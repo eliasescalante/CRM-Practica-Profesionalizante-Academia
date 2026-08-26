@@ -6,7 +6,7 @@
 * **Framework Web:** Flask
 * **Base de Datos:** MySQL
 * **Entorno de Servidor Local:** XAMPP (Apache + MySQL / phpMyAdmin)
-* **Conector BD:** `mysql-connector-python` *(o `PyMySQL` / `Flask-SQLAlchemy` según uses)*
+* **Conector BD:** `mysql-connector-python`
 
 ---
 
