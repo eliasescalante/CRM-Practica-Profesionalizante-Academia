@@ -1,3 +1,17 @@
+# BACKEND:
+
+## 🛠️ Tech Stack (Backend & Base de Datos)
+
+* **Lenguaje:** Python 3.x
+* **Framework Web:** Flask
+* **Base de Datos:** MySQL
+* **Entorno de Servidor Local:** XAMPP (Apache + MySQL / phpMyAdmin)
+* **Conector BD:** `mysql-connector-python` *(o `PyMySQL` / `Flask-SQLAlchemy` según uses)*
+
+---
+
+# Modelo DB de CRM
+
 ### Conexiones de Foreign Keys (Relaciones)
 
 #### Entidades Base y Accesos
@@ -51,4 +65,5 @@ erDiagram
     PROFESOR ||--|{ PAGO : profesor_id
     CENTRO ||--|{ PAGO : centro_id
 ```
-![Diagrama](https://github.com/eliasescalante/CRM-Practica-Profesionalizante-Academia/blob/main/Docs/diagrama%20e-r%20db.png)
+
+
