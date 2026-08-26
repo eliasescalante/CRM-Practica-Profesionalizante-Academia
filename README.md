@@ -50,5 +50,5 @@ erDiagram
     ALUMNO ||--|{ PAGO : alumno_id
     PROFESOR ||--|{ PAGO : profesor_id
     CENTRO ||--|{ PAGO : centro_id
-
-    ![Texto alternativo](ruta_o_url_de_la_imagen)
+```
+![Diagrama](https://github.com/eliasescalante/CRM-Practica-Profesionalizante-Academia/blob/main/Docs/diagrama%20e-r%20db.png)
