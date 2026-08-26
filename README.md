@@ -46,7 +46,7 @@
 
 ---
 
-#### Diagrama de Entidad-Relaciones (Mermaid)
+#### Diagrama de Entidad-Relaciones
 
 ```mermaid
 erDiagram
