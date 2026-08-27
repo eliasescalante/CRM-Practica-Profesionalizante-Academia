@@ -3,191 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRM Academia - Artes Marciales</title>
-    <!-- Tailwind CSS para diseño rápido y moderno -->
+    <title>Portal del Alumno - CRM Academia</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
 
-    <!-- Navegación -->
+    <!-- Header / Navbar del Alumno -->
     <nav class="bg-slate-900 text-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                🥋 CRM Academia
-            </h1>
-            <span id="api-status" class="text-xs bg-red-500 px-2 py-1 rounded-full font-semibold">
-                Desconectado
-            </span>
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🥋</span>
+                <div>
+                    <h1 class="text-lg font-bold leading-tight">Academia de Artes Marciales</h1>
+                    <p class="text-xs text-gray-400">Portal del Estudiante</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3 text-right">
+                <div class="hidden sm:block">
+                    <p class="text-sm font-semibold">Elias Deguel</p>
+                    <p class="text-xs text-emerald-400">Cinturón Azul • Taekwondo</p>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-bold text-slate-200 border border-slate-600">
+                    ED
+                </div>
+            </div>
         </div>
     </nav>
 
     <!-- Contenido Principal -->
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
-        <!-- Formulario: Registrar Pago -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 md:col-span-1">
-            <h2 class="text-lg font-bold mb-4 border-b pb-2 text-slate-800">Registrar Pago</h2>
-            
-            <form id="form-pago" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">ID Alumno</label>
-                    <input type="number" id="alumno_id" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                </div>
+        <!-- Banner de Estado de Cuenta -->
+        <div class="bg-emerald-500 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span class="bg-emerald-700/50 text-xs px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold">Estado de Cuota</span>
+                <h2 class="text-2xl font-bold mt-1">Cuota de Agosto Al Día</h2>
+                <p class="text-sm text-emerald-100">Próximo vencimiento: 10 de Septiembre</p>
+            </div>
+            <button class="bg-white text-emerald-800 hover:bg-emerald-50 px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
+                Ver Comprobante
+            </button>
+        </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">ID Profesor (Recibe)</label>
-                    <input type="number" id="profesor_id" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                </div>
+        <!-- Módulos Principales -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">ID Centro / Sede</label>
-                    <input type="number" id="centro_id" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                </div>
+            <!-- Columna Izquierda: Información Académica y Avisos -->
+            <div class="md:col-span-2 space-y-6">
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Concepto</label>
-                    <select id="tipo_concepto" class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                        <option value="CUOTA">CUOTA</option>
-                        <option value="EXAMEN">EXAMEN</option>
-                        <option value="MATRICULA">MATRICULA</option>
-                        <option value="INSUMO">INSUMO</option>
-                        <option value="OTRO">OTRO</option>
-                    </select>
-                </div>
+                <!-- Anuncios del Dojang / Centro -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                        📢 Cartelera de Avisos
+                    </h3>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Monto ($)</label>
-                    <input type="number" step="0.01" id="monto" required class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-amber-900 text-sm">Examen de Graduación</span>
+                                <span class="text-xs text-amber-700">Hace 2 días</span>
+                            </div>
+                            <p class="text-xs text-amber-800">Abierta la inscripción para la mesa de examen del mes que viene. Consultar requisitos de formas con el Sabonim.</p>
+                        </div>
 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">Método de Pago</label>
-                    <select id="metodo_pago" class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-slate-800 outline-none">
-                        <option value="EFECTIVO">EFECTIVO</option>
-                        <option value="TRANSFERENCIA">TRANSFERENCIA</option>
-                    </select>
-                </div>
+                        <div class="p-4 bg-slate-50 border-l-4 border-slate-700 rounded-r-xl">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-slate-800 text-sm">Horarios de Feriado</span>
+                                <span class="text-xs text-slate-500">Hace 5 días</span>
+                            </div>
+                            <p class="text-xs text-slate-600">El lunes feriado las clases del turno tarde se unifican a las 18:00 hs.</p>
+                        </div>
+                    </div>
+                </section>
 
-                <button type="submit" class="w-full bg-slate-900 text-white font-semibold py-2 rounded-lg hover:bg-slate-800 transition">
-                    Guardar Pago
-                </button>
-            </form>
-        </section>
+                <!-- Historial de Pagos del Alumno -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                        💳 Mis Útimos Pagos
+                    </h3>
 
-        <!-- Tabla / Vista de Registros -->
-        <section class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 md:col-span-2">
-            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                <h2 class="text-lg font-bold text-slate-800">Últimos Pagos Registrados</h2>
-                <button onclick="cargarPagos()" class="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-lg transition">
-                    🔄 Actualizar
-                </button>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-gray-600">
+                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                                <tr>
+                                    <th class="p-3">Fecha</th>
+                                    <th class="p-3">Concepto</th>
+                                    <th class="p-3">Método</th>
+                                    <th class="p-3 text-right">Monto</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y text-xs">
+                                <tr>
+                                    <td class="p-3">05/08/2026</td>
+                                    <td class="p-3 font-medium text-slate-800">Cuota Mensual - Agosto</td>
+                                    <td class="p-3">Transferencia</td>
+                                    <td class="p-3 text-right font-bold text-slate-800">$15.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">10/07/2026</td>
+                                    <td class="p-3 font-medium text-slate-800">Cuota Mensual - Julio</td>
+                                    <td class="p-3">Efectivo</td>
+                                    <td class="p-3 text-right font-bold text-slate-800">$15.000</td>
+                                </tr>
+                                <tr>
+                                    <td class="p-3">15/06/2026</td>
+                                    <td class="p-3 font-medium text-slate-800">Derecho a Examen</td>
+                                    <td class="p-3">Transferencia</td>
+                                    <td class="p-3 text-right font-bold text-slate-800">$8.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
             </div>
 
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-700 uppercase text-xs">
-                        <tr>
-                            <th class="p-3">ID</th>
-                            <th class="p-3">Alumno</th>
-                            <th class="p-3">Concepto</th>
-                            <th class="p-3">Monto</th>
-                            <th class="p-3">Método</th>
-                            <th class="p-3">Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-pagos" class="divide-y">
-                        <tr>
-                            <td colspan="6" class="p-4 text-center text-gray-400">Cargando datos...</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Columna Derecha: Asistencia y Mi Perfil -->
+            <div class="space-y-6">
+
+                <!-- Resumen de Asistencia -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+                    <h3 class="text-base font-bold text-slate-800 mb-3 border-b pb-2">
+                        📊 Mi Asistencia Este Mes
+                    </h3>
+
+                    <div class="text-center my-4">
+                        <span class="text-4xl font-extrabold text-slate-900">8</span>
+                        <span class="text-gray-400 text-sm">/ 12 clases</span>
+                        <p class="text-xs text-emerald-600 font-semibold mt-1">66% de asistencia (Cumple requisito)</p>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
+                            <span>Última clase registrada:</span>
+                            <span class="font-bold text-slate-700">Ayer, 19:30 hs</span>
+                        </div>
+                        <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
+                            <span>Instructor a cargo:</span>
+                            <span class="font-bold text-slate-700">Prof. Carlos Ruiz</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Próxima Graduación / Progreso -->
+                <section class="bg-slate-900 text-white p-6 rounded-2xl shadow-sm">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        Progreso de Cinto
+                    </h3>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-lg font-bold">Cinturón Azul</span>
+                        <span class="text-xs text-slate-400">➔ Cinturón Rojo</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 mb-4">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                    </div>
+                    <p class="text-xs text-slate-400">
+                        Tenés acumuladas 45 de 60 horas de práctica requeridas para rendir.
+                    </p>
+                </section>
+
             </div>
-        </section>
+
+        </div>
 
     </main>
 
-    <!-- JS de integración con Flask -->
-    <script>
-        const API_URL = 'http://localhost:5000';
-
-        // 1. Verificar estado del servidor Flask
-        async function checkHealth() {
-            const statusBadge = document.getElementById('api-status');
-            try {
-                const res = await fetch(`${API_URL}/`);
-                if (res.ok) {
-                    statusBadge.textContent = 'API Conectada';
-                    statusBadge.className = 'text-xs bg-emerald-500 px-2 py-1 rounded-full font-semibold';
-                }
-            } catch (err) {
-                statusBadge.textContent = 'Sin Conexión';
-                statusBadge.className = 'text-xs bg-red-500 px-2 py-1 rounded-full font-semibold';
-            }
-        }
-
-        // 2. Cargar pagos desde el backend
-        async function cargarPagos() {
-            const tbody = document.getElementById('tabla-pagos');
-            try {
-                const res = await fetch(`${API_URL}/pagos`);
-                if (!res.ok) throw new Error();
-                const pagos = await res.json();
-
-                if (pagos.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-400">No hay pagos registrados.</td></tr>`;
-                    return;
-                }
-
-                tbody.innerHTML = pagos.map(p => `
-                    <tr class="hover:bg-gray-50">
-                        <td class="p-3 font-semibold">#${p.id}</td>
-                        <td class="p-3">ID: ${p.alumno_id}</td>
-                        <td class="p-3"><span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">${p.tipo_concepto}</span></td>
-                        <td class="p-3 font-medium text-emerald-600">$${p.monto}</td>
-                        <td class="p-3">${p.metodo_pago}</td>
-                        <td class="p-3 text-xs text-gray-400">${p.fecha_de_pago || 'Hoy'}</td>
-                    </tr>
-                `).join('');
-            } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500">Error al obtener pagos de la API.</td></tr>`;
-            }
-        }
-
-        // 3. Enviar pago al backend
-        document.getElementById('form-pago').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const payload = {
-                alumno_id: parseInt(document.getElementById('alumno_id').value),
-                profesor_id: parseInt(document.getElementById('profesor_id').value),
-                centro_id: parseInt(document.getElementById('centro_id').value),
-                tipo_concepto: document.getElementById('tipo_concepto').value,
-                monto: parseFloat(document.getElementById('monto').value),
-                metodo_pago: document.getElementById('metodo_pago').value
-            };
-
-            try {
-                const res = await fetch(`${API_URL}/pagos`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (res.ok) {
-                    alert('¡Pago registrado con éxito!');
-                    document.getElementById('form-pago').reset();
-                    cargarPagos();
-                } else {
-                    alert('Error al guardar el pago.');
-                }
-            } catch (err) {
-                alert('No se pudo conectar con el servidor.');
-            }
-        });
-
-        // Inicializar
-        checkHealth();
-        cargarPagos();
-    </script>
 </body>
 </html>
