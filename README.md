@@ -10,6 +10,11 @@
 
 ---
 
+# FRONTEND:
+
+* ** HTML + CSS + JS**
+* sitio placeholder: https://eliasescalante.github.io/CRM-Practica-Profesionalizante-Academia/
+
 # Modelo DB de CRM
 
 ### Conexiones de Foreign Keys (Relaciones)
