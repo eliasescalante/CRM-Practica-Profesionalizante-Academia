@@ -6,25 +6,37 @@
     <title>Portal del Alumno - CRM Academia</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 font-sans text-gray-800">
+<body class="bg-slate-100 font-sans text-slate-800">
 
     <!-- Header / Navbar del Alumno -->
-    <nav class="bg-slate-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+    <nav class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-4">
+            
+            <!-- Branding -->
             <div class="flex items-center gap-3">
-                <span class="text-2xl">🥋</span>
+                <span class="text-3xl">🥋</span>
                 <div>
-                    <h1 class="text-lg font-bold leading-tight">Academia de Artes Marciales</h1>
-                    <p class="text-xs text-gray-400">Portal del Estudiante</p>
+                    <h1 class="text-base font-bold leading-tight">Academia de Artes Marciales</h1>
+                    <p class="text-xs text-slate-400">Portal del Estudiante</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-3 text-right">
-                <div class="hidden sm:block">
+
+            <!-- Contexto: Centro Actual (Tabla CENTRO) -->
+            <div class="flex items-center bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-700 text-xs">
+                <span class="text-slate-400 mr-2">📍 Sede:</span>
+                <select class="bg-transparent font-semibold text-emerald-400 focus:outline-none cursor-pointer">
+                    <option class="bg-slate-900 text-white" value="1">Centro Central - Quilmes</option>
+                    <option class="bg-slate-900 text-white" value="2">Sede Bernal</option>
+                </select>
+            </div>
+
+            <!-- Perfil de Usuario (Tablas PERSONA + ALUMNO) -->
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:block text-right">
                     <p class="text-sm font-semibold">Elias Deguel</p>
                     <p class="text-xs text-emerald-400">Cinturón Azul • Taekwondo</p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center font-bold text-slate-200 border border-slate-600">
+                <div class="w-10 h-10 rounded-full bg-emerald-600 flex items-center justify-center font-bold text-white border-2 border-emerald-400 shadow">
                     ED
                 </div>
             </div>
@@ -34,82 +46,110 @@
     <!-- Contenido Principal -->
     <main class="max-w-7xl mx-auto px-4 py-8 space-y-6">
 
-        <!-- Banner de Estado de Cuenta -->
-        <div class="bg-emerald-500 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <!-- Banner de Estado de Cuenta (Tabla CUOTA) -->
+        <div class="bg-emerald-600 text-white p-6 rounded-2xl shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border border-emerald-500">
             <div>
-                <span class="bg-emerald-700/50 text-xs px-2.5 py-1 rounded-full uppercase tracking-wider font-semibold">Estado de Cuota</span>
-                <h2 class="text-2xl font-bold mt-1">Cuota de Agosto Al Día</h2>
-                <p class="text-sm text-emerald-100">Próximo vencimiento: 10 de Septiembre</p>
+                <div class="flex items-center gap-2">
+                    <span class="bg-emerald-800/60 text-emerald-100 text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider font-bold">Estado de Cuota</span>
+                    <span class="bg-white/20 text-white text-[10px] px-2 py-0.5 rounded-full font-medium">Agosto 2026</span>
+                </div>
+                <h2 class="text-2xl font-extrabold mt-1">Cuota Al Día</h2>
+                <p class="text-xs text-emerald-100 mt-0.5">Próximo vencimiento: 10 de Septiembre de 2026</p>
             </div>
-            <button class="bg-white text-emerald-800 hover:bg-emerald-50 px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition">
-                Ver Comprobante
+            <button class="bg-white text-emerald-900 hover:bg-emerald-50 px-5 py-2.5 rounded-xl font-bold text-xs shadow-md transition">
+                📄 Ver Comprobante
             </button>
         </div>
 
         <!-- Módulos Principales -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-            <!-- Columna Izquierda: Información Académica y Avisos -->
+            <!-- Columna Izquierda: Cartelera, Exámenes y Pagos -->
             <div class="md:col-span-2 space-y-6">
 
-                <!-- Anuncios del Dojang / Centro -->
-                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
-                        📢 Cartelera de Avisos
+                <!-- 📢 Cartelera de Avisos (Tabla NOTICIA) -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2 uppercase tracking-wide">
+                        📢 Cartelera de Novedades
                     </h3>
 
-                    <div class="space-y-4">
-                        <div class="p-4 bg-amber-50 border-l-4 border-amber-500 rounded-r-xl">
+                    <div class="space-y-3">
+                        <!-- Noticia de Sede -->
+                        <div class="p-4 bg-amber-50/60 border-l-4 border-amber-500 rounded-r-xl">
                             <div class="flex justify-between items-center mb-1">
-                                <span class="font-bold text-amber-900 text-sm">Examen de Graduación</span>
-                                <span class="text-xs text-amber-700">Hace 2 días</span>
+                                <span class="font-bold text-amber-900 text-sm">Examen de Graduación Próximo</span>
+                                <span class="text-[10px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">Sede Quilmes</span>
                             </div>
-                            <p class="text-xs text-amber-800">Abierta la inscripción para la mesa de examen del mes que viene. Consultar requisitos de formas con el Sabonim.</p>
+                            <p class="text-xs text-amber-800">Abierta la inscripción para la mesa de examen del mes que viene. Consultar requisitos con el Sabonim.</p>
                         </div>
 
+                        <!-- Noticia General -->
                         <div class="p-4 bg-slate-50 border-l-4 border-slate-700 rounded-r-xl">
                             <div class="flex justify-between items-center mb-1">
                                 <span class="font-bold text-slate-800 text-sm">Horarios de Feriado</span>
-                                <span class="text-xs text-slate-500">Hace 5 días</span>
+                                <span class="text-[10px] text-slate-500 bg-slate-200 px-2 py-0.5 rounded-full">General</span>
                             </div>
                             <p class="text-xs text-slate-600">El lunes feriado las clases del turno tarde se unifican a las 18:00 hs.</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Historial de Pagos del Alumno -->
-                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2">
+                <!-- 🥋 Próximos Exámenes Programados (Tablas EXAMEN_PROGRAMADO + INSCRIPCION_EXAMEN) -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2 uppercase tracking-wide">
+                        🎯 Próximas Mesas de Examen
+                    </h3>
+
+                    <div class="border rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50">
+                        <div>
+                            <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">Evaluador: Prof. Carlos Ruiz</span>
+                            <h4 class="font-bold text-slate-800 text-sm mt-1">Mesa de Examen - Cinturones Avanzados</h4>
+                            <p class="text-xs text-slate-500">📅 25 de Septiembre • 18:00 hs</p>
+                            <p class="text-xs text-emerald-700 font-semibold mt-1">Costo: $8.000</p>
+                        </div>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm transition whitespace-nowrap">
+                            Inscribirme Ahora
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 💳 Historial de Pagos (Tabla PAGO) -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2 border-b pb-2 uppercase tracking-wide">
                         💳 Mis Útimos Pagos
                     </h3>
 
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-gray-600">
-                            <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
+                        <table class="w-full text-left text-xs text-slate-600">
+                            <thead class="bg-slate-50 text-slate-500 uppercase text-[10px] tracking-wider">
                                 <tr>
                                     <th class="p-3">Fecha</th>
                                     <th class="p-3">Concepto</th>
                                     <th class="p-3">Método</th>
+                                    <th class="p-3">Estado</th>
                                     <th class="p-3 text-right">Monto</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y text-xs">
+                            <tbody class="divide-y">
                                 <tr>
                                     <td class="p-3">05/08/2026</td>
                                     <td class="p-3 font-medium text-slate-800">Cuota Mensual - Agosto</td>
                                     <td class="p-3">Transferencia</td>
+                                    <td class="p-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">CONFIRMADO</span></td>
                                     <td class="p-3 text-right font-bold text-slate-800">$15.000</td>
                                 </tr>
                                 <tr>
                                     <td class="p-3">10/07/2026</td>
                                     <td class="p-3 font-medium text-slate-800">Cuota Mensual - Julio</td>
                                     <td class="p-3">Efectivo</td>
+                                    <td class="p-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">CONFIRMADO</span></td>
                                     <td class="p-3 text-right font-bold text-slate-800">$15.000</td>
                                 </tr>
                                 <tr>
                                     <td class="p-3">15/06/2026</td>
                                     <td class="p-3 font-medium text-slate-800">Derecho a Examen</td>
                                     <td class="p-3">Transferencia</td>
+                                    <td class="p-3"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">CONFIRMADO</span></td>
                                     <td class="p-3 text-right font-bold text-slate-800">$8.000</td>
                                 </tr>
                             </tbody>
@@ -119,48 +159,82 @@
 
             </div>
 
-            <!-- Columna Derecha: Asistencia y Mi Perfil -->
+            <!-- Columna Derecha: Asistencia, Progreso y Chat por Centro -->
             <div class="space-y-6">
 
-                <!-- Resumen de Asistencia -->
-                <section class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
-                    <h3 class="text-base font-bold text-slate-800 mb-3 border-b pb-2">
-                        📊 Mi Asistencia Este Mes
+                <!-- 📊 Resumen de Asistencia (Tabla ASISTENCIA) -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-800 mb-3 border-b pb-2 uppercase tracking-wide">
+                        📊 Asistencia del Mes
                     </h3>
 
                     <div class="text-center my-4">
                         <span class="text-4xl font-extrabold text-slate-900">8</span>
-                        <span class="text-gray-400 text-sm">/ 12 clases</span>
+                        <span class="text-slate-400 text-xs">/ 12 clases</span>
                         <p class="text-xs text-emerald-600 font-semibold mt-1">66% de asistencia (Cumple requisito)</p>
                     </div>
 
                     <div class="space-y-2 text-xs">
-                        <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
-                            <span>Última clase registrada:</span>
+                        <div class="flex justify-between p-2.5 bg-slate-50 rounded-xl">
+                            <span class="text-slate-500">Última clase:</span>
                             <span class="font-bold text-slate-700">Ayer, 19:30 hs</span>
                         </div>
-                        <div class="flex justify-between p-2 bg-gray-50 rounded-lg">
-                            <span>Instructor a cargo:</span>
+                        <div class="flex justify-between p-2.5 bg-slate-50 rounded-xl">
+                            <span class="text-slate-500">Instructor:</span>
                             <span class="font-bold text-slate-700">Prof. Carlos Ruiz</span>
                         </div>
                     </div>
                 </section>
 
-                <!-- Próxima Graduación / Progreso -->
+                <!-- 🥋 Progreso de Cinturón (Tabla GRADUACION) -->
                 <section class="bg-slate-900 text-white p-6 rounded-2xl shadow-sm">
-                    <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400 mb-2">
-                        Progreso de Cinto
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                        Progreso de Graduación
                     </h3>
                     <div class="flex justify-between items-center mb-2">
-                        <span class="text-lg font-bold">Cinturón Azul</span>
+                        <span class="text-base font-bold text-emerald-400">Cinturón Azul</span>
                         <span class="text-xs text-slate-400">➔ Cinturón Rojo</span>
                     </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2 mb-4">
-                        <div class="bg-blue-500 h-2 rounded-full" style="width: 70%"></div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 mb-3">
+                        <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
                     </div>
                     <p class="text-xs text-slate-400">
-                        Tenés acumuladas 45 de 60 horas de práctica requeridas para rendir.
+                        Tenés acumuladas 45 de 60 horas requeridas para el próximo examen.
                     </p>
+                </section>
+
+                <!-- 💬 Chat del Centro / Dojang (Tabla MENSAJE_CHAT) -->
+                <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="text-sm font-bold text-slate-800 mb-3 border-b pb-2 uppercase tracking-wide flex justify-between items-center">
+                        <span>💬 Chat de Sede</span>
+                        <span class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full font-bold">En vivo</span>
+                    </h3>
+
+                    <!-- Mensajes -->
+                    <div class="space-y-3 h-40 overflow-y-auto pr-1 text-xs mb-3">
+                        <div class="bg-slate-100 p-2.5 rounded-xl">
+                            <div class="flex justify-between font-bold text-slate-700 text-[11px]">
+                                <span>Prof. Carlos Ruiz</span>
+                                <span class="text-[9px] text-slate-400 font-normal">18:30 hs</span>
+                            </div>
+                            <p class="text-slate-600 mt-0.5">Recuerden traer los protectores para el sparring de hoy.</p>
+                        </div>
+                        <div class="bg-blue-50 p-2.5 rounded-xl border border-blue-100">
+                            <div class="flex justify-between font-bold text-blue-900 text-[11px]">
+                                <span>Vos (Elias)</span>
+                                <span class="text-[9px] text-blue-400 font-normal">18:32 hs</span>
+                            </div>
+                            <p class="text-blue-800 mt-0.5">¡Entendido Sabonim! Ahí nos vemos.</p>
+                        </div>
+                    </div>
+
+                    <!-- Input de Envío -->
+                    <div class="flex gap-2">
+                        <input type="text" placeholder="Escribir mensaje..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-slate-400">
+                        <button class="bg-slate-900 text-white font-bold text-xs px-3 py-2 rounded-xl hover:bg-slate-800 transition">
+                            Enviar
+                        </button>
+                    </div>
                 </section>
 
             </div>
