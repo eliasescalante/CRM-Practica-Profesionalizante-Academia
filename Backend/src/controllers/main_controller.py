@@ -1,34 +1,69 @@
 from flask import Blueprint, jsonify
+
 from database.connection import get_db_connection
 from database.cloudinary_connection import check_cloudinary_connection
 
-main_bp = Blueprint('main', __name__)
 
-@main_bp.route('/', methods=['GET'])
-def bienvenida():
-    db_estado = "Desconectado"
-    cld_estado = "Desconectado"
-    cld_detalle = None
-    
-    # 1. Validación de MySQL
+main_bp = Blueprint("main", __name__)
+
+
+@main_bp.route("/api/status", methods=["GET"])
+def status():
+
+    # ---------------------------------------------
+    # MYSQL
+    # ---------------------------------------------
+
+    db_estado = "ERROR"
+
     try:
+
         conn = get_db_connection()
+
         if conn and conn.is_connected():
+            db_estado = "OK"
             conn.close()
-            db_estado = "Conectado exitosamente al server XAMPP (Apache) y MySQL"
+
     except Exception as e:
-        db_estado = f"Error DB: {str(e)}"
 
-    # 2. Validación de Cloudinary
-    cld_res = check_cloudinary_connection()
-    cld_estado = cld_res.get("mensaje")
+        db_estado = f"ERROR: {str(e)}"
 
-    # Evaluar estado general
-    is_ok = ("Conectado exitosamente" in db_estado) and (cld_res.get("status") == "OK")
+
+    # ---------------------------------------------
+    # CLOUDINARY
+    # ---------------------------------------------
+
+    cloudinary_resultado = check_cloudinary_connection()
+
+    cloudinary_estado = cloudinary_resultado.get("status")
+
+
+    # ---------------------------------------------
+    # SERVER
+    # ---------------------------------------------
+
+    server_estado = "OK"
+
+
+    # ---------------------------------------------
+    # ESTADO GENERAL
+    # ---------------------------------------------
+
+    todo_ok = (
+        db_estado == "OK"
+        and cloudinary_estado == "OK"
+        and server_estado == "OK"
+    )
+
 
     return jsonify({
-        "mensaje": "API CRM de Artes Marciales",
-        "estado": "Online" if is_ok else "Parcial / Inactivo",
+
+        "server": server_estado,
+
         "database": db_estado,
-        "cloudinary": cld_estado
-    }), (200 if is_ok else 500)
+
+        "cloudinary": cloudinary_estado,
+
+        "status": "OK" if todo_ok else "ERROR"
+
+    }), 200 if todo_ok else 500

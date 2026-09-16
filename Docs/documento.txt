@@ -1,0 +1,16 @@
+{
+    "dni": "40123456",
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "email": "juan@gmail.com",
+    "telefono": "1123456789",
+    "fecha_nacimiento": "2000-05-15",
+    "contacto_emergencia": "Maria Perez - 1122222222",
+
+    "usuario": "juanperez",
+    "contrasenia": "123456",
+
+    "centro_id": 1,
+    "profesor_id": 1,
+    "fecha_inicio": "2026-09-16"
+}

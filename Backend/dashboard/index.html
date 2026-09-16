@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>CRM API Dashboard</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: #f9fafb;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #9ca3af;
+        }
+
+        .status-container {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(200px, 1fr));
+
+            gap: 15px;
+
+            margin-bottom: 35px;
+        }
+
+        .status-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .status-card h3 {
+            margin-bottom: 15px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .online {
+            color: #22c55e;
+        }
+
+        .offline {
+            color: #ef4444;
+        }
+
+        .endpoint-section {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .endpoint-section h2 {
+            margin-bottom: 20px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            padding: 14px;
+
+            border-bottom: 1px solid #374151;
+        }
+
+        .endpoint:last-child {
+            border-bottom: none;
+        }
+
+        .method {
+            width: 70px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 8px;
+            border-radius: 6px;
+        }
+
+        .get {
+            background: #064e3b;
+            color: #34d399;
+        }
+
+        .post {
+            background: #1e3a8a;
+            color: #60a5fa;
+        }
+
+        .pending {
+            color: #6b7280;
+        }
+
+        .endpoint-path {
+            font-family: monospace;
+            font-size: 15px;
+        }
+
+        .endpoint-name {
+            color: #9ca3af;
+            margin-left: auto;
+        }
+
+        .refresh {
+            margin-top: 20px;
+            padding: 10px 16px;
+
+            background: #374151;
+            color: white;
+
+            border: none;
+            border-radius: 8px;
+
+            cursor: pointer;
+        }
+
+        .refresh:hover {
+            background: #4b5563;
+        }
+
+        @media (max-width: 600px) {
+
+            .endpoint {
+                flex-wrap: wrap;
+            }
+
+            .endpoint-name {
+                margin-left: 0;
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <header>
+
+        <h1>🥋 CRM Academia de Artes Marciales</h1>
+
+        <p>
+            Backend API Dashboard
+        </p>
+
+    </header>
+
+
+    <!-- STATUS -->
+
+    <section class="status-container">
+
+
+        <div class="status-card">
+
+            <h3>🖥️ Server</h3>
+
+            <span
+                id="server-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <h3>🗄️ MySQL</h3>
+
+            <span
+                id="database-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <h3>☁️ Cloudinary</h3>
+
+            <span
+                id="cloudinary-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- ENDPOINTS -->
+
+    <section class="endpoint-section">
+
+        <h2>Endpoints</h2>
+
+
+        <div class="endpoint">
+
+            <span class="method get">
+                GET
+            </span>
+
+            <span class="endpoint-path">
+                /api/status
+            </span>
+
+            <span class="endpoint-name">
+                Estado del backend
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method post">
+                POST
+            </span>
+
+            <span class="endpoint-path">
+                /api/auth/register
+            </span>
+
+            <span class="endpoint-name">
+                Registrar usuario
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method post">
+                POST
+            </span>
+
+            <span class="endpoint-path">
+                /api/auth/login
+            </span>
+
+            <span class="endpoint-name">
+                Iniciar sesión
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method get">
+                GET
+            </span>
+
+            <span class="endpoint-path pending">
+                /api/auth/me
+            </span>
+
+            <span class="endpoint-name pending">
+                Próximamente
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method get">
+                GET
+            </span>
+
+            <span class="endpoint-path pending">
+                /api/alumnos
+            </span>
+
+            <span class="endpoint-name pending">
+                Próximamente
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method get">
+                GET
+            </span>
+
+            <span class="endpoint-path pending">
+                /api/profesores
+            </span>
+
+            <span class="endpoint-name pending">
+                Próximamente
+            </span>
+
+        </div>
+
+
+        <button
+            class="refresh"
+            onclick="checkStatus()"
+        >
+            🔄 Actualizar estado
+        </button>
+
+
+    </section>
+
+
+</div>
+
+
+<script>
+
+    async function checkStatus() {
+
+        const server =
+            document.getElementById("server-status");
+
+        const database =
+            document.getElementById("database-status");
+
+        const cloudinary =
+            document.getElementById("cloudinary-status");
+
+
+        server.textContent = "Verificando...";
+        database.textContent = "Verificando...";
+        cloudinary.textContent = "Verificando...";
+
+
+        try {
+
+            const response =
+                await fetch("http://localhost:4000/api/status");
+
+
+            const data =
+                await response.json();
+
+
+            setStatus(
+                server,
+                data.server
+            );
+
+
+            setStatus(
+                database,
+                data.database
+            );
+
+
+            setStatus(
+                cloudinary,
+                data.cloudinary
+            );
+
+
+        } catch (error) {
+
+            server.textContent = "🔴 OFFLINE";
+            server.className = "status offline";
+
+            database.textContent = "❌ Sin conexión";
+            database.className = "status offline";
+
+            cloudinary.textContent = "❌ Sin conexión";
+            cloudinary.className = "status offline";
+
+        }
+
+    }
+
+
+    function setStatus(element, value) {
+
+        if (value === "OK") {
+
+            element.textContent = "🟢 CONECTADO";
+            element.className = "status online";
+
+        } else {
+
+            element.textContent = "🔴 ERROR";
+            element.className = "status offline";
+
+        }
+
+    }
+
+
+    checkStatus();
+
+</script>
+
+
+</body>
+
+</html>
