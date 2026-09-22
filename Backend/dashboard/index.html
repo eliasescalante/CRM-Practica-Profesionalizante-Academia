@@ -1,247 +1,306 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
 <head>
 
-    <meta charset="UTF-8">
+```
+<meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
 
-    <title>CRM API Dashboard</title>
+<title>CRM API Dashboard</title>
 
-    <style>
+<style>
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            background: #111827;
-            color: #f9fafb;
-            min-height: 100vh;
-        }
+    body {
+        font-family: Arial, sans-serif;
+        background: #111827;
+        color: #f9fafb;
+        min-height: 100vh;
+    }
 
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 40px auto;
-        }
+    .container {
+        width: 90%;
+        max-width: 1100px;
+        margin: 40px auto;
+    }
 
-        header {
-            margin-bottom: 30px;
-        }
+    header {
+        margin-bottom: 30px;
+    }
 
-        header h1 {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
+    header h1 {
+        font-size: 28px;
+        margin-bottom: 8px;
+    }
 
-        header p {
-            color: #9ca3af;
-        }
+    header p {
+        color: #9ca3af;
+    }
 
-        .status-container {
-            display: grid;
-            grid-template-columns:
-                repeat(auto-fit, minmax(200px, 1fr));
+    .status-container {
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fit, minmax(200px, 1fr));
 
-            gap: 15px;
+        gap: 15px;
 
-            margin-bottom: 35px;
-        }
+        margin-bottom: 35px;
+    }
 
-        .status-card {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            padding: 20px;
-        }
+    .status-card {
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        padding: 20px;
+    }
 
-        .status-card h3 {
-            margin-bottom: 15px;
-        }
+    .status-card h3 {
+        margin-bottom: 15px;
+    }
 
-        .status {
-            font-weight: bold;
-        }
+    .status {
+        font-weight: bold;
+    }
 
-        .online {
-            color: #22c55e;
-        }
+    .online {
+        color: #22c55e;
+    }
 
-        .offline {
-            color: #ef4444;
-        }
+    .offline {
+        color: #ef4444;
+    }
 
-        .endpoint-section {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 12px;
-            padding: 20px;
-        }
+    .endpoint-section {
+        background: #1f2937;
+        border: 1px solid #374151;
+        border-radius: 12px;
+        padding: 20px;
+    }
 
-        .endpoint-section h2 {
-            margin-bottom: 20px;
-        }
+    .endpoint-section h2 {
+        margin-bottom: 20px;
+    }
+
+    .endpoint-group {
+        margin-bottom: 25px;
+    }
+
+    .endpoint-group:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .endpoint-group-title {
+        color: #d1d5db;
+        font-size: 14px;
+        margin-bottom: 5px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #374151;
+    }
+
+    .endpoint {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+
+        padding: 14px;
+
+        border-bottom: 1px solid #374151;
+    }
+
+    .endpoint:last-child {
+        border-bottom: none;
+    }
+
+    .method {
+        width: 70px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 6px 8px;
+        border-radius: 6px;
+        flex-shrink: 0;
+    }
+
+    .get {
+        background: #064e3b;
+        color: #34d399;
+    }
+
+    .post {
+        background: #1e3a8a;
+        color: #60a5fa;
+    }
+
+    .put {
+        background: #78350f;
+        color: #fbbf24;
+    }
+
+    .delete {
+        background: #7f1d1d;
+        color: #f87171;
+    }
+
+    .pending {
+        color: #6b7280;
+    }
+
+    .endpoint-path {
+        font-family: monospace;
+        font-size: 15px;
+    }
+
+    .endpoint-name {
+        color: #9ca3af;
+        margin-left: auto;
+    }
+
+    .implemented {
+        color: #22c55e;
+        font-size: 13px;
+    }
+
+    .pending-label {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .refresh {
+        margin-top: 25px;
+        padding: 10px 16px;
+
+        background: #374151;
+        color: white;
+
+        border: none;
+        border-radius: 8px;
+
+        cursor: pointer;
+    }
+
+    .refresh:hover {
+        background: #4b5563;
+    }
+
+    @media (max-width: 600px) {
 
         .endpoint {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-
-            padding: 14px;
-
-            border-bottom: 1px solid #374151;
-        }
-
-        .endpoint:last-child {
-            border-bottom: none;
-        }
-
-        .method {
-            width: 70px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 6px 8px;
-            border-radius: 6px;
-        }
-
-        .get {
-            background: #064e3b;
-            color: #34d399;
-        }
-
-        .post {
-            background: #1e3a8a;
-            color: #60a5fa;
-        }
-
-        .pending {
-            color: #6b7280;
-        }
-
-        .endpoint-path {
-            font-family: monospace;
-            font-size: 15px;
+            flex-wrap: wrap;
         }
 
         .endpoint-name {
-            color: #9ca3af;
-            margin-left: auto;
+            margin-left: 0;
+            width: 100%;
         }
 
-        .refresh {
-            margin-top: 20px;
-            padding: 10px 16px;
-
-            background: #374151;
-            color: white;
-
-            border: none;
-            border-radius: 8px;
-
-            cursor: pointer;
+        .method {
+            width: 65px;
         }
 
-        .refresh:hover {
-            background: #4b5563;
-        }
+    }
 
-        @media (max-width: 600px) {
-
-            .endpoint {
-                flex-wrap: wrap;
-            }
-
-            .endpoint-name {
-                margin-left: 0;
-                width: 100%;
-            }
-
-        }
-
-    </style>
+</style>
+```
 
 </head>
-
 
 <body>
 
 <div class="container">
 
-    <header>
+```
+<header>
 
-        <h1>🥋 CRM Academia de Artes Marciales</h1>
+    <h1>🥋 CRM Academia de Artes Marciales</h1>
 
-        <p>
-            Backend API Dashboard
-        </p>
+    <p>
+        Backend API Dashboard
+    </p>
 
-    </header>
-
-
-    <!-- STATUS -->
-
-    <section class="status-container">
+</header>
 
 
-        <div class="status-card">
+<!-- =====================================================
+     STATUS
+     ===================================================== -->
 
-            <h3>🖥️ Server</h3>
+<section class="status-container">
 
-            <span
-                id="server-status"
-                class="status"
-            >
-                Verificando...
-            </span>
 
+    <div class="status-card">
+
+        <h3>🖥️ Server</h3>
+
+        <span
+            id="server-status"
+            class="status"
+        >
+            Verificando...
+        </span>
+
+    </div>
+
+
+    <div class="status-card">
+
+        <h3>🗄️ MySQL</h3>
+
+        <span
+            id="database-status"
+            class="status"
+        >
+            Verificando...
+        </span>
+
+    </div>
+
+
+    <div class="status-card">
+
+        <h3>☁️ Cloudinary</h3>
+
+        <span
+            id="cloudinary-status"
+            class="status"
+        >
+            Verificando...
+        </span>
+
+    </div>
+
+
+</section>
+
+
+<!-- =====================================================
+     ENDPOINTS
+     ===================================================== -->
+
+<section class="endpoint-section">
+
+    <h2>Endpoints</h2>
+
+
+    <!-- =================================================
+         SISTEMA
+         ================================================= -->
+
+    <div class="endpoint-group">
+
+        <div class="endpoint-group-title">
+            Sistema
         </div>
-
-
-        <div class="status-card">
-
-            <h3>🗄️ MySQL</h3>
-
-            <span
-                id="database-status"
-                class="status"
-            >
-                Verificando...
-            </span>
-
-        </div>
-
-
-        <div class="status-card">
-
-            <h3>☁️ Cloudinary</h3>
-
-            <span
-                id="cloudinary-status"
-                class="status"
-            >
-                Verificando...
-            </span>
-
-        </div>
-
-
-    </section>
-
-
-    <!-- ENDPOINTS -->
-
-    <section class="endpoint-section">
-
-        <h2>Endpoints</h2>
 
 
         <div class="endpoint">
@@ -258,6 +317,23 @@
                 Estado del backend
             </span>
 
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         AUTENTICACIÓN
+         ================================================= -->
+
+    <div class="endpoint-group">
+
+        <div class="endpoint-group-title">
+            Autenticación
         </div>
 
 
@@ -273,6 +349,10 @@
 
             <span class="endpoint-name">
                 Registrar usuario
+            </span>
+
+            <span class="implemented">
+                ✓ Implementado
             </span>
 
         </div>
@@ -292,6 +372,10 @@
                 Iniciar sesión
             </span>
 
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
         </div>
 
 
@@ -306,7 +390,45 @@
             </span>
 
             <span class="endpoint-name pending">
+                Usuario autenticado
+            </span>
+
+            <span class="pending-label">
                 Próximamente
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ALUMNOS
+         ================================================= -->
+
+    <div class="endpoint-group">
+
+        <div class="endpoint-group-title">
+            Alumnos
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method get">
+                GET
+            </span>
+
+            <span class="endpoint-path">
+                /api/alumnos
+            </span>
+
+            <span class="endpoint-name">
+                Listar alumnos
+            </span>
+
+            <span class="implemented">
+                ✓ Implementado
             </span>
 
         </div>
@@ -318,14 +440,94 @@
                 GET
             </span>
 
-            <span class="endpoint-path pending">
+            <span class="endpoint-path">
+                /api/alumnos/:id
+            </span>
+
+            <span class="endpoint-name">
+                Obtener alumno
+            </span>
+
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method post">
+                POST
+            </span>
+
+            <span class="endpoint-path">
                 /api/alumnos
             </span>
 
-            <span class="endpoint-name pending">
-                Próximamente
+            <span class="endpoint-name">
+                Crear alumno
             </span>
 
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method put">
+                PUT
+            </span>
+
+            <span class="endpoint-path">
+                /api/alumnos/:id
+            </span>
+
+            <span class="endpoint-name">
+                Actualizar alumno
+            </span>
+
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
+        </div>
+
+
+        <div class="endpoint">
+
+            <span class="method delete">
+                DELETE
+            </span>
+
+            <span class="endpoint-path">
+                /api/alumnos/:id
+            </span>
+
+            <span class="endpoint-name">
+                Dar de baja alumno
+            </span>
+
+            <span class="implemented">
+                ✓ Implementado
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         PROFESORES
+         ================================================= -->
+
+    <div class="endpoint-group">
+
+        <div class="endpoint-group-title">
+            Profesores
         </div>
 
 
@@ -340,25 +542,30 @@
             </span>
 
             <span class="endpoint-name pending">
+                Listar profesores
+            </span>
+
+            <span class="pending-label">
                 Próximamente
             </span>
 
         </div>
 
-
-        <button
-            class="refresh"
-            onclick="checkStatus()"
-        >
-            🔄 Actualizar estado
-        </button>
+    </div>
 
 
-    </section>
+    <button
+        class="refresh"
+        onclick="checkStatus()"
+    >
+        🔄 Actualizar estado
+    </button>
 
+
+</section>
+```
 
 </div>
-
 
 <script>
 
@@ -382,7 +589,9 @@
         try {
 
             const response =
-                await fetch("http://localhost:4000/api/status");
+                await fetch(
+                    "http://localhost:4000/api/status"
+                );
 
 
             const data =
@@ -443,7 +652,6 @@
     checkStatus();
 
 </script>
-
 
 </body>
 
