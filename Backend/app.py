@@ -4,6 +4,7 @@ from flask_cors import CORS
 from src.controllers.main_controller import main_bp
 from src.controllers.auth_controller import auth_bp
 from src.controllers.alumno_controller import alumno_bp
+from src.controllers.profesor_controller import profesor_bp
 
 DASHBOARD_FOLDER = os.path.join(os.path.dirname(__file__), 'dashboard')
 
@@ -13,6 +14,7 @@ CORS(app)
 app.register_blueprint(main_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(alumno_bp)
+app.register_blueprint(profesor_bp)
 
 
 @app.route('/')
