@@ -7,10 +7,6 @@ class ProfesorRepository:
     # LISTAR PROFESORES
     # =========================================================
 
-# =========================================================
-    # LISTAR PROFESORES
-    # =========================================================
-
     @staticmethod
     def listar(incluir_inactivos=False):
         conn = get_db_connection()
