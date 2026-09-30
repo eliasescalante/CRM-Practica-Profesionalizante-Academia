@@ -1,586 +1,1882 @@
+```html
 <!DOCTYPE html>
 
 <html lang="es">
 
 <head>
 
-```
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>CRM API Dashboard</title>
+    <title>CRM API Dashboard</title>
 
-<style>
+    <style>
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        font-family: Arial, sans-serif;
-        background: #111827;
-        color: #f9fafb;
-        min-height: 100vh;
-    }
-
-    .container {
-        width: 90%;
-        max-width: 1100px;
-        margin: 40px auto;
-    }
-
-    header {
-        margin-bottom: 30px;
-    }
-
-    header h1 {
-        font-size: 28px;
-        margin-bottom: 8px;
-    }
-
-    header p {
-        color: #9ca3af;
-    }
-
-    .status-container {
-        display: grid;
-        grid-template-columns:
-            repeat(auto-fit, minmax(200px, 1fr));
-
-        gap: 15px;
-
-        margin-bottom: 35px;
-    }
-
-    .status-card {
-        background: #1f2937;
-        border: 1px solid #374151;
-        border-radius: 12px;
-        padding: 20px;
-    }
-
-    .status-card h3 {
-        margin-bottom: 15px;
-    }
-
-    .status {
-        font-weight: bold;
-    }
-
-    .online {
-        color: #22c55e;
-    }
-
-    .offline {
-        color: #ef4444;
-    }
-
-    .endpoint-section {
-        background: #1f2937;
-        border: 1px solid #374151;
-        border-radius: 12px;
-        padding: 20px;
-    }
-
-    .endpoint-section h2 {
-        margin-bottom: 20px;
-    }
-
-    .endpoint-group {
-        margin-bottom: 25px;
-    }
-
-    .endpoint-group:last-of-type {
-        margin-bottom: 0;
-    }
-
-    .endpoint-group-title {
-        color: #d1d5db;
-        font-size: 14px;
-        margin-bottom: 5px;
-        padding-bottom: 8px;
-        border-bottom: 1px solid #374151;
-    }
-
-    .endpoint {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-
-        padding: 14px;
-
-        border-bottom: 1px solid #374151;
-    }
-
-    .endpoint:last-child {
-        border-bottom: none;
-    }
-
-    .method {
-        width: 70px;
-        text-align: center;
-        font-size: 12px;
-        font-weight: bold;
-        padding: 6px 8px;
-        border-radius: 6px;
-        flex-shrink: 0;
-    }
-
-    .get {
-        background: #064e3b;
-        color: #34d399;
-    }
-
-    .post {
-        background: #1e3a8a;
-        color: #60a5fa;
-    }
-
-    .put {
-        background: #78350f;
-        color: #fbbf24;
-    }
-
-    .delete {
-        background: #7f1d1d;
-        color: #f87171;
-    }
-
-    .pending {
-        color: #6b7280;
-    }
-
-    .endpoint-path {
-        font-family: monospace;
-        font-size: 15px;
-    }
-
-    .endpoint-name {
-        color: #9ca3af;
-        margin-left: auto;
-    }
-
-    .implemented {
-        color: #22c55e;
-        font-size: 13px;
-    }
-
-    .pending-label {
-        color: #6b7280;
-        font-size: 13px;
-    }
-
-    .refresh {
-        margin-top: 25px;
-        padding: 10px 16px;
-
-        background: #374151;
-        color: white;
-
-        border: none;
-        border-radius: 8px;
-
-        cursor: pointer;
-    }
-
-    .refresh:hover {
-        background: #4b5563;
-    }
-
-    @media (max-width: 600px) {
-
-        .endpoint {
-            flex-wrap: wrap;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .endpoint-name {
-            margin-left: 0;
-            width: 100%;
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: #f9fafb;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        header {
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: #9ca3af;
+        }
+
+        .status-container {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(200px, 1fr)
+            );
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .status-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .status-card h3 {
+            margin-bottom: 15px;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .online {
+            color: #22c55e;
+        }
+
+        .offline {
+            color: #ef4444;
+        }
+
+        .endpoint-section {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .endpoint-section h2 {
+            margin-bottom: 30px;
+        }
+
+        .endpoint-group {
+            margin-bottom: 35px;
+        }
+
+        .endpoint-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .endpoint-group-title {
+            color: #d1d5db;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .endpoint-group-description {
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 5px;
+            padding-top: 8px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .endpoint:last-child {
+            border-bottom: none;
         }
 
         .method {
-            width: 65px;
+            width: 70px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 6px 8px;
+            border-radius: 6px;
+            flex-shrink: 0;
         }
 
-    }
+        .get {
+            background: #064e3b;
+            color: #34d399;
+        }
 
-</style>
-```
+        .post {
+            background: #1e3a8a;
+            color: #60a5fa;
+        }
+
+        .put {
+            background: #78350f;
+            color: #fbbf24;
+        }
+
+        .delete {
+            background: #7f1d1d;
+            color: #f87171;
+        }
+
+        .endpoint-path {
+            font-family: monospace;
+            font-size: 14px;
+            color: #f3f4f6;
+            word-break: break-word;
+        }
+
+        .endpoint-name {
+            color: #9ca3af;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .implemented {
+            color: #22c55e;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .pending-label {
+            color: #6b7280;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .refresh {
+            margin-top: 25px;
+            padding: 10px 16px;
+            background: #374151;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .refresh:hover {
+            background: #4b5563;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .summary-number {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+
+            .endpoint {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .endpoint-name {
+                margin-left: 0;
+                width: 100%;
+                text-align: left;
+            }
+
+            .implemented,
+            .pending-label {
+                width: 100%;
+            }
+
+            .method {
+                width: 65px;
+            }
+
+        }
+
+    </style>
 
 </head>
+
 
 <body>
 
 <div class="container">
 
-```
-<header>
 
-    <h1>🥋 CRM Academia de Artes Marciales</h1>
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
 
-    <p>
-        Backend API Dashboard
-    </p>
+    <header>
 
-</header>
+        <h1>
+            🥋 CRM Academia de Artes Marciales
+        </h1>
+
+        <p>
+            Backend API Dashboard · Documentación de endpoints
+        </p>
+
+    </header>
 
 
-<!-- =====================================================
-     STATUS
-     ===================================================== -->
+    <!-- =====================================================
+         RESUMEN
+         ===================================================== -->
 
-<section class="status-container">
+    <section class="summary">
+
+        <div class="summary-card">
+
+            <div class="summary-number">
+                10
+            </div>
+
+            <div class="summary-label">
+                Recursos principales
+            </div>
+
+        </div>
 
 
-    <div class="status-card">
+        <div class="summary-card">
 
-        <h3>🖥️ Server</h3>
+            <div class="summary-number">
+                API
+            </div>
 
-        <span
-            id="server-status"
-            class="status"
+            <div class="summary-label">
+                REST Backend
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-number">
+                Flask
+            </div>
+
+            <div class="summary-label">
+                Framework
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="summary-number">
+                MySQL
+            </div>
+
+            <div class="summary-label">
+                Base de datos
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         STATUS
+         ===================================================== -->
+
+    <section class="status-container">
+
+
+        <div class="status-card">
+
+            <h3>
+                🖥️ Server
+            </h3>
+
+            <span
+                id="server-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <h3>
+                🗄️ MySQL
+            </h3>
+
+            <span
+                id="database-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <h3>
+                ☁️ Cloudinary
+            </h3>
+
+            <span
+                id="cloudinary-status"
+                class="status"
+            >
+                Verificando...
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         ENDPOINTS
+         ===================================================== -->
+
+    <section class="endpoint-section">
+
+        <h2>
+            📚 Endpoints de la API
+        </h2>
+
+
+        <!-- =================================================
+             SISTEMA
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                ⚙️ Sistema
+            </div>
+
+            <div class="endpoint-group-description">
+                Estado y disponibilidad del backend.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path">
+                    /api/status
+                </span>
+
+                <span class="endpoint-name">
+                    Estado del backend
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             AUTENTICACIÓN
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🔐 Autenticación
+            </div>
+
+            <div class="endpoint-group-description">
+                Registro e inicio de sesión de usuarios.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">
+                    POST
+                </span>
+
+                <span class="endpoint-path">
+                    /api/auth/register
+                </span>
+
+                <span class="endpoint-name">
+                    Registrar usuario
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">
+                    POST
+                </span>
+
+                <span class="endpoint-path">
+                    /api/auth/login
+                </span>
+
+                <span class="endpoint-name">
+                    Iniciar sesión
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path">
+                    /api/auth/me
+                </span>
+
+                <span class="endpoint-name">
+                    Usuario autenticado
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ALUMNOS
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🧑‍🎓 Alumnos
+            </div>
+
+            <div class="endpoint-group-description">
+                Gestión de alumnos de la academia.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/alumnos
+                </span>
+
+                <span class="endpoint-name">
+                    Listar alumnos
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/alumnos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/alumnos
+                </span>
+
+                <span class="endpoint-name">
+                    Crear alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/alumnos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/alumnos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Dar de baja alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PROFESORES
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                👨‍🏫 Profesores
+            </div>
+
+            <div class="endpoint-group-description">
+                Gestión de profesores y su estado.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/profesores
+                </span>
+
+                <span class="endpoint-name">
+                    Listar profesores
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/profesores/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener profesor
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/profesores
+                </span>
+
+                <span class="endpoint-name">
+                    Crear profesor
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/profesores/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar profesor
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/profesores/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Dar de baja profesor
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CENTROS
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🏢 Centros
+            </div>
+
+            <div class="endpoint-group-description">
+                Gestión de centros de la academia.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/centros
+                </span>
+
+                <span class="endpoint-name">
+                    Listar centros
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/centros/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener centro
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/centros
+                </span>
+
+                <span class="endpoint-name">
+                    Crear centro
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/centros/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar centro
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/centros/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Dar de baja centro
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             GRADUACIONES
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🥋 Graduaciones
+            </div>
+
+            <div class="endpoint-group-description">
+                Historial y gestión de graduaciones de alumnos.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/graduaciones
+                </span>
+
+                <span class="endpoint-name">
+                    Listar graduaciones
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/graduaciones/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener graduación
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/graduaciones/alumno/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Graduaciones de alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/graduaciones
+                </span>
+
+                <span class="endpoint-name">
+                    Crear graduación
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             EXÁMENES
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                📝 Exámenes
+            </div>
+
+            <div class="endpoint-group-description">
+                Programación de exámenes e inscripciones.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/
+                </span>
+
+                <span class="endpoint-name">
+                    Listar exámenes
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/proximos
+                </span>
+
+                <span class="endpoint-name">
+                    Próximos exámenes
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener examen
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/
+                </span>
+
+                <span class="endpoint-name">
+                    Crear examen
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar examen
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Baja lógica del examen
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/:id/inscriptos
+                </span>
+
+                <span class="endpoint-name">
+                    Listar inscriptos
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/:id/inscriptos
+                </span>
+
+                <span class="endpoint-name">
+                    Inscribir alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/inscripciones/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener inscripción
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/examenes/inscripciones/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Cancelar inscripción
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PAGOS
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                💰 Pagos
+            </div>
+
+            <div class="endpoint-group-description">
+                Registro y gestión de pagos realizados por los alumnos.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/pagos
+                </span>
+
+                <span class="endpoint-name">
+                    Listar pagos
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/pagos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener pago
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/pagos
+                </span>
+
+                <span class="endpoint-name">
+                    Registrar pago
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/pagos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar pago
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/pagos/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Eliminar pago
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CUOTAS
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🧾 Cuotas
+            </div>
+
+            <div class="endpoint-group-description">
+                Cuotas mensuales y estado de las obligaciones de los alumnos.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas
+                </span>
+
+                <span class="endpoint-name">
+                    Listar cuotas
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener cuota
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas/alumno/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Cuotas de alumno
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas
+                </span>
+
+                <span class="endpoint-name">
+                    Crear cuota
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar cuota
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/cuotas/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Dar de baja cuota
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             ASISTENCIA
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                📋 Asistencia
+            </div>
+
+            <div class="endpoint-group-description">
+                Control de presentismo de los alumnos.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/asistencia
+                </span>
+
+                <span class="endpoint-name">
+                    Listar asistencias
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/asistencia/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener asistencia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/asistencia
+                </span>
+
+                <span class="endpoint-name">
+                    Registrar asistencia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/asistencia/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar asistencia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             NOTICIAS
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                📰 Noticias
+            </div>
+
+            <div class="endpoint-group-description">
+                Noticias generales y específicas de cada centro.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/noticias
+                </span>
+
+                <span class="endpoint-name">
+                    Listar noticias
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/noticias/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Obtener noticia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">GET</span>
+
+                <span class="endpoint-path">
+                    /api/noticias/centro/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Noticias de un centro
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">POST</span>
+
+                <span class="endpoint-path">
+                    /api/noticias
+                </span>
+
+                <span class="endpoint-name">
+                    Crear noticia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">PUT</span>
+
+                <span class="endpoint-path">
+                    /api/noticias/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Actualizar noticia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method delete">DELETE</span>
+
+                <span class="endpoint-path">
+                    /api/noticias/:id
+                </span>
+
+                <span class="endpoint-name">
+                    Desactivar noticia
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             UPLOAD
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                ☁️ Upload / Cloudinary
+            </div>
+
+            <div class="endpoint-group-description">
+                Subida de imágenes y avatares.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">
+                    POST
+                </span>
+
+                <span class="endpoint-path">
+                    /api/upload/avatar
+                </span>
+
+                <span class="endpoint-name">
+                    Subir avatar
+                </span>
+
+                <span class="implemented">
+                    ✓ Implementado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             CHAT
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                💬 Chat
+            </div>
+
+            <div class="endpoint-group-description">
+                Comunicación entre alumnos y profesores.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/chat
+                </span>
+
+                <span class="endpoint-name pending">
+                    Mensajes
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method post">
+                    POST
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/chat
+                </span>
+
+                <span class="endpoint-name pending">
+                    Enviar mensaje
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             PERFIL
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                👤 Perfil
+            </div>
+
+            <div class="endpoint-group-description">
+                Gestión de información personal y contraseña.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/perfil
+                </span>
+
+                <span class="endpoint-name pending">
+                    Ver perfil
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">
+                    PUT
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/perfil
+                </span>
+
+                <span class="endpoint-name pending">
+                    Actualizar perfil
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method put">
+                    PUT
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/perfil/password
+                </span>
+
+                <span class="endpoint-name pending">
+                    Cambiar contraseña
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SEGURIDAD
+             ================================================= -->
+
+        <div class="endpoint-group">
+
+            <div class="endpoint-group-title">
+                🛡️ Seguridad y permisos
+            </div>
+
+            <div class="endpoint-group-description">
+                Autenticación JWT, roles y permisos de acceso.
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/auth/me
+                </span>
+
+                <span class="endpoint-name pending">
+                    Validar sesión
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+
+            <div class="endpoint">
+
+                <span class="method get">
+                    GET
+                </span>
+
+                <span class="endpoint-path pending">
+                    /api/dashboard
+                </span>
+
+                <span class="endpoint-name pending">
+                    Dashboard administrativo
+                </span>
+
+                <span class="pending-label">
+                    Próximamente
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             BOTÓN
+             ===================================================== -->
+
+        <button
+            class="refresh"
+            onclick="checkStatus()"
         >
-            Verificando...
-        </span>
+            🔄 Actualizar estado
+        </button>
 
-    </div>
 
-
-    <div class="status-card">
-
-        <h3>🗄️ MySQL</h3>
-
-        <span
-            id="database-status"
-            class="status"
-        >
-            Verificando...
-        </span>
-
-    </div>
-
-
-    <div class="status-card">
-
-        <h3>☁️ Cloudinary</h3>
-
-        <span
-            id="cloudinary-status"
-            class="status"
-        >
-            Verificando...
-        </span>
-
-    </div>
-
-
-</section>
-
-
-<!-- =====================================================
-     ENDPOINTS
-     ===================================================== -->
-
-<section class="endpoint-section">
-
-    <h2>Endpoints</h2>
-
-
-    <!-- =================================================
-         SISTEMA
-         ================================================= -->
-
-    <div class="endpoint-group">
-
-        <div class="endpoint-group-title">
-            Sistema
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method get">
-                GET
-            </span>
-
-            <span class="endpoint-path">
-                /api/status
-            </span>
-
-            <span class="endpoint-name">
-                Estado del backend
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         AUTENTICACIÓN
-         ================================================= -->
-
-    <div class="endpoint-group">
-
-        <div class="endpoint-group-title">
-            Autenticación
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method post">
-                POST
-            </span>
-
-            <span class="endpoint-path">
-                /api/auth/register
-            </span>
-
-            <span class="endpoint-name">
-                Registrar usuario
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method post">
-                POST
-            </span>
-
-            <span class="endpoint-path">
-                /api/auth/login
-            </span>
-
-            <span class="endpoint-name">
-                Iniciar sesión
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method get">
-                GET
-            </span>
-
-            <span class="endpoint-path pending">
-                /api/auth/me
-            </span>
-
-            <span class="endpoint-name pending">
-                Usuario autenticado
-            </span>
-
-            <span class="pending-label">
-                Próximamente
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         ALUMNOS
-         ================================================= -->
-
-    <div class="endpoint-group">
-
-        <div class="endpoint-group-title">
-            Alumnos
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method get">
-                GET
-            </span>
-
-            <span class="endpoint-path">
-                /api/alumnos
-            </span>
-
-            <span class="endpoint-name">
-                Listar alumnos
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method get">
-                GET
-            </span>
-
-            <span class="endpoint-path">
-                /api/alumnos/:id
-            </span>
-
-            <span class="endpoint-name">
-                Obtener alumno
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method post">
-                POST
-            </span>
-
-            <span class="endpoint-path">
-                /api/alumnos
-            </span>
-
-            <span class="endpoint-name">
-                Crear alumno
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method put">
-                PUT
-            </span>
-
-            <span class="endpoint-path">
-                /api/alumnos/:id
-            </span>
-
-            <span class="endpoint-name">
-                Actualizar alumno
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-
-        <div class="endpoint">
-
-            <span class="method delete">
-                DELETE
-            </span>
-
-            <span class="endpoint-path">
-                /api/alumnos/:id
-            </span>
-
-            <span class="endpoint-name">
-                Dar de baja alumno
-            </span>
-
-            <span class="implemented">
-                ✓ Implementado
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- =================================================
-         PROFESORES
-         ================================================= -->
-
-    
-
-    <!-- PROFESORES -->
-    <div class="endpoint-group">
-        <div class="endpoint-group-title">
-            Profesores
-        </div>
-
-        <div class="endpoint">
-            <span class="method get">GET</span>
-            <span class="endpoint-path">/api/profesores</span>
-            <span class="endpoint-name">Listar profesores</span>
-            <span class="implemented">✓ Implementado</span>
-        </div>
-
-        <div class="endpoint">
-            <span class="method get">GET</span>
-            <span class="endpoint-path">/api/profesores/:id</span>
-            <span class="endpoint-name">Obtener profesor</span>
-            <span class="implemented">✓ Implementado</span>
-        </div>
-
-        <div class="endpoint">
-            <span class="method post">POST</span>
-            <span class="endpoint-path">/api/profesores</span>
-            <span class="endpoint-name">Crear profesor</span>
-            <span class="implemented">✓ Implementado</span>
-        </div>
-
-        <div class="endpoint">
-            <span class="method put">PUT</span>
-            <span class="endpoint-path">/api/profesores/:id</span>
-            <span class="endpoint-name">Actualizar profesor</span>
-            <span class="implemented">✓ Implementado</span>
-        </div>
-
-        <div class="endpoint">
-            <span class="method delete">DELETE</span>
-            <span class="endpoint-path">/api/profesores/:id</span>
-            <span class="endpoint-name">Dar de baja profesor</span>
-            <span class="implemented">✓ Implementado</span>
-        </div>
-    </div>
-
-
-    <button
-        class="refresh"
-        onclick="checkStatus()"
-    >
-        🔄 Actualizar estado
-    </button>
-
-
-</section>
+    </section>
 
 
 </div>
+
 
 <script>
 
@@ -633,14 +1929,25 @@
 
         } catch (error) {
 
-            server.textContent = "🔴 OFFLINE";
-            server.className = "status offline";
+            server.textContent =
+                "🔴 OFFLINE";
 
-            database.textContent = "❌ Sin conexión";
-            database.className = "status offline";
+            server.className =
+                "status offline";
 
-            cloudinary.textContent = "❌ Sin conexión";
-            cloudinary.className = "status offline";
+
+            database.textContent =
+                "❌ Sin conexión";
+
+            database.className =
+                "status offline";
+
+
+            cloudinary.textContent =
+                "❌ Sin conexión";
+
+            cloudinary.className =
+                "status offline";
 
         }
 
@@ -651,13 +1958,19 @@
 
         if (value === "OK") {
 
-            element.textContent = "🟢 CONECTADO";
-            element.className = "status online";
+            element.textContent =
+                "🟢 CONECTADO";
+
+            element.className =
+                "status online";
 
         } else {
 
-            element.textContent = "🔴 ERROR";
-            element.className = "status offline";
+            element.textContent =
+                "🔴 ERROR";
+
+            element.className =
+                "status offline";
 
         }
 
@@ -668,6 +1981,8 @@
 
 </script>
 
+
 </body>
 
 </html>
+```

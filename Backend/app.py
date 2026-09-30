@@ -6,6 +6,13 @@ from src.controllers.auth_controller import auth_bp
 from src.controllers.alumno_controller import alumno_bp
 from src.controllers.profesor_controller import profesor_bp
 from src.controllers.upload_controller import upload_bp
+from src.controllers.centro_controller import centro_bp
+from src.controllers.graduacion_controller import graduacion_bp
+from src.controllers.pago_controller import pago_bp
+from src.controllers.examen_controller import examen_bp
+from src.controllers.asistencia_controller import asistencia_bp
+from src.controllers.noticia_controller import noticia_bp
+from src.controllers.cuota_controller import cuota_bp
 
 DASHBOARD_FOLDER = os.path.join(os.path.dirname(__file__), 'dashboard')
 
@@ -17,7 +24,13 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(alumno_bp)
 app.register_blueprint(profesor_bp)
 app.register_blueprint(upload_bp)
-
+app.register_blueprint(centro_bp)
+app.register_blueprint(graduacion_bp)
+app.register_blueprint(pago_bp)
+app.register_blueprint(examen_bp)
+app.register_blueprint(asistencia_bp)
+app.register_blueprint(noticia_bp)
+app.register_blueprint(cuota_bp)
 
 @app.route('/')
 def index():
