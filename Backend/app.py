@@ -13,6 +13,7 @@ from src.controllers.examen_controller import examen_bp
 from src.controllers.asistencia_controller import asistencia_bp
 from src.controllers.noticia_controller import noticia_bp
 from src.controllers.cuota_controller import cuota_bp
+from src.controllers.chat_controller import chat_bp
 
 DASHBOARD_FOLDER = os.path.join(os.path.dirname(__file__), 'dashboard')
 
@@ -31,6 +32,7 @@ app.register_blueprint(examen_bp)
 app.register_blueprint(asistencia_bp)
 app.register_blueprint(noticia_bp)
 app.register_blueprint(cuota_bp)
+app.register_blueprint(chat_bp)
 
 @app.route('/')
 def index():
