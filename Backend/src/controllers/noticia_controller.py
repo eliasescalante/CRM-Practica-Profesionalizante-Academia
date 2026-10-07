@@ -1,3 +1,4 @@
+#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.noticia_repository import NoticiaRepository

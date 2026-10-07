@@ -38,12 +38,10 @@ app.register_blueprint(chat_bp)
 def index():
     return send_from_directory(app.static_folder, 'index.html')
 
-
 @app.route('/<path:path>')
 def serve_static_files(path):
     if os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
-    # Si la ruta no existe en 'dashboard', dejamos que pase a otros manejadores
     return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':

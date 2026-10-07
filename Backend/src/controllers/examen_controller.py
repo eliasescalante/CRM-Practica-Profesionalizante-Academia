@@ -1,5 +1,5 @@
+#agregado al docs
 from flask import Blueprint, request, jsonify
-
 from src.repositories.examen_repository import ExamenRepository
 
 

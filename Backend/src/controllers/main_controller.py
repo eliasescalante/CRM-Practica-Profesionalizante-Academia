@@ -1,3 +1,4 @@
+#agregado al docs
 from flask import Blueprint, jsonify
 
 from database.connection import get_db_connection

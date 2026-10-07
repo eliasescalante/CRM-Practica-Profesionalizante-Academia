@@ -1,3 +1,4 @@
+#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.cuota_repository import CuotaRepository
@@ -8,7 +9,6 @@ cuota_bp = Blueprint(
     __name__,
     url_prefix="/api/cuotas"
 )
-
 
 # =========================================================
 # GET /api/cuotas

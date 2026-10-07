@@ -1,3 +1,4 @@
+#agregado al docs
 from flask import Blueprint, request, jsonify
 import bcrypt
 
@@ -11,12 +12,8 @@ alumno_bp = Blueprint(
     url_prefix="/api/alumnos"
 )
 
-
-# =========================================================
 # GET /api/alumnos
 # Listar alumnos
-# =========================================================
-
 @alumno_bp.route("", methods=["GET"])
 @token_required
 @roles_required("PROFESOR", "ADMIN")

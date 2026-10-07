@@ -1,5 +1,5 @@
+#agregado a docs
 from database.connection import get_db_connection
-
 
 class CentroRepository:
 

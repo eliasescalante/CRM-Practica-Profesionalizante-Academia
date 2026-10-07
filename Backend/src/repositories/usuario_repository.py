@@ -1,6 +1,5 @@
 from database.connection import get_db_connection
 
-
 class UsuarioRepository:
 
     @staticmethod

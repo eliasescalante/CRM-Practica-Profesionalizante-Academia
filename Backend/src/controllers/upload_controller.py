@@ -1,3 +1,4 @@
+#agregado al docs
 from flask import Blueprint, request, jsonify
 import cloudinary
 import cloudinary.uploader
