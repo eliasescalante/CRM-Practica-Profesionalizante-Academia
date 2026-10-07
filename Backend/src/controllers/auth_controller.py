@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import bcrypt
 from src.repositories.usuario_repository import UsuarioRepository
+from src.utils.auth import generar_token
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -159,18 +160,23 @@ def login():
             "mensaje": "Usuario o contraseña incorrectos"
         }), 401
 
+    token = generar_token(usuario)
+
     return jsonify({
         "status": "OK",
         "mensaje": "Inicio de sesión exitoso",
+
+        "token": token,
+
         "usuario": {
-            "id": usuario['usuario_id'],
-            "persona_id": usuario['persona_id'],
-            "usuario": usuario['usuario'],
-            "nombre": usuario['nombre'],
-            "apellido": usuario['apellido'],
-            "email": usuario['email'],
-            "rol": usuario['rol'],
-            "avatar": usuario['avatar']
+            "id": usuario["usuario_id"],
+            "persona_id": usuario["persona_id"],
+            "usuario": usuario["usuario"],
+            "nombre": usuario["nombre"],
+            "apellido": usuario["apellido"],
+            "email": usuario["email"],
+            "rol": usuario["rol"],
+            "avatar": usuario["avatar"]
         }
     }), 200
 
