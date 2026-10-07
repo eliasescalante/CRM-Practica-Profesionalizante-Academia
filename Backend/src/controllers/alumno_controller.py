@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 import bcrypt
 
 from src.repositories.alumno_repository import AlumnoRepository
+from src.utils.auth import token_required, roles_required
 
 
 alumno_bp = Blueprint(
@@ -17,6 +18,8 @@ alumno_bp = Blueprint(
 # =========================================================
 
 @alumno_bp.route("", methods=["GET"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def listar_alumnos():
 
     try:
@@ -50,6 +53,8 @@ def listar_alumnos():
 # =========================================================
 
 @alumno_bp.route("/<int:alumno_id>", methods=["GET"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def obtener_alumno(alumno_id):
 
     try:
@@ -82,6 +87,8 @@ def obtener_alumno(alumno_id):
 # =========================================================
 
 @alumno_bp.route("", methods=["POST"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def crear_alumno():
 
     data = request.get_json()
@@ -202,6 +209,8 @@ def crear_alumno():
 # =========================================================
 
 @alumno_bp.route("/<int:alumno_id>", methods=["PUT"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def actualizar_alumno(alumno_id):
 
     data = request.get_json()
@@ -314,6 +323,8 @@ def actualizar_alumno(alumno_id):
 # =========================================================
 
 @alumno_bp.route("/<int:alumno_id>", methods=["DELETE"])
+@token_required
+@roles_required("ADMIN")
 def eliminar_alumno(alumno_id):
 
     try:

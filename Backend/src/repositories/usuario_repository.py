@@ -154,3 +154,47 @@ class UsuarioRepository:
 
             cursor.close()
             conn.close()
+
+    @staticmethod
+    def registrar_profesor(persona_id, usuario, contrasenia):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        try:
+            query = """
+                INSERT INTO usuario (
+                    persona_id,
+                    usuario,
+                    contrasenia,
+                    rol
+                )
+                VALUES (%s, %s, %s, 'PROFESOR')
+            """
+
+            cursor.execute(
+                query,
+                (
+                    persona_id,
+                    usuario,
+                    contrasenia
+                )
+            )
+
+            usuario_id = cursor.lastrowid
+
+            conn.commit()
+
+            return {
+                "usuario_id": usuario_id,
+                "persona_id": persona_id,
+                "usuario": usuario,
+                "rol": "PROFESOR"
+            }
+
+        except Exception:
+            conn.rollback()
+            raise
+
+        finally:
+            cursor.close()
+            conn.close()
