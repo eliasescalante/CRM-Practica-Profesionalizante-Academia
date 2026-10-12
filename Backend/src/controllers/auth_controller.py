@@ -2,7 +2,7 @@
 from flask import Blueprint, request, jsonify
 import bcrypt
 from src.repositories.usuario_repository import UsuarioRepository
-from src.utils.auth import generar_token
+from src.utils.auth import generar_token, token_required
 
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/api/auth')
@@ -180,4 +180,48 @@ def login():
             "avatar": usuario["avatar"]
         }
     }), 200
+
+    
+@auth_bp.route("/me", methods=["GET"])
+@token_required
+def obtener_usuario_autenticado():
+    usuario_token = request.usuario
+
+    try:
+        usuario = UsuarioRepository.obtener_por_id(
+            usuario_token["usuario_id"]
+        )
+
+        if not usuario:
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El usuario ya no existe"
+            }), 401
+
+        if not usuario["usuario_activo"] or not usuario["persona_activa"]:
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "La cuenta se encuentra inactiva"
+            }), 403
+
+        return jsonify({
+            "status": "OK",
+            "mensaje": "Usuario autenticado",
+            "usuario": {
+                "id": usuario["usuario_id"],
+                "persona_id": usuario["persona_id"],
+                "usuario": usuario["usuario"],
+                "nombre": usuario["nombre"],
+                "apellido": usuario["apellido"],
+                "email": usuario["email"],
+                "rol": usuario["rol"],
+                "avatar": usuario["avatar"]
+            }
+        }), 200
+
+    except Exception:
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "Error al obtener el usuario autenticado"
+        }), 500
 
