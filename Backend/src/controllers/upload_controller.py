@@ -9,7 +9,7 @@ upload_bp = Blueprint("upload", __name__, url_prefix="/api/upload")
 @upload_bp.route("/avatar", methods=["POST"])
 def subir_avatar():
     try:
-        # Verificar si vino un archivo en la petición
+        
         if 'file' not in request.files:
             return jsonify({
                 "status": "ERROR",
@@ -17,7 +17,7 @@ def subir_avatar():
             }), 400
 
         file = request.files['file']
-        persona_id = request.form.get("persona_id") # Opcional: si queremos impactar directo en BD
+        persona_id = request.form.get("persona_id") 
 
         if file.filename == '':
             return jsonify({
@@ -25,7 +25,7 @@ def subir_avatar():
                 "mensaje": "El archivo está vacío"
             }), 400
 
-        # Subir imagen a Cloudinary (se puede guardar en una carpeta específica)
+
         upload_result = cloudinary.uploader.upload(
             file,
             folder="crm_artes_marciales/avatars"
@@ -33,7 +33,7 @@ def subir_avatar():
 
         avatar_url = upload_result.get("secure_url")
 
-        # Si mandaron la persona_id, actualizamos directamente en la tabla 'persona'
+
         if persona_id:
             conn = get_db_connection()
             cursor = conn.cursor()

@@ -513,3 +513,118 @@ class AlumnoRepository:
         finally:
             cursor.close()
             conn.close()
+
+    
+    @staticmethod
+    def obtener_por_persona_id(persona_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute(
+                """
+                SELECT id AS alumno_id, persona_id, centro_id,
+                       profesor_id, fecha_de_inicio, estado
+                FROM alumno
+                WHERE persona_id = %s
+                LIMIT 1
+                """,
+                (persona_id,)
+            )
+
+            return cursor.fetchone()
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    
+    @staticmethod
+    def obtener_profesor_id_por_persona_id(persona_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute(
+                """
+                SELECT id AS profesor_id
+                FROM profesor
+                WHERE persona_id = %s
+                LIMIT 1
+                """,
+                (persona_id,)
+            )
+
+            profesor = cursor.fetchone()
+            return profesor["profesor_id"] if profesor else None
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    
+    @staticmethod
+    def obtener_por_dni_excluyendo(dni, alumno_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute(
+                """
+                SELECT a.id AS alumno_id, a.persona_id
+                FROM alumno a
+                INNER JOIN persona p ON a.persona_id = p.id
+                WHERE p.dni = %s AND a.id != %s
+                LIMIT 1
+                """,
+                (dni, alumno_id)
+            )
+            return cursor.fetchone()
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def obtener_por_email_excluyendo(email, alumno_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute(
+                """
+                SELECT p.id AS persona_id, p.email
+                FROM persona p
+                INNER JOIN alumno a ON a.persona_id = p.id
+                WHERE p.email = %s AND a.id != %s
+                LIMIT 1
+                """,
+                (email, alumno_id)
+            )
+            return cursor.fetchone()
+
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def obtener_por_usuario_excluyendo(usuario, alumno_id):
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+            cursor.execute(
+                """
+                SELECT u.id AS usuario_id, u.usuario
+                FROM usuario u
+                INNER JOIN alumno a ON a.persona_id = u.persona_id
+                WHERE u.usuario = %s AND a.id != %s
+                LIMIT 1
+                """,
+                (usuario, alumno_id)
+            )
+            return cursor.fetchone()
+
+        finally:
+            cursor.close()
+            conn.close()

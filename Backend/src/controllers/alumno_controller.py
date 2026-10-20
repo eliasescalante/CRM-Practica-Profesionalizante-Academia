@@ -266,6 +266,35 @@ def actualizar_alumno(alumno_id):
                 "mensaje": "Alumno no encontrado"
             }), 404
 
+        
+        # Validar DNI duplicado
+        if AlumnoRepository.obtener_por_dni_excluyendo(
+            data["dni"], alumno_id
+        ):
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El DNI ya está registrado"
+            }), 409
+
+        # Validar email duplicado
+        if AlumnoRepository.obtener_por_email_excluyendo(
+            data["email"], alumno_id
+        ):
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El email ya está registrado"
+            }), 409
+
+        # Validar usuario duplicado
+        if AlumnoRepository.obtener_por_usuario_excluyendo(
+            data["usuario"], alumno_id
+        ):
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El usuario ya está registrado"
+            }), 409
+
+
         datos = {
             "dni": data["dni"],
             "nombre": data["nombre"],

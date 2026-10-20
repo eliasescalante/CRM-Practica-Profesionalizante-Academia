@@ -1,5 +1,6 @@
 #agregado al docs
 from database.connection import get_db_connection
+from src.utils.auth import token_required, roles_required
 
 
 class ProfesorRepository:
@@ -9,6 +10,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def listar(incluir_inactivos=False):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -77,6 +80,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_id(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -139,6 +144,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_centros_con_conexion(cursor, profesor_id):
         query = """
             SELECT
@@ -166,6 +173,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_centros(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -182,6 +191,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_dni(dni):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -213,6 +224,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_email(email):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -241,6 +254,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_usuario(usuario):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -269,6 +284,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def crear(datos):
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -360,6 +377,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def actualizar(profesor_id, datos):
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -431,6 +450,8 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
+    @token_required
+    @roles_required("PROFESOR", "ADMIN")
     def eliminar(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor()

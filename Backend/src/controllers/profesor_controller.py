@@ -1,7 +1,7 @@
 #agregado al docs
 from flask import Blueprint, request, jsonify
 import bcrypt
-
+from datetime import date
 from src.repositories.profesor_repository import ProfesorRepository
 
 
@@ -191,7 +191,7 @@ def crear_profesor():
             "usuario": data["usuario"],
             "contrasenia": password_hash,
 
-            "fecha_alta": data.get("fecha_alta"),
+            "fecha_alta": data.get("fecha_alta") or date.today().isoformat(),
 
             "centro_ids": data.get("centro_ids", [])
         }
