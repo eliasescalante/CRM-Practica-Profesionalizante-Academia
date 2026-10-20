@@ -195,7 +195,17 @@ class CentroRepository:
             )
 
             if cursor.rowcount == 0:
-                return False
+                # MySQL devuelve rowcount = 0 si los valores no cambian.
+                # Solo es un error si el centro realmente no existe.
+                cursor.execute(
+                    "SELECT 1 FROM centro WHERE id = %s LIMIT 1",
+                    (centro_id,)
+                )
+                existe = cursor.fetchone() is not None
+
+                conn.commit()
+
+                return existe
 
             conn.commit()
 

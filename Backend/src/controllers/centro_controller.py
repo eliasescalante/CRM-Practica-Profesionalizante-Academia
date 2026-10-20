@@ -1,7 +1,8 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.centro_repository import CentroRepository
+from src.utils.auth import token_required, roles_required
 
 
 centro_bp = Blueprint(
@@ -17,6 +18,8 @@ centro_bp = Blueprint(
 # =========================================================
 
 @centro_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_centros():
 
     try:
@@ -50,6 +53,8 @@ def listar_centros():
 # =========================================================
 
 @centro_bp.route("/<int:centro_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_centro(centro_id):
 
     try:
@@ -83,6 +88,8 @@ def obtener_centro(centro_id):
 # =========================================================
 
 @centro_bp.route("", methods=["POST"])
+@token_required
+@roles_required("ADMIN")
 def crear_centro():
 
     data = request.get_json()
@@ -157,6 +164,8 @@ def crear_centro():
 # =========================================================
 
 @centro_bp.route("/<int:centro_id>", methods=["PUT"])
+@token_required
+@roles_required("ADMIN")
 def actualizar_centro(centro_id):
 
     data = request.get_json()
@@ -261,6 +270,8 @@ def actualizar_centro(centro_id):
 # =========================================================
 
 @centro_bp.route("/<int:centro_id>", methods=["DELETE"])
+@token_required
+@roles_required("ADMIN")
 def eliminar_centro(centro_id):
 
     try:

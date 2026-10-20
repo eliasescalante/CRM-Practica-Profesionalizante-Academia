@@ -385,6 +385,140 @@
 
         }
 
+
+        /* =====================================================
+           NOVEDADES / DOCUMENTACION AMPLIADA
+           ===================================================== */
+
+        .news-section {
+            margin-bottom: 30px;
+        }
+
+        .news-section > h2 {
+            margin-bottom: 15px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(260px, 1fr)
+            );
+            gap: 15px;
+        }
+
+        .news-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 18px;
+        }
+
+        .news-card h3 {
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .news-card ul {
+            margin-left: 18px;
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .news-card li {
+            margin-bottom: 6px;
+        }
+
+        .flow-card {
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .flow-card h3 {
+            margin-bottom: 12px;
+        }
+
+        .flow-card ol {
+            margin-left: 20px;
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .code {
+            font-family: monospace;
+            background: #111827;
+            color: #93c5fd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .new-label {
+            color: #fbbf24;
+            font-size: 11px;
+            font-weight: bold;
+            background: #451a03;
+            border: 1px solid #78350f;
+            padding: 2px 6px;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .public-label {
+            color: #fbbf24;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .group-note {
+            background: #111827;
+            border-left: 3px solid #3b82f6;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 12px;
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .group-extra {
+            margin-top: 15px;
+        }
+
+        .group-extra h4 {
+            font-size: 14px;
+            margin: 20px 0 8px;
+            color: #d1d5db;
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .doc-table th,
+        .doc-table td {
+            border: 1px solid #374151;
+            padding: 8px 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .doc-table th {
+            background: #111827;
+            color: #f9fafb;
+        }
+
+        .doc-table td {
+            color: #9ca3af;
+        }
+
     </style>
 
 </head>
@@ -398,6 +532,7 @@
          HEADER
          ===================================================== -->
 
+
     <header>
 
         <h1>
@@ -405,7 +540,7 @@
         </h1>
 
         <p>
-            Backend API Dashboard · Documentación de endpoints
+            Backend API Dashboard · Documentación completa · 68 endpoints · JWT + RBAC
         </p>
 
     </header>
@@ -418,53 +553,121 @@
     <section class="summary">
 
         <div class="summary-card">
+            <div class="summary-number">68</div>
+            <div class="summary-label">Endpoints documentados</div>
+        </div>
 
-            <div class="summary-number">
-                13
+        <div class="summary-card">
+            <div class="summary-number">14</div>
+            <div class="summary-label">Módulos / recursos</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number">JWT + RBAC</div>
+            <div class="summary-label">Seguridad</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number">Flask</div>
+            <div class="summary-label">Framework</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-number">MySQL</div>
+            <div class="summary-label">Base de datos</div>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         NOVEDADES
+         ===================================================== -->
+
+    <section class="news-section">
+
+        <h2>
+            🆕 Novedades del backend
+        </h2>
+
+        <div class="news-grid">
+
+            <div class="news-card">
+                <h3>🔐 Seguridad JWT + roles</h3>
+                <ul>
+                    <li>Todas las rutas privadas exigen <span class="code">Bearer token</span>.</li>
+                    <li>Las escrituras se restringen con <span class="code">roles_required</span>.</li>
+                    <li>La cuenta y el rol se verifican contra la base en cada request.</li>
+                    <li>Al deshabilitar un usuario, su token queda revocado al instante.</li>
+                </ul>
             </div>
 
-            <div class="summary-label">
-                Recursos principales
+            <div class="news-card">
+                <h3>👨‍🏫 Alta de profesores con aprobación</h3>
+                <ul>
+                    <li>El profesor se registra solo con <span class="code">POST /api/auth/register-profesor</span>.</li>
+                    <li>La cuenta se crea inactiva y sin centros.</li>
+                    <li>El ADMIN la habilita con <span class="code">PUT /api/profesores/:id</span>.</li>
+                    <li>La habilitación sincroniza persona, usuario y profesor.</li>
+                </ul>
+            </div>
+
+            <div class="news-card">
+                <h3>⚙️ Rol y estado configurables</h3>
+                <ul>
+                    <li><span class="code">POST /api/profesores</span> acepta <span class="code">rol</span> (PROFESOR/ADMIN).</li>
+                    <li>También acepta <span class="code">activo</span> booleano.</li>
+                    <li>Valores inválidos devuelven 400.</li>
+                    <li>El auto-registro público ignora esos campos (anti-escalada).</li>
+                </ul>
+            </div>
+
+            <div class="news-card">
+                <h3>🧪 Validaciones y consistencia</h3>
+                <ul>
+                    <li>Contraseñas de mínimo 8 caracteres.</li>
+                    <li>DNI y email únicos a nivel global (409, no 500).</li>
+                    <li>Un PUT sin cambios devuelve 200 si el registro existe.</li>
+                    <li>Usuario y email duplicados devuelven 409.</li>
+                </ul>
+            </div>
+
+            <div class="news-card">
+                <h3>💬 Chat y pagos</h3>
+                <ul>
+                    <li>El emisor del chat se toma del token, no del body.</li>
+                    <li>Solo el autor o un ADMIN pueden borrar un mensaje.</li>
+                    <li>Pagos pendientes para PROFESOR/ADMIN.</li>
+                    <li>Confirmar o rechazar un pago es solo ADMIN.</li>
+                </ul>
+            </div>
+
+            <div class="news-card">
+                <h3>🔧 Correcciones técnicas</h3>
+                <ul>
+                    <li><span class="code">requirements.txt</span> completo y <span class="code">load_dotenv()</span> al inicio.</li>
+                    <li>Corrección de <span class="code">DB_PASS</span> / <span class="code">DB_PASSWORD</span>.</li>
+                    <li>Decoradores HTTP eliminados del repositorio (evitaba 500).</li>
+                    <li>Limpieza de <span class="code">__pycache__</span> y <span class="code">.gitignore</span> ampliado.</li>
+                </ul>
             </div>
 
         </div>
 
 
-        <div class="summary-card">
+        <div class="flow-card">
 
-            <div class="summary-number">
-                REST
-            </div>
+            <h3>🔄 Flujo completo de alta de un profesor</h3>
 
-            <div class="summary-label">
-                Arquitectura API
-            </div>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <div class="summary-number">
-                Flask
-            </div>
-
-            <div class="summary-label">
-                Framework
-            </div>
-
-        </div>
-
-
-        <div class="summary-card">
-
-            <div class="summary-number">
-                MariaDB
-            </div>
-
-            <div class="summary-label">
-                Base de datos
-            </div>
+            <ol>
+                <li>El profesor completa <span class="code">POST /api/auth/register-profesor</span> (público) y recibe 201.</li>
+                <li>La cuenta queda con rol PROFESOR, <span class="code">activo = false</span> en las tres tablas y sin centros.</li>
+                <li>Si intenta loguearse, recibe 403: "pendiente de habilitación por un administrador".</li>
+                <li>El ADMIN consulta <span class="code">GET /api/profesores?todos=true</span> y detecta los pendientes.</li>
+                <li>El ADMIN envía <span class="code">PUT /api/profesores/:id</span> con <span class="code">activo: true</span> y los <span class="code">centro_ids</span>.</li>
+                <li>El profesor ya puede iniciar sesión y usar la API con su token PROFESOR.</li>
+                <li>Si el ADMIN lo vuelve a deshabilitar, el acceso se corta de inmediato.</li>
+            </ol>
 
         </div>
 
@@ -496,7 +699,7 @@
         <div class="status-card">
 
             <h3>
-                🗄️ MariaDB / MySQL
+                🗄️ MySQL
             </h3>
 
             <span
@@ -538,19 +741,25 @@
         </h2>
 
 
-        <!-- =================================================
-             LEYENDA
-             ================================================= -->
-
         <div class="legend">
 
             <div class="legend-item">
-                <strong>🔐 JWT</strong>
-                Endpoint protegido
+                <strong>🌐 Público</strong>
+                Sin token
             </div>
 
             <div class="legend-item">
-                <strong>👨‍🏫 PROFESOR</strong>
+                <strong>🔐 JWT</strong>
+                Requiere token
+            </div>
+
+            <div class="legend-item">
+                <strong>🔐 CUALQUIER ROL</strong>
+                Usuario autenticado
+            </div>
+
+            <div class="legend-item">
+                <strong>👨‍🏫 PROFESOR / ADMIN</strong>
                 Acceso docente
             </div>
 
@@ -560,16 +769,12 @@
             </div>
 
             <div class="legend-item">
-                <strong>👨‍🎓 ALUMNO</strong>
-                Acceso alumno
+                <strong>👤 AUTOR / ADMIN</strong>
+                Borrado de chat
             </div>
 
         </div>
 
-
-        <!-- =================================================
-             CONTROLES
-             ================================================= -->
 
         <div class="collapse-controls">
 
@@ -583,10 +788,6 @@
 
         </div>
 
-
-        <!-- =================================================
-             SISTEMA
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -617,9 +818,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/status
@@ -629,20 +828,17 @@
                         Estado del backend
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="public-label" title="No requiere token">
+                        🌐 Público
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             AUTENTICACIÓN
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -664,7 +860,7 @@
 
             <div class="endpoint-group-description">
 
-                Registro, inicio de sesión y generación de tokens JWT.
+                Registro público, login y validación de sesión mediante JWT. El token incluye el rol, pero se revalida contra la base en cada request.
 
             </div>
 
@@ -673,30 +869,47 @@
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/auth/register
                     </span>
 
                     <span class="endpoint-name">
-                        Registrar alumno
+                        Registrar alumno (auto-registro)
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="public-label" title="No requiere token">
+                        🌐 Público
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
+                <div class="endpoint">
+
+                    <span class="method post">POST</span>
+
+                    <span class="endpoint-path">
+                        /api/auth/register-profesor
+                    </span>
+
+                    <span class="endpoint-name">
+                        Auto-registro de profesor (queda pendiente)
+                    </span>
+
+                    <span class="public-label" title="No requiere token">
+                        🌐 Público
+                    </span>
+
+                    <span class="new-label">NUEVO</span> <span class="implemented">✓</span>
+
+                </div>
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/auth/login
@@ -706,18 +919,17 @@
                         Iniciar sesión
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="public-label" title="No requiere token">
+                        🌐 Público
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/auth/me
@@ -727,20 +939,17 @@
                         Usuario autenticado
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             ALUMNOS
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -762,7 +971,7 @@
 
             <div class="endpoint-group-description">
 
-                Gestión de alumnos de la academia.
+                Gestión de alumnos de la academia. Las escrituras requieren PROFESOR o ADMIN; la baja solo ADMIN.
 
             </div>
 
@@ -771,9 +980,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/alumnos
@@ -783,22 +990,17 @@
                         Listar alumnos
                     </span>
 
-                    <span class="security-label">
-                        🔐 PROFESOR / ADMIN
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
 
-                    <span class="implemented">
-                        ✓
-                    </span>
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/alumnos/:id
@@ -808,22 +1010,17 @@
                         Obtener alumno
                     </span>
 
-                    <span class="security-label">
-                        🔐 PROFESOR / ADMIN
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
 
-                    <span class="implemented">
-                        ✓
-                    </span>
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/alumnos
@@ -833,22 +1030,17 @@
                         Crear alumno
                     </span>
 
-                    <span class="security-label">
-                        🔐 PROFESOR / ADMIN
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
 
-                    <span class="implemented">
-                        ✓
-                    </span>
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/alumnos/:id
@@ -858,22 +1050,17 @@
                         Actualizar alumno
                     </span>
 
-                    <span class="security-label">
-                        🔐 PROFESOR / ADMIN
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
 
-                    <span class="implemented">
-                        ✓
-                    </span>
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/alumnos/:id
@@ -883,24 +1070,17 @@
                         Dar de baja alumno
                     </span>
 
-                    <span class="security-label">
-                        🔐 ADMIN
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
 
-                    <span class="implemented">
-                        ✓
-                    </span>
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             PROFESORES
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -922,7 +1102,7 @@
 
             <div class="endpoint-group-description">
 
-                Gestión de profesores y su estado.
+                Alta, habilitación y baja. El auto-registro público crea un profesor inactivo; el ADMIN lo habilita y le asigna centros. El alta administrativa acepta rol (PROFESOR/ADMIN) y estado (activo) configurables.
 
             </div>
 
@@ -931,30 +1111,27 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/profesores
                     </span>
 
                     <span class="endpoint-name">
-                        Listar profesores
+                        Listar profesores (?todos=true incluye inactivos)
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/profesores/:id
@@ -964,83 +1141,90 @@
                         Obtener profesor
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/profesores
                     </span>
 
                     <span class="endpoint-name">
-                        Crear profesor
+                        Crear profesor (rol y activo configurables)
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="new-label">NUEVO</span> <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/profesores/:id
                     </span>
 
                     <span class="endpoint-name">
-                        Actualizar profesor
+                        Actualizar / habilitar profesor
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="new-label">NUEVO</span> <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/profesores/:id
                     </span>
 
                     <span class="endpoint-name">
-                        Dar de baja profesor
+                        Baja lógica (persona + usuario + profesor)
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
+
+
+                <div class="group-note">
+                    <strong>Flujo de habilitación:</strong>
+                    <span class="code">POST /api/auth/register-profesor</span> crea la cuenta
+                    como PROFESOR inactivo y sin centros. El ADMIN la ve con
+                    <span class="code">GET /api/profesores?todos=true</span> y la habilita con
+                    <span class="code">PUT /api/profesores/:id</span> enviando
+                    <span class="code">activo: true</span> y <span class="code">centro_ids</span>.
+                    La habilitación se sincroniza en
+                    <span class="code">persona</span>, <span class="code">usuario</span> y <span class="code">profesor</span>.
+                </div>
+
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             CENTROS
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1062,7 +1246,7 @@
 
             <div class="endpoint-group-description">
 
-                Gestión de centros de entrenamiento.
+                Gestión de centros de entrenamiento. Las escrituras son exclusivas de ADMIN. Un PUT sin cambios devuelve 200 si el centro existe.
 
             </div>
 
@@ -1071,9 +1255,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/centros
@@ -1083,18 +1265,17 @@
                         Listar centros
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/centros/:id
@@ -1104,18 +1285,17 @@
                         Obtener centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/centros
@@ -1125,18 +1305,17 @@
                         Crear centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/centros/:id
@@ -1146,18 +1325,17 @@
                         Actualizar centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/centros/:id
@@ -1167,20 +1345,17 @@
                         Dar de baja centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             GRADUACIONES
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1211,9 +1386,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/graduaciones
@@ -1223,18 +1396,17 @@
                         Listar graduaciones
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/graduaciones/:id
@@ -1244,39 +1416,37 @@
                         Obtener graduación
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/graduaciones/alumno/:id
                     </span>
 
                     <span class="endpoint-name">
-                        Graduaciones de alumno
+                        Graduaciones de un alumno
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/graduaciones
@@ -1286,20 +1456,17 @@
                         Crear graduación
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             EXÁMENES
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1321,7 +1488,7 @@
 
             <div class="endpoint-group-description">
 
-                Programación de exámenes e inscripciones.
+                Programación de exámenes e inscripciones. Cualquier usuario autenticado puede inscribir o cancelar una inscripción.
 
             </div>
 
@@ -1330,9 +1497,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/examenes/
@@ -1342,18 +1507,17 @@
                         Listar exámenes
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/examenes/proximos
@@ -1363,18 +1527,17 @@
                         Próximos exámenes
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/examenes/:id
@@ -1384,18 +1547,17 @@
                         Obtener examen
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/examenes/
@@ -1405,18 +1567,17 @@
                         Crear examen
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/examenes/:id
@@ -1426,18 +1587,17 @@
                         Actualizar examen
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/examenes/:id
@@ -1447,18 +1607,17 @@
                         Baja lógica del examen
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/examenes/:id/inscriptos
@@ -1468,18 +1627,17 @@
                         Listar inscriptos
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/examenes/:id/inscriptos
@@ -1489,18 +1647,17 @@
                         Inscribir alumno
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/examenes/inscripciones/:id
@@ -1510,18 +1667,17 @@
                         Obtener inscripción
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/examenes/inscripciones/:id
@@ -1531,20 +1687,17 @@
                         Cancelar inscripción
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             PAGOS
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1566,7 +1719,7 @@
 
             <div class="endpoint-group-description">
 
-                Registro y gestión de pagos realizados por los alumnos.
+                Registro y gestión de pagos. Cualquier usuario autenticado puede registrar un pago; ver pendientes es para PROFESOR/ADMIN; confirmar o rechazar es solo ADMIN.
 
             </div>
 
@@ -1575,9 +1728,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/pagos
@@ -1587,18 +1738,17 @@
                         Listar pagos
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/pagos/:id
@@ -1608,18 +1758,57 @@
                         Obtener pago
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
+                <div class="endpoint">
+
+                    <span class="method get">GET</span>
+
+                    <span class="endpoint-path">
+                        /api/pagos/alumno/:id
+                    </span>
+
+                    <span class="endpoint-name">
+                        Pagos de un alumno
+                    </span>
+
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
+                    </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
+                    <span class="method get">GET</span>
+
+                    <span class="endpoint-path">
+                        /api/pagos/pendientes
                     </span>
+
+                    <span class="endpoint-name">
+                        Pagos pendientes
+                    </span>
+
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
+                    </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
+
+                <div class="endpoint">
+
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/pagos
@@ -1629,62 +1818,57 @@
                         Registrar pago
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
-                        /api/pagos/:id
+                        /api/pagos/:id/confirmar
                     </span>
 
                     <span class="endpoint-name">
-                        Actualizar pago
+                        Confirmar pago
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
-                        /api/pagos/:id
+                        /api/pagos/:id/rechazar
                     </span>
 
                     <span class="endpoint-name">
-                        Eliminar pago
+                        Rechazar pago
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             CUOTAS
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1706,7 +1890,7 @@
 
             <div class="endpoint-group-description">
 
-                Cuotas mensuales y estado de las obligaciones de los alumnos.
+                Cuotas mensuales y estado de las obligaciones. Las escrituras son solo ADMIN. Un PUT sin cambios devuelve 200 si la cuota existe.
 
             </div>
 
@@ -1715,9 +1899,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/cuotas
@@ -1727,18 +1909,17 @@
                         Listar cuotas
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/cuotas/:id
@@ -1748,39 +1929,37 @@
                         Obtener cuota
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/cuotas/alumno/:id
                     </span>
 
                     <span class="endpoint-name">
-                        Cuotas de alumno
+                        Cuotas de un alumno
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/cuotas
@@ -1790,18 +1969,17 @@
                         Crear cuota
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/cuotas/:id
@@ -1811,18 +1989,17 @@
                         Actualizar cuota
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/cuotas/:id
@@ -1832,20 +2009,17 @@
                         Dar de baja cuota
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Solo rol ADMIN">
+                        🛡️ ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             ASISTENCIA
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1855,7 +2029,7 @@
             >
 
                 <span>
-                    📋 Asistencia
+                    📋 Asistencias
                 </span>
 
                 <span class="toggle-icon">
@@ -1867,7 +2041,7 @@
 
             <div class="endpoint-group-description">
 
-                Control de presentismo de los alumnos.
+                Control de presentismo de los alumnos. Las escrituras requieren PROFESOR o ADMIN.
 
             </div>
 
@@ -1876,95 +2050,147 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
-                        /api/asistencia
+                        /api/asistencias
                     </span>
 
                     <span class="endpoint-name">
                         Listar asistencias
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
-                        /api/asistencia/:id
+                        /api/asistencias/:id
                     </span>
 
                     <span class="endpoint-name">
                         Obtener asistencia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
+                <div class="endpoint">
+
+                    <span class="method get">GET</span>
+
+                    <span class="endpoint-path">
+                        /api/asistencias/alumno/:id
+                    </span>
+
+                    <span class="endpoint-name">
+                        Asistencias de un alumno
+                    </span>
+
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
+                    </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
-                        /api/asistencia
+                        /api/asistencias/centro/:id
+                    </span>
+
+                    <span class="endpoint-name">
+                        Asistencias de un centro
+                    </span>
+
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
+                    </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
+
+                <div class="endpoint">
+
+                    <span class="method post">POST</span>
+
+                    <span class="endpoint-path">
+                        /api/asistencias
                     </span>
 
                     <span class="endpoint-name">
                         Registrar asistencia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
-                        /api/asistencia/:id
+                        /api/asistencias/:id
                     </span>
 
                     <span class="endpoint-name">
                         Actualizar asistencia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
+
+                <div class="endpoint">
+
+                    <span class="method delete">DELETE</span>
+
+                    <span class="endpoint-path">
+                        /api/asistencias/:id
+                    </span>
+
+                    <span class="endpoint-name">
+                        Eliminar asistencia
+                    </span>
+
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
+                    </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             NOTICIAS
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -1986,7 +2212,7 @@
 
             <div class="endpoint-group-description">
 
-                Noticias generales y específicas de cada centro.
+                Noticias generales y específicas de cada centro. Las escrituras requieren PROFESOR o ADMIN. Un PUT sin cambios devuelve 200 si la noticia existe.
 
             </div>
 
@@ -1995,9 +2221,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/noticias
@@ -2007,18 +2231,17 @@
                         Listar noticias
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/noticias/:id
@@ -2028,18 +2251,17 @@
                         Obtener noticia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/noticias/centro/:id
@@ -2049,18 +2271,17 @@
                         Noticias de un centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/noticias
@@ -2070,18 +2291,17 @@
                         Crear noticia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/noticias/:id
@@ -2091,18 +2311,17 @@
                         Actualizar noticia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method delete">
-                        DELETE
-                    </span>
+                    <span class="method delete">DELETE</span>
 
                     <span class="endpoint-path">
                         /api/noticias/:id
@@ -2112,20 +2331,17 @@
                         Desactivar noticia
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Roles PROFESOR o ADMIN">
+                        👨‍🏫 PROFESOR / ADMIN
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             UPLOAD
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -2147,7 +2363,7 @@
 
             <div class="endpoint-group-description">
 
-                Subida de imágenes y avatares.
+                Subida de imágenes y avatares. Requiere autenticación.
 
             </div>
 
@@ -2156,9 +2372,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
-                    </span>
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/upload/avatar
@@ -2168,20 +2382,17 @@
                         Subir avatar
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             CHAT
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -2212,53 +2423,97 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
-                        /api/chat
+                        /api/chat/centro/:id
                     </span>
 
                     <span class="endpoint-name">
-                        Listar mensajes
+                        Listar mensajes del centro
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
-
 
                 <div class="endpoint">
 
-                    <span class="method post">
-                        POST
+                    <span class="method get">GET</span>
+
+                    <span class="endpoint-path">
+                        /api/chat/:id
                     </span>
+
+                    <span class="endpoint-name">
+                        Obtener mensaje
+                    </span>
+
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
+                    </span>
+
+                    <span class="implemented">✓</span>
+
+                </div>
+
+                <div class="endpoint">
+
+                    <span class="method post">POST</span>
 
                     <span class="endpoint-path">
                         /api/chat
                     </span>
 
                     <span class="endpoint-name">
-                        Enviar mensaje
+                        Enviar mensaje (emisor desde el token)
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Cualquier usuario autenticado">
+                        🔐 CUALQUIER ROL
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
+
+                <div class="endpoint">
+
+                    <span class="method delete">DELETE</span>
+
+                    <span class="endpoint-path">
+                        /api/chat/:id
+                    </span>
+
+                    <span class="endpoint-name">
+                        Eliminar mensaje (autor o ADMIN)
+                    </span>
+
+                    <span class="security-label" title="Solo el autor del mensaje o ADMIN">
+                        👤 AUTOR / ADMIN
+                    </span>
+
+                    <span class="new-label">NUEVO</span> <span class="implemented">✓</span>
+
+                </div>
+
+
+                <div class="group-note">
+                    <strong>Seguridad del chat:</strong> el emisor se toma
+                    siempre del token (<span class="code">request.usuario</span>), nunca del
+                    body, por lo que no se puede suplantar a otro usuario.
+                    <span class="code">DELETE</span> solo lo puede ejecutar el autor del
+                    mensaje o un ADMIN.
+                </div>
+
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             PERFIL
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -2280,7 +2535,7 @@
 
             <div class="endpoint-group-description">
 
-                Gestión de información personal y contraseña.
+                Información personal y contraseña del usuario autenticado. El cambio de contraseña exige mínimo 8 caracteres.
 
             </div>
 
@@ -2289,9 +2544,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method get">GET</span>
 
                     <span class="endpoint-path">
                         /api/perfil
@@ -2301,18 +2554,17 @@
                         Ver perfil
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/perfil
@@ -2322,41 +2574,37 @@
                         Actualizar perfil
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method put">
-                        PUT
-                    </span>
+                    <span class="method put">PUT</span>
 
                     <span class="endpoint-path">
                         /api/perfil/password
                     </span>
 
                     <span class="endpoint-name">
-                        Cambiar contraseña
+                        Cambiar contraseña (mín. 8)
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
             </div>
 
         </div>
-
-
-        <!-- =================================================
-             SEGURIDAD
-             ================================================= -->
 
         <div class="endpoint-group">
 
@@ -2378,7 +2626,7 @@
 
             <div class="endpoint-group-description">
 
-                Autenticación JWT y autorización basada en roles.
+                Autenticación JWT, autorización por roles y reglas transversales del backend.
 
             </div>
 
@@ -2387,9 +2635,7 @@
 
                 <div class="endpoint">
 
-                    <span class="method">
-                        JWT
-                    </span>
+                    <span class="method">JWT</span>
 
                     <span class="endpoint-path">
                         Authorization: Bearer &lt;token&gt;
@@ -2399,74 +2645,217 @@
                         Autenticación mediante token
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
 
-
                 <div class="endpoint">
 
-                    <span class="method">
-                        ROLE
-                    </span>
+                    <span class="method">ROLE</span>
 
                     <span class="endpoint-path">
                         roles_required(...)
                     </span>
 
                     <span class="endpoint-name">
-                        Control de permisos
+                        Control de permisos por rol
                     </span>
 
-                    <span class="implemented">
-                        ✓ Implementado
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
-
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method">BD</span>
 
                     <span class="endpoint-path">
-                        /api/auth/me
+                        Verificación en cada request
                     </span>
 
                     <span class="endpoint-name">
-                        Validar sesión
+                        Cuenta activa y rol actualizados desde la BD
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
-
 
                 <div class="endpoint">
 
-                    <span class="method get">
-                        GET
-                    </span>
+                    <span class="method">8+</span>
 
                     <span class="endpoint-path">
-                        /api/dashboard
+                        Política de contraseñas
                     </span>
 
                     <span class="endpoint-name">
-                        Dashboard administrativo
+                        Mínimo 8 caracteres en todos los altas y cambios
                     </span>
 
-                    <span class="pending-label">
-                        Próximamente
+                    <span class="security-label" title="Requiere token JWT">
+                        🔐 JWT
                     </span>
+
+                    <span class="implemented">✓</span>
 
                 </div>
+
+
+                <div class="group-extra">
+
+                    <h4>Matriz de permisos</h4>
+
+                    <table class="doc-table">
+
+                        <thead>
+                            <tr>
+                                <th>Acción</th>
+                                <th>ALUMNO</th>
+                                <th>PROFESOR</th>
+                                <th>ADMIN</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Ver catálogos (centros, profesores, alumnos, cuotas, pagos, noticias, asistencias, exámenes)</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Registrar pagos</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Inscribirse a exámenes / cancelar inscripción</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Subir avatar / editar perfil propio</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Chat: enviar mensaje y borrar el propio</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                                <td>✅ (puede borrar cualquiera)</td>
+                            </tr>
+                            <tr>
+                                <td>Crear / editar alumnos</td>
+                                <td>❌</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Asistencias, graduaciones, exámenes y noticias (escritura)</td>
+                                <td>❌</td>
+                                <td>✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Centros, cuotas y profesores (escritura)</td>
+                                <td>❌</td>
+                                <td>❌</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Confirmar / rechazar pagos y ver pendientes</td>
+                                <td>❌</td>
+                                <td>Ver pendientes ✅</td>
+                                <td>✅</td>
+                            </tr>
+                            <tr>
+                                <td>Habilitar / deshabilitar profesores y asignar roles</td>
+                                <td>❌</td>
+                                <td>❌</td>
+                                <td>✅</td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+
+                    <h4>Reglas de seguridad</h4>
+
+                    <div class="group-note">
+                        <strong>Token verificado contra la BD en cada request:</strong>
+                        si el usuario o la persona se deshabilitan, su token deja
+                        de funcionar inmediatamente (403). El rol también se
+                        refresca desde la base, no se confía en el rol viejo del JWT.
+                    </div>
+
+                    <div class="group-note">
+                        <strong>Contraseñas:</strong> mínimo 8 caracteres en
+                        <span class="code">POST /api/auth/register</span>,
+                        <span class="code">POST /api/auth/register-profesor</span>,
+                        <span class="code">POST /api/alumnos</span>,
+                        <span class="code">POST /api/profesores</span> y
+                        <span class="code">PUT /api/perfil/password</span>.
+                    </div>
+
+                    <div class="group-note">
+                        <strong>Anti-escalada de privilegios:</strong>
+                        <span class="code">/api/auth/register</span> siempre crea ALUMNO y
+                        <span class="code">/api/auth/register-profesor</span> siempre crea
+                        PROFESOR inactivo. Los campos <span class="code">rol</span>,
+                        <span class="code">activo</span> y <span class="code">centro_ids</span> enviados a esos
+                        endpoints públicos se ignoran. Solo un ADMIN puede
+                        asignar el rol ADMIN.
+                    </div>
+
+                    <div class="group-note">
+                        <strong>Integridad:</strong> DNI y email son únicos a
+                        nivel global de <span class="code">persona</span>; usuario es único en
+                        <span class="code">usuario</span>. Los duplicados devuelven 409, no 500.
+                    </div>
+
+
+                    <h4>Códigos de respuesta</h4>
+
+                    <table class="doc-table">
+
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Significado</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr><td>200</td><td>Operación exitosa. Un PUT sin cambios también devuelve 200 si el registro existe.</td></tr>
+                            <tr><td>201</td><td>Recurso creado correctamente.</td></tr>
+                            <tr><td>400</td><td>Datos inválidos o campos obligatorios faltantes.</td></tr>
+                            <tr><td>401</td><td>Token ausente, inválido o expirado; credenciales incorrectas.</td></tr>
+                            <tr><td>403</td><td>Rol sin permiso o cuenta inactiva/pendiente.</td></tr>
+                            <tr><td>404</td><td>El recurso no existe.</td></tr>
+                            <tr><td>409</td><td>Duplicado (DNI, email o usuario ya registrado).</td></tr>
+                            <tr><td>500</td><td>Error interno del servidor.</td></tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
 
             </div>
 

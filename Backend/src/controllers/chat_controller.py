@@ -2,6 +2,7 @@
 from flask import Blueprint, request, jsonify
 
 from src.repositories.chat_repository import ChatRepository
+from src.utils.auth import token_required, roles_required
 
 
 # =========================================================
@@ -20,6 +21,8 @@ chat_bp = Blueprint(
 # =========================================================
 
 @chat_bp.route("/centro/<int:centro_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_mensajes_centro(centro_id):
 
     try:
@@ -46,6 +49,8 @@ def listar_mensajes_centro(centro_id):
 # =========================================================
 
 @chat_bp.route("/<int:mensaje_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_mensaje(mensaje_id):
 
     try:
@@ -78,6 +83,8 @@ def obtener_mensaje(mensaje_id):
 # =========================================================
 
 @chat_bp.route("", methods=["POST"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def crear_mensaje():
 
     data = request.get_json()
@@ -113,6 +120,11 @@ def crear_mensaje():
         }), 400
 
 
+    # El emisor siempre es el usuario autenticado: evita que un usuario
+    # publique mensajes haciéndose pasar por otra persona.
+    data["emisor_persona_id"] = request.usuario["persona_id"]
+
+
     try:
 
         mensaje_id = ChatRepository.crear(data)
@@ -143,6 +155,8 @@ def crear_mensaje():
 # =========================================================
 
 @chat_bp.route("/<int:mensaje_id>", methods=["DELETE"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def eliminar_mensaje(mensaje_id):
 
     try:
@@ -155,6 +169,22 @@ def eliminar_mensaje(mensaje_id):
                 "status": "ERROR",
                 "mensaje": "Mensaje no encontrado"
             }), 404
+
+
+        # Solo el autor del mensaje o un ADMIN pueden eliminarlo.
+        usuario_token = request.usuario
+
+        es_autor = (
+            mensaje["emisor_persona_id"] == usuario_token["persona_id"]
+        )
+        es_admin = usuario_token["rol"] == "ADMIN"
+
+        if not (es_autor or es_admin):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "No tiene permiso para eliminar este mensaje"
+            }), 403
 
 
         eliminado = ChatRepository.eliminar(mensaje_id)

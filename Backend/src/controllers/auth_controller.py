@@ -1,7 +1,9 @@
 #agregado al docs
 from flask import Blueprint, request, jsonify
 import bcrypt
+from datetime import date
 from src.repositories.usuario_repository import UsuarioRepository
+from src.repositories.profesor_repository import ProfesorRepository
 from src.utils.auth import generar_token, token_required
 
 
@@ -42,6 +44,20 @@ def register():
             "status": "ERROR",
             "mensaje": "Faltan campos obligatorios",
             "campos": campos_faltantes
+        }), 400
+
+    # ---------------------------------------------
+    # Validar contraseña (misma regla que PUT /api/perfil/password)
+    # ---------------------------------------------
+
+    if (
+        not isinstance(data["contrasenia"], str)
+        or len(data["contrasenia"]) < 8
+    ):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "La contraseña debe tener al menos 8 caracteres"
         }), 400
 
     try:
@@ -119,6 +135,147 @@ def register():
         }), 500
 
 
+# =========================================================
+# POST /api/auth/register-profesor
+# Auto-registro público de profesor: queda PENDIENTE
+# de habilitación por un administrador.
+# =========================================================
+
+@auth_bp.route("/register-profesor", methods=["POST"])
+def register_profesor():
+
+    data = request.get_json()
+
+    if not data:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "No se recibieron datos"
+        }), 400
+
+    # Normalizamos los campos de identidad (sin tocar la contraseña)
+    for campo in ("dni", "nombre", "apellido", "email", "usuario"):
+
+        if isinstance(data.get(campo), str):
+            data[campo] = data[campo].strip()
+
+    campos_obligatorios = [
+        "dni",
+        "nombre",
+        "apellido",
+        "email",
+        "usuario",
+        "contrasenia"
+    ]
+
+    campos_faltantes = [
+        campo
+        for campo in campos_obligatorios
+        if not data.get(campo)
+    ]
+
+    if campos_faltantes:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "Faltan campos obligatorios",
+            "campos": campos_faltantes
+        }), 400
+
+    # ---------------------------------------------
+    # Validar contraseña (misma regla que register)
+    # ---------------------------------------------
+
+    if (
+        not isinstance(data["contrasenia"], str)
+        or len(data["contrasenia"]) < 8
+    ):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "La contraseña debe tener al menos 8 caracteres"
+        }), 400
+
+    try:
+
+        # ---------------------------------------------
+        # Verificar DNI / email / usuario existentes
+        # ---------------------------------------------
+
+        if ProfesorRepository.obtener_por_dni(data["dni"]):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El DNI ya está registrado"
+            }), 409
+
+        if ProfesorRepository.obtener_por_email(data["email"]):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El email ya está registrado"
+            }), 409
+
+        if ProfesorRepository.obtener_por_usuario(data["usuario"]):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El usuario ya está registrado"
+            }), 409
+
+        # ---------------------------------------------
+        # Hash de contraseña
+        # ---------------------------------------------
+
+        password_hash = bcrypt.hashpw(
+            data["contrasenia"].encode("utf-8"),
+            bcrypt.gensalt()
+        ).decode("utf-8")
+
+        # ---------------------------------------------
+        # Crear SIEMPRE un PROFESOR inactivo.
+        # El rol, el estado y los centros los define
+        # el ADMIN al habilitar la cuenta.
+        # ---------------------------------------------
+
+        nuevo_profesor = ProfesorRepository.crear({
+
+            "dni": data["dni"],
+            "nombre": data["nombre"],
+            "apellido": data["apellido"],
+            "email": data["email"],
+
+            "telefono": data.get("telefono"),
+            "fecha_nacimiento": data.get("fecha_nacimiento"),
+            "contacto_emergencia": data.get("contacto_emergencia"),
+
+            "usuario": data["usuario"],
+            "contrasenia": password_hash,
+
+            "rol": "PROFESOR",
+            "activo": False,
+            "fecha_alta": date.today().isoformat(),
+            "centro_ids": []
+        })
+
+        return jsonify({
+            "status": "OK",
+            "mensaje": (
+                "Registro recibido. Un administrador debe habilitar "
+                "la cuenta para que puedas iniciar sesión."
+            ),
+            "profesor": nuevo_profesor
+        }), 201
+
+    except Exception as e:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "No se pudo registrar el profesor",
+            "detalle": str(e)
+        }), 500
+
+
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
@@ -145,9 +302,18 @@ def login():
         }), 401
 
     if not usuario['usuario_activo'] or not usuario['persona_activa']:
+
+        mensaje = "La cuenta se encuentra inactiva"
+
+        if usuario['rol'] == 'PROFESOR':
+            mensaje = (
+                "La cuenta está inactiva o pendiente de habilitación "
+                "por un administrador"
+            )
+
         return jsonify({
             "status": "ERROR",
-            "mensaje": "La cuenta se encuentra inactiva"
+            "mensaje": mensaje
         }), 403
 
     contraseña_valida = bcrypt.checkpw(

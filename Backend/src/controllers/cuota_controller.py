@@ -1,7 +1,8 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.cuota_repository import CuotaRepository
+from src.utils.auth import token_required, roles_required
 
 
 cuota_bp = Blueprint(
@@ -16,6 +17,8 @@ cuota_bp = Blueprint(
 # =========================================================
 
 @cuota_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_cuotas():
 
     try:
@@ -43,6 +46,8 @@ def listar_cuotas():
 # =========================================================
 
 @cuota_bp.route("/<int:cuota_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_cuota(cuota_id):
 
     try:
@@ -76,6 +81,8 @@ def obtener_cuota(cuota_id):
 # =========================================================
 
 @cuota_bp.route("/alumno/<int:alumno_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_cuotas_alumno(alumno_id):
 
     try:
@@ -103,6 +110,8 @@ def listar_cuotas_alumno(alumno_id):
 # =========================================================
 
 @cuota_bp.route("", methods=["POST"])
+@token_required
+@roles_required("ADMIN")
 def crear_cuota():
 
     data = request.get_json()
@@ -162,6 +171,8 @@ def crear_cuota():
 # =========================================================
 
 @cuota_bp.route("/<int:cuota_id>", methods=["PUT"])
+@token_required
+@roles_required("ADMIN")
 def actualizar_cuota(cuota_id):
 
     data = request.get_json()
@@ -231,6 +242,8 @@ def actualizar_cuota(cuota_id):
 # =========================================================
 
 @cuota_bp.route("/<int:cuota_id>", methods=["DELETE"])
+@token_required
+@roles_required("ADMIN")
 def eliminar_cuota(cuota_id):
 
     try:

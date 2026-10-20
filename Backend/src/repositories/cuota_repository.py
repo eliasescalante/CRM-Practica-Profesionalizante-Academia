@@ -259,6 +259,15 @@ class CuotaRepository:
 
             actualizado = cursor.rowcount > 0
 
+            if not actualizado:
+                # MySQL devuelve rowcount = 0 si los valores no cambian.
+                # Solo es un error si la cuota realmente no existe.
+                cursor.execute(
+                    "SELECT 1 FROM cuota WHERE id = %s LIMIT 1",
+                    (cuota_id,)
+                )
+                actualizado = cursor.fetchone() is not None
+
             conn.commit()
 
             return actualizado

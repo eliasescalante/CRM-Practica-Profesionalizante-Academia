@@ -1,7 +1,8 @@
-#agregado a docs
+﻿#agregado a docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.pago_repository import PagoRepository
+from src.utils.auth import token_required, roles_required
 
 
 pago_bp = Blueprint(
@@ -17,6 +18,8 @@ pago_bp = Blueprint(
 # =========================================================
 
 @pago_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_pagos():
 
     try:
@@ -44,6 +47,8 @@ def listar_pagos():
 # =========================================================
 
 @pago_bp.route("/<int:pago_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_pago(pago_id):
 
     try:
@@ -82,6 +87,8 @@ def obtener_pago(pago_id):
     "/alumno/<int:alumno_id>",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_pagos_alumno(alumno_id):
 
     try:
@@ -114,6 +121,8 @@ def listar_pagos_alumno(alumno_id):
     "/pendientes",
     methods=["GET"]
 )
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def listar_pagos_pendientes():
 
     try:
@@ -141,6 +150,8 @@ def listar_pagos_pendientes():
 # =========================================================
 
 @pago_bp.route("", methods=["POST"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def crear_pago():
 
     data = request.get_json()
@@ -326,6 +337,8 @@ def crear_pago():
     "/<int:pago_id>/confirmar",
     methods=["PUT"]
 )
+@token_required
+@roles_required("ADMIN")
 def confirmar_pago(pago_id):
 
     data = request.get_json(silent=True) or {}
@@ -402,6 +415,8 @@ def confirmar_pago(pago_id):
     "/<int:pago_id>/rechazar",
     methods=["PUT"]
 )
+@token_required
+@roles_required("ADMIN")
 def rechazar_pago(pago_id):
 
     data = request.get_json(silent=True) or {}

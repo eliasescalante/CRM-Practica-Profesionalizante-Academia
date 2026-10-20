@@ -1,4 +1,10 @@
 import os
+
+# Cargamos las variables de .env ANTES de importar los módulos
+# que leen configuración al momento de importarse (ej: JWT_SECRET en utils/auth.py).
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, send_from_directory
 from flask_cors import CORS
 from src.controllers.main_controller import main_bp

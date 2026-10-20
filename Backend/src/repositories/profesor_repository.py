@@ -1,6 +1,5 @@
 #agregado al docs
 from database.connection import get_db_connection
-from src.utils.auth import token_required, roles_required
 
 
 class ProfesorRepository:
@@ -10,8 +9,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def listar(incluir_inactivos=False):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -80,8 +77,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_id(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -144,8 +139,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_centros_con_conexion(cursor, profesor_id):
         query = """
             SELECT
@@ -173,8 +166,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_centros(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -191,21 +182,17 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_dni(dni):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
 
         try:
+            # Se busca en persona (no solo en profesor) porque el DNI es
+            # único a nivel global: puede existir como alumno u otro rol.
             query = """
                 SELECT
-                    pr.id AS profesor_id,
-                    pr.persona_id
-                FROM profesor pr
-
-                INNER JOIN persona p
-                    ON pr.persona_id = p.id
+                    p.id AS persona_id
+                FROM persona p
 
                 WHERE p.dni = %s
 
@@ -224,8 +211,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_email(email):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -254,8 +239,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def obtener_por_usuario(usuario):
         conn = get_db_connection()
         cursor = conn.cursor(dictionary=True)
@@ -284,8 +267,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def crear(datos):
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -294,9 +275,9 @@ class ProfesorRepository:
             query_persona = """
                 INSERT INTO persona (
                     dni, nombre, apellido, email, telefono,
-                    fecha_nacimiento, contacto_emergencia, avatar
+                    fecha_nacimiento, contacto_emergencia, avatar, activo
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
 
             cursor.execute(
@@ -309,7 +290,8 @@ class ProfesorRepository:
                     datos.get("telefono"),
                     datos.get("fecha_nacimiento"),
                     datos.get("contacto_emergencia"),
-                    datos.get("avatar")
+                    datos.get("avatar"),
+                    datos.get("activo", True)
                 )
             )
             persona_id = cursor.lastrowid
@@ -318,7 +300,7 @@ class ProfesorRepository:
                 INSERT INTO usuario (
                     persona_id, usuario, contrasenia, rol, activo
                 )
-                VALUES (%s, %s, %s, 'PROFESOR', TRUE)
+                VALUES (%s, %s, %s, %s, %s)
             """
 
             cursor.execute(
@@ -326,7 +308,9 @@ class ProfesorRepository:
                 (
                     persona_id,
                     datos["usuario"],
-                    datos["contrasenia"]
+                    datos["contrasenia"],
+                    datos.get("rol", "PROFESOR"),
+                    datos.get("activo", True)
                 )
             )
             usuario_id = cursor.lastrowid
@@ -335,14 +319,15 @@ class ProfesorRepository:
                 INSERT INTO profesor (
                     persona_id, fecha_alta, activo
                 )
-                VALUES (%s, %s, TRUE)
+                VALUES (%s, %s, %s)
             """
 
             cursor.execute(
                 query_profesor,
                 (
                     persona_id,
-                    datos.get("fecha_alta")
+                    datos.get("fecha_alta"),
+                    datos.get("activo", True)
                 )
             )
             profesor_id = cursor.lastrowid
@@ -377,8 +362,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def actualizar(profesor_id, datos):
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -400,7 +383,7 @@ class ProfesorRepository:
                 SET
                     dni = %s, nombre = %s, apellido = %s, email = %s,
                     telefono = %s, fecha_nacimiento = %s,
-                    contacto_emergencia = %s, avatar = %s
+                    contacto_emergencia = %s, avatar = %s, activo = %s
                 WHERE id = %s
             """
 
@@ -415,12 +398,19 @@ class ProfesorRepository:
                     datos.get("fecha_nacimiento"),
                     datos.get("contacto_emergencia"),
                     datos.get("avatar"),
+                    datos["activo"],
                     persona_id
                 )
             )
 
-            query_usuario = "UPDATE usuario SET usuario = %s WHERE persona_id = %s"
-            cursor.execute(query_usuario, (datos["usuario"], persona_id))
+            query_usuario = (
+                "UPDATE usuario SET usuario = %s, activo = %s "
+                "WHERE persona_id = %s"
+            )
+            cursor.execute(
+                query_usuario,
+                (datos["usuario"], datos["activo"], persona_id)
+            )
 
             query_profesor = "UPDATE profesor SET activo = %s WHERE id = %s"
             cursor.execute(query_profesor, (datos["activo"], profesor_id))
@@ -450,8 +440,6 @@ class ProfesorRepository:
     # =========================================================
 
     @staticmethod
-    @token_required
-    @roles_required("PROFESOR", "ADMIN")
     def eliminar(profesor_id):
         conn = get_db_connection()
         cursor = conn.cursor()

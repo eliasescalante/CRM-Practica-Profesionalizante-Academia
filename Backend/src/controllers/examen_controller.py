@@ -1,6 +1,7 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 from src.repositories.examen_repository import ExamenRepository
+from src.utils.auth import token_required, roles_required
 
 
 # =========================================================
@@ -19,6 +20,8 @@ examen_bp = Blueprint(
 # =========================================================
 
 @examen_bp.route("/", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_examenes():
 
     try:
@@ -52,6 +55,8 @@ def listar_examenes():
 # =========================================================
 
 @examen_bp.route("/proximos", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_proximos_examenes():
 
     try:
@@ -78,6 +83,8 @@ def listar_proximos_examenes():
 # =========================================================
 
 @examen_bp.route("/<int:examen_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_examen(examen_id):
 
     try:
@@ -112,6 +119,8 @@ def obtener_examen(examen_id):
 # =========================================================
 
 @examen_bp.route("/", methods=["POST"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def crear_examen():
 
     try:
@@ -168,6 +177,8 @@ def crear_examen():
 # =========================================================
 
 @examen_bp.route("/<int:examen_id>", methods=["PUT"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def actualizar_examen(examen_id):
 
     try:
@@ -234,6 +245,8 @@ def actualizar_examen(examen_id):
 # =========================================================
 
 @examen_bp.route("/<int:examen_id>", methods=["DELETE"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def eliminar_examen(examen_id):
 
     try:
@@ -271,6 +284,8 @@ def eliminar_examen(examen_id):
     "/<int:examen_id>/inscriptos",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_inscriptos(examen_id):
 
     try:
@@ -313,6 +328,8 @@ def listar_inscriptos(examen_id):
     "/inscripciones/<int:inscripcion_id>",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_inscripcion(inscripcion_id):
 
     try:
@@ -350,6 +367,8 @@ def obtener_inscripcion(inscripcion_id):
     "/<int:examen_id>/inscriptos",
     methods=["POST"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def inscribir_alumno(examen_id):
 
     try:
@@ -434,6 +453,8 @@ def inscribir_alumno(examen_id):
     "/inscripciones/<int:inscripcion_id>",
     methods=["DELETE"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def cancelar_inscripcion(inscripcion_id):
 
     try:

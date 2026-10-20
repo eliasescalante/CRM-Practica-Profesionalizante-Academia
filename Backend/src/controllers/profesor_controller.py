@@ -1,8 +1,9 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 import bcrypt
 from datetime import date
 from src.repositories.profesor_repository import ProfesorRepository
+from src.utils.auth import token_required, roles_required
 
 
 profesor_bp = Blueprint(
@@ -18,6 +19,8 @@ profesor_bp = Blueprint(
 # =========================================================
 
 @profesor_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_profesores():
 
     try:
@@ -51,6 +54,8 @@ def listar_profesores():
 # =========================================================
 
 @profesor_bp.route("/<int:profesor_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_profesor(profesor_id):
 
     try:
@@ -86,6 +91,8 @@ def obtener_profesor(profesor_id):
 # =========================================================
 
 @profesor_bp.route("", methods=["POST"])
+@token_required
+@roles_required("ADMIN")
 def crear_profesor():
 
     data = request.get_json()
@@ -121,6 +128,44 @@ def crear_profesor():
             "status": "ERROR",
             "mensaje": "Faltan campos obligatorios",
             "campos": campos_faltantes
+        }), 400
+
+
+    # -------------------------------------------------
+    # VALIDAR CONTRASEÑA (misma regla que PUT /api/perfil/password)
+    # -------------------------------------------------
+
+    if (
+        not isinstance(data["contrasenia"], str)
+        or len(data["contrasenia"]) < 8
+    ):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "La contraseña debe tener al menos 8 caracteres"
+        }), 400
+
+
+    # -------------------------------------------------
+    # VALIDAR ROL Y ESTADO (sin hardcodear en el SQL)
+    # -------------------------------------------------
+
+    rol = str(data.get("rol") or "PROFESOR").upper()
+
+    if rol not in ("PROFESOR", "ADMIN"):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "Rol inválido. Valores permitidos: PROFESOR, ADMIN"
+        }), 400
+
+    activo = data.get("activo", True)
+
+    if not isinstance(activo, bool):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "El campo 'activo' debe ser booleano"
         }), 400
 
 
@@ -191,6 +236,9 @@ def crear_profesor():
             "usuario": data["usuario"],
             "contrasenia": password_hash,
 
+            "rol": rol,
+            "activo": activo,
+
             "fecha_alta": data.get("fecha_alta") or date.today().isoformat(),
 
             "centro_ids": data.get("centro_ids", [])
@@ -222,6 +270,8 @@ def crear_profesor():
 # =========================================================
 
 @profesor_bp.route("/<int:profesor_id>", methods=["PUT"])
+@token_required
+@roles_required("ADMIN")
 def actualizar_profesor(profesor_id):
 
     data = request.get_json()
@@ -337,6 +387,8 @@ def actualizar_profesor(profesor_id):
 # =========================================================
 
 @profesor_bp.route("/<int:profesor_id>", methods=["DELETE"])
+@token_required
+@roles_required("ADMIN")
 def eliminar_profesor(profesor_id):
 
     try:

@@ -155,7 +155,7 @@ class UsuarioRepository:
             conn.close()
 
     @staticmethod
-    def registrar_profesor(persona_id, usuario, contrasenia):
+    def registrar_profesor(persona_id, usuario, contrasenia, rol="PROFESOR"):
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -167,7 +167,7 @@ class UsuarioRepository:
                     contrasenia,
                     rol
                 )
-                VALUES (%s, %s, %s, 'PROFESOR')
+                VALUES (%s, %s, %s, %s)
             """
 
             cursor.execute(
@@ -175,7 +175,8 @@ class UsuarioRepository:
                 (
                     persona_id,
                     usuario,
-                    contrasenia
+                    contrasenia,
+                    rol
                 )
             )
 

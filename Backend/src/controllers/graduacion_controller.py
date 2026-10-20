@@ -1,7 +1,8 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.graduacion_repository import GraduacionRepository
+from src.utils.auth import token_required, roles_required
 
 
 graduacion_bp = Blueprint(
@@ -16,6 +17,8 @@ graduacion_bp = Blueprint(
 # =========================================================
 
 @graduacion_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_graduaciones():
 
     graduaciones = GraduacionRepository.listar()
@@ -28,6 +31,8 @@ def listar_graduaciones():
 # =========================================================
 
 @graduacion_bp.route("/<int:graduacion_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_graduacion(graduacion_id):
 
     graduacion = GraduacionRepository.obtener_por_id(
@@ -51,6 +56,8 @@ def obtener_graduacion(graduacion_id):
     "/alumno/<int:alumno_id>",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_graduaciones_alumno(alumno_id):
 
     graduaciones = GraduacionRepository.listar_por_alumno(
@@ -65,6 +72,8 @@ def listar_graduaciones_alumno(alumno_id):
 # =========================================================
 
 @graduacion_bp.route("", methods=["POST"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def crear_graduacion():
 
     datos = request.get_json()

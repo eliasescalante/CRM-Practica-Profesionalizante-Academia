@@ -125,6 +125,46 @@ def token_required(func):
                 "mensaje": "Token inválido o expirado"
             }), 401
 
+        # Verificar contra la BD que la cuenta siga activa y usar su rol
+        # actual. Así, al deshabilitar a un usuario, su token deja de servir
+        # y los cambios de rol se aplican sin esperar a que expire el JWT.
+        try:
+
+            from src.repositories.usuario_repository import (
+                UsuarioRepository
+            )
+
+            usuario_db = UsuarioRepository.obtener_por_id(
+                usuario["usuario_id"]
+            )
+
+        except Exception:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "No se pudo verificar la sesión"
+            }), 503
+
+        if not usuario_db:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El usuario ya no existe"
+            }), 401
+
+        if (
+            not usuario_db["usuario_activo"]
+            or not usuario_db["persona_activa"]
+        ):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "La cuenta se encuentra inactiva"
+            }), 403
+
+        usuario["rol"] = usuario_db["rol"]
+        usuario["persona_id"] = usuario_db["persona_id"]
+
         # Guardamos el usuario autenticado
         # para que el endpoint pueda utilizarlo.
 

@@ -1,7 +1,8 @@
-#agregado al docs
+﻿#agregado al docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.noticia_repository import NoticiaRepository
+from src.utils.auth import token_required, roles_required
 
 
 noticia_bp = Blueprint(
@@ -17,6 +18,8 @@ noticia_bp = Blueprint(
 # =========================================================
 
 @noticia_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_noticias():
 
     try:
@@ -50,6 +53,8 @@ def listar_noticias():
 # =========================================================
 
 @noticia_bp.route("/<int:noticia_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_noticia(noticia_id):
 
     try:
@@ -83,6 +88,8 @@ def obtener_noticia(noticia_id):
 # =========================================================
 
 @noticia_bp.route("/centro/<int:centro_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_noticias_centro(centro_id):
 
     try:
@@ -110,6 +117,8 @@ def listar_noticias_centro(centro_id):
 # =========================================================
 
 @noticia_bp.route("", methods=["POST"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def crear_noticia():
 
     data = request.get_json()
@@ -168,6 +177,8 @@ def crear_noticia():
 # =========================================================
 
 @noticia_bp.route("/<int:noticia_id>", methods=["PUT"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def actualizar_noticia(noticia_id):
 
     data = request.get_json()
@@ -235,6 +246,8 @@ def actualizar_noticia(noticia_id):
 # =========================================================
 
 @noticia_bp.route("/<int:noticia_id>", methods=["DELETE"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def eliminar_noticia(noticia_id):
 
     try:

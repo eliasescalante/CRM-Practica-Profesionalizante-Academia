@@ -1,7 +1,8 @@
-# ya incluido en docs
+﻿# ya incluido en docs
 from flask import Blueprint, request, jsonify
 
 from src.repositories.asistencia_repository import AsistenciaRepository
+from src.utils.auth import token_required, roles_required
 
 
 asistencia_bp = Blueprint(
@@ -17,6 +18,8 @@ asistencia_bp = Blueprint(
 # =========================================================
 
 @asistencia_bp.route("", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_asistencias():
 
     try:
@@ -44,6 +47,8 @@ def listar_asistencias():
 # =========================================================
 
 @asistencia_bp.route("/<int:asistencia_id>", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def obtener_asistencia(asistencia_id):
 
     try:
@@ -82,6 +87,8 @@ def obtener_asistencia(asistencia_id):
     "/alumno/<int:alumno_id>",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_asistencias_alumno(alumno_id):
 
     try:
@@ -114,6 +121,8 @@ def listar_asistencias_alumno(alumno_id):
     "/centro/<int:centro_id>",
     methods=["GET"]
 )
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def listar_asistencias_centro(centro_id):
 
     try:
@@ -143,6 +152,8 @@ def listar_asistencias_centro(centro_id):
 # =========================================================
 
 @asistencia_bp.route("", methods=["POST"])
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def crear_asistencia():
 
     data = request.get_json()
@@ -220,6 +231,8 @@ def crear_asistencia():
     "/<int:asistencia_id>",
     methods=["PUT"]
 )
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def actualizar_asistencia(asistencia_id):
 
     data = request.get_json()
@@ -308,6 +321,8 @@ def actualizar_asistencia(asistencia_id):
     "/<int:asistencia_id>",
     methods=["DELETE"]
 )
+@token_required
+@roles_required("PROFESOR", "ADMIN")
 def eliminar_asistencia(asistencia_id):
 
     try:

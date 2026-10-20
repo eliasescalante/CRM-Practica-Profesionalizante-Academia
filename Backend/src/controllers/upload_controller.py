@@ -3,10 +3,13 @@ from flask import Blueprint, request, jsonify
 import cloudinary
 import cloudinary.uploader
 from database.connection import get_db_connection
+from src.utils.auth import token_required, roles_required
 
 upload_bp = Blueprint("upload", __name__, url_prefix="/api/upload")
 
 @upload_bp.route("/avatar", methods=["POST"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
 def subir_avatar():
     try:
         

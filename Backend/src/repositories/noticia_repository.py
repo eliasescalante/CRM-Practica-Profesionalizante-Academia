@@ -249,7 +249,18 @@ class NoticiaRepository:
 
             conn.commit()
 
-            return cursor.rowcount > 0
+            actualizado = cursor.rowcount > 0
+
+            if not actualizado:
+                # MySQL devuelve rowcount = 0 si los valores no cambian.
+                # Solo es un error si la noticia realmente no existe.
+                cursor.execute(
+                    "SELECT 1 FROM noticia WHERE id = %s LIMIT 1",
+                    (noticia_id,)
+                )
+                actualizado = cursor.fetchone() is not None
+
+            return actualizado
 
         except Exception:
             conn.rollback()

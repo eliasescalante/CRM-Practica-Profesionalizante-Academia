@@ -121,6 +121,19 @@ def crear_alumno():
             "campos": campos_faltantes
         }), 400
 
+    # ---------------------------------------------
+    # Validar contraseña (misma regla que PUT /api/perfil/password)
+    # ---------------------------------------------
+
+    if (
+        not isinstance(data["contrasenia"], str)
+        or len(data["contrasenia"]) < 8
+    ):
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "La contraseña debe tener al menos 8 caracteres"
+        }), 400
+
     try:
 
         # ---------------------------------------------
