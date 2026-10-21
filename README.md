@@ -12,8 +12,113 @@
 
 # FRONTEND:
 
-* **HTML5 + CSS3 + JS (Vanilla)**
-* **Sitio Placeholder / Demo:** https://eliasescalante.github.io/CRM-Practica-Profesionalizante-Academia/
+## Landing pública — Tien Long Hu / Shen Xin Ling
+
+Landing page pública de la academia, de una sola página, hecha con HTML, CSS y JavaScript puro. Diseño inspirado en el PDF de referencia de Tien Long Hu / Shen Xin Ling. **No consume la API del backend todavía**: es solo presentación.
+
+### Estructura de carpetas
+
+```
+FrontEnd/
+├── index.html      # estructura y contenido de todas las secciones
+├── css/
+│   └── styles.css  # paleta, tipografía, layout responsive y animaciones
+├── js/
+│   └── script.js   # menú móvil, scroll suave, animaciones, barra de lectura, parallax y año del footer
+└── assets/         # imágenes del PDF de referencia y favicon.svg con la marca
+```
+
+### Cómo ejecutarla
+
+1. Abrí `FrontEnd/index.html` en tu navegador. Para desarrollo, podés usar la extensión **Live Server** de VS Code.
+2. No requiere Node.js, npm, frameworks ni backend.
+
+### Mockup del portal del alumno
+
+En la raíz del repositorio hay un `index.html` aparte: es el **mockup del Portal del Alumno** (HTML + Tailwind por CDN), usado como sitio placeholder. Se publica en GitHub Pages: <https://eliasescalante.github.io/CRM-Practica-Profesionalizante-Academia/>. No forma parte de la landing de `FrontEnd/`.
+
+### Codificación de los archivos
+
+Los tres archivos de código (`FrontEnd/index.html`, `FrontEnd/css/styles.css`, `FrontEnd/js/script.js`) se guardan en **UTF-8 con BOM** (`EF BB BF`). El BOM es lo que permite que el Bloc de notas y el VS Code de Windows detecten el UTF-8 y muestren bien los acentos, las comillas tipográficas y las flechas (`★`, `↗`, `·`). Si los editás con una herramienta que los vuelva a guardar sin BOM, la página vuelve a mostrar `Ã©`, `â˜…` o `â†—` en vez de `é`, `★` y `↗`.
+
+Si tenés que editar a mano, mantené el BOM. Para revisarlo rápido:
+
+```powershell
+Format-Hex -Path FrontEnd\index.html -Count 3   # debe devolver EF BB BF
+```
+
+### Imágenes de los testimonios
+
+Las 3 fotos de los testimonios (`FrontEnd/assets/testimonial-1.jpg`, `FrontEnd/assets/testimonial-2.jpg` y `FrontEnd/assets/testimonial-3.jpg`) se extrajeron de la página 4 del PDF de referencia. `testimonial-3.jpg` no estaba en el paquete original de la plantilla: se recuperó del PDF.
+
+## Paleta
+
+El acento de la marca es **verde brillante** (`--yellow: #3ee87a`), con `--green-ink: #15803d` para textos sobre fondos claros y `--green-deep: #0b3d20` para detalles sobre verde. El rojo (`--red`) se usa solo en detalles puntuales. Si querés cambiar el acento, modificá esas variables en `:root` dentro de `FrontEnd/css/styles.css`.
+
+## Responsive
+
+La página se adapta a celulares, tablets, notebooks y distintos monitores:
+
+- `≥1800px` y `≥2300px`: monitores 2K y ultrawide (ancho máximo ampliado, tipografías y fotos más grandes).
+- `1500–1799px`: monitores de 1920.
+- `1101–1440px`: notebooks de 1366 y 1440.
+- Alto de pantalla ≤ 760px: notebooks apaisadas (hero más compacto).
+- `651–900px`: tablets verticales y grandes (grillas a 2 columnas).
+- `481–650px`: celulares grandes.
+- `≤360px`: celulares chicos.
+
+## Dinamismo (JavaScript)
+
+- **Transición fuerte por sección**: cada `<section>` entra con desplazamiento, escala y desenfoque (las pares desde la derecha, las impares desde la izquierda) más un barrido de luz. **Se repite cada vez** que la sección vuelve a entrar en pantalla.
+- **Contenido en cascada**: kicker, regla, títulos y tarjetas aparecen escalonados al entrar cada sección.
+- Barra de progreso de lectura y header que se compacta al scrollear.
+- Parallax suave del hero (solo desktop).
+- Efecto de luz que sigue al cursor en tarjetas y testimonios.
+- Las cards de testimonios tienen **foto de la persona** en la parte superior (mismo tratamiento que las cards de disciplinas: degradado inferior, saturación baja y zoom suave al hacer hover).
+- Scroll suave con compensación del header y enlace “Saltar al contenido” accesible.
+
+### Cómo se comportan las animaciones
+
+Las transiciones de sección se **repiten cada vez** que una sección entra o sale de pantalla (no solo la primera vez). Para lograrlo, el JS resetea el estado de la sección cuando ya salió del viewport.
+
+El script tiene dos constantes al comienzo:
+
+```js
+const FORCE_ANIMATIONS = true;          // true = animaciones siempre activas
+const ACCESSIBILITY_REDUCED_MOTION = false; // true = respetar "reducir movimiento" del sistema
+```
+
+- `FORCE_ANIMATIONS = true` (valor actual) mantiene siempre las animaciones de sección.
+- Poné `ACCESSIBILITY_REDUCED_MOTION = true` si querés que la preferencia de accesibilidad del sistema desactive todo.
+
+### Video de fondo (fuego)
+
+Las secciones `.intro` y `.experiences` tienen `FrontEnd/assets/fire.mp4` de fondo, con un degradado oscuro suave encima para que el texto se lea. El video:
+
+- Se descarga **solo cuando entra en pantalla** (`preload="none"` + `data-src`), para no bajar 35 MB al abrir la página.
+- Se pausa al salir de vista y no se carga en móviles (< 651px).
+- Se reproduce igual aunque el sistema tenga "reducir movimiento" activado (es decorativo y se pidió explícitamente).
+
+## Accesibilidad y SEO
+
+- Enlace “Saltar al contenido principal” visible con teclado.
+- Foco visible en enlaces y botones; navegación operable solo con teclado (menú móvil se cierra con Escape).
+- Imágenes con `alt` descriptivo, `width`, `height`, `loading="lazy"` y `decoding="async"` (el hero se precarga con `fetchpriority="high"`).
+- Se respeta `prefers-reduced-motion`: si el sistema pide menos movimiento, no se animan las secciones.
+- Metadatos Open Graph y Twitter Card para compartir en redes.
+- Datos estructurados JSON-LD (`SportsActivityLocation`).
+
+## Botón Login
+
+El botón del header dice **Login** y apunta a `#login`, que por ahora **no existe** (es una página de presentación). Cuando esté el acceso del CRM, reemplazá ese `href` por la URL o por el id de la sección del formulario de ingreso.
+
+## Antes de publicar
+
+- Confirmá el teléfono y el correo de contacto. Se conservaron los datos visibles en el PDF (`923 456 789` y `hola@unsitiogenial.es`) como referencias editables; podrían ser datos de ejemplo.
+- Confirmá que los testimonios y nombres pueden publicarse (la nota interna se quitó de la página; queda pendiente la autorización).
+- Las tipografías se cargan desde Google Fonts; si no hay conexión, se usan fuentes alternativas.
+- Las imágenes se usan como JPG sin optimizar ni formatos modernos (WebP/AVIF); conviene comprimirlas antes de publicar.
+- `FrontEnd/assets/fire.mp4` pesa 35 MB: se carga de forma diferida, pero Git lo guarda completo en el historial. Conviene optimizarlo, convertirlo a WebM o excluirlo del repositorio.
 
 ---
 
