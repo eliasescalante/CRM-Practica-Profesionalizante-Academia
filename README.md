@@ -39,33 +39,21 @@ En la raíz del repositorio hay un `index.html` aparte: es el **mockup del Porta
 
 ### Codificación de los archivos
 
-Los tres archivos de código (`FrontEnd/index.html`, `FrontEnd/css/styles.css`, `FrontEnd/js/script.js`) se guardan en **UTF-8 con BOM** (`EF BB BF`). El BOM es lo que permite que el Bloc de notas y el VS Code de Windows detecten el UTF-8 y muestren bien los acentos, las comillas tipográficas y las flechas (`★`, `↗`, `·`). Si los editás con una herramienta que los vuelva a guardar sin BOM, la página vuelve a mostrar `Ã©`, `â˜…` o `â†—` en vez de `é`, `★` y `↗`.
+Los tres archivos de código (`FrontEnd/index.html`, `FrontEnd/css/styles.css`, `FrontEnd/js/script.js`) se guardan en **UTF-8 con BOM** (`EF BB BF`). 
 
-Si tenés que editar a mano, mantené el BOM. Para revisarlo rápido:
-
-```powershell
-Format-Hex -Path FrontEnd\index.html -Count 3   # debe devolver EF BB BF
-```
 
 ### Imágenes de los testimonios
 
-Las 3 fotos de los testimonios (`FrontEnd/assets/testimonial-1.jpg`, `FrontEnd/assets/testimonial-2.jpg` y `FrontEnd/assets/testimonial-3.jpg`) se extrajeron de la página 4 del PDF de referencia. `testimonial-3.jpg` no estaba en el paquete original de la plantilla: se recuperó del PDF.
+Las 3 fotos de los testimonios (`FrontEnd/assets/testimonial-1.jpg`, `FrontEnd/assets/testimonial-2.jpg` y `FrontEnd/assets/testimonial-3.jpg`) se extrajeron de la página 4 del PDF de referencia. `testimonial-3.jpg` no estaba en el paquete original de la plantilla:
 
 ## Paleta
 
-El acento de la marca es **verde brillante** (`--yellow: #3ee87a`), con `--green-ink: #15803d` para textos sobre fondos claros y `--green-deep: #0b3d20` para detalles sobre verde. El rojo (`--red`) se usa solo en detalles puntuales. Si querés cambiar el acento, modificá esas variables en `:root` dentro de `FrontEnd/css/styles.css`.
+El acento de la marca es **verde brillante** | para textos sobre fondos claros y para detalles sobre verde. El rojo se usa solo en detalles puntuales.
 
 ## Responsive
 
 La página se adapta a celulares, tablets, notebooks y distintos monitores:
 
-- `≥1800px` y `≥2300px`: monitores 2K y ultrawide (ancho máximo ampliado, tipografías y fotos más grandes).
-- `1500–1799px`: monitores de 1920.
-- `1101–1440px`: notebooks de 1366 y 1440.
-- Alto de pantalla ≤ 760px: notebooks apaisadas (hero más compacto).
-- `651–900px`: tablets verticales y grandes (grillas a 2 columnas).
-- `481–650px`: celulares grandes.
-- `≤360px`: celulares chicos.
 
 ## Dinamismo (JavaScript)
 
@@ -74,7 +62,7 @@ La página se adapta a celulares, tablets, notebooks y distintos monitores:
 - Barra de progreso de lectura y header que se compacta al scrollear.
 - Parallax suave del hero (solo desktop).
 - Efecto de luz que sigue al cursor en tarjetas y testimonios.
-- Las cards de testimonios tienen **foto de la persona** en la parte superior (mismo tratamiento que las cards de disciplinas: degradado inferior, saturación baja y zoom suave al hacer hover).
+- Las cards de testimonios tienen **foto de la persona** en la parte superior
 - Scroll suave con compensación del header y enlace “Saltar al contenido” accesible.
 
 ### Cómo se comportan las animaciones
@@ -111,14 +99,6 @@ Las secciones `.intro` y `.experiences` tienen `FrontEnd/assets/fire.mp4` de fon
 ## Botón Login
 
 El botón del header dice **Login** y apunta a `#login`, que por ahora **no existe** (es una página de presentación). Cuando esté el acceso del CRM, reemplazá ese `href` por la URL o por el id de la sección del formulario de ingreso.
-
-## Antes de publicar
-
-- Confirmá el teléfono y el correo de contacto. Se conservaron los datos visibles en el PDF (`923 456 789` y `hola@unsitiogenial.es`) como referencias editables; podrían ser datos de ejemplo.
-- Confirmá que los testimonios y nombres pueden publicarse (la nota interna se quitó de la página; queda pendiente la autorización).
-- Las tipografías se cargan desde Google Fonts; si no hay conexión, se usan fuentes alternativas.
-- Las imágenes se usan como JPG sin optimizar ni formatos modernos (WebP/AVIF); conviene comprimirlas antes de publicar.
-- `FrontEnd/assets/fire.mp4` pesa 35 MB: se carga de forma diferida, pero Git lo guarda completo en el historial. Conviene optimizarlo, convertirlo a WebM o excluirlo del repositorio.
 
 ---
 
