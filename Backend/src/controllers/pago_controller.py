@@ -2,7 +2,14 @@
 from flask import Blueprint, request, jsonify
 
 from src.repositories.pago_repository import PagoRepository
+from src.repositories.cuota_repository import CuotaRepository
+from src.repositories.examen_repository import ExamenRepository
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import (
+    es_alumno,
+    exigir_alumno_propio,
+    datos_alumno
+)
 
 
 pago_bp = Blueprint(
@@ -24,7 +31,24 @@ def listar_pagos():
 
     try:
 
-        pagos = PagoRepository.listar()
+        usuario = request.usuario
+
+        if es_alumno(usuario):
+
+            if not usuario.get("alumno_id"):
+
+                return jsonify({
+                    "status": "ERROR",
+                    "mensaje": "Tu usuario no está asociado a un alumno"
+                }), 403
+
+            pagos = PagoRepository.listar_por_alumno(
+                usuario["alumno_id"]
+            )
+
+        else:
+
+            pagos = PagoRepository.listar()
 
         return jsonify({
             "status": "OK",
@@ -64,6 +88,14 @@ def obtener_pago(pago_id):
                 "mensaje": "Pago no encontrado"
             }), 404
 
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            pago.get("alumno_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         return jsonify({
             "status": "OK",
             "pago": pago
@@ -92,6 +124,14 @@ def obtener_pago(pago_id):
 def listar_pagos_alumno(alumno_id):
 
     try:
+
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            alumno_id
+        )
+
+        if sin_permiso:
+            return sin_permiso
 
         pagos = PagoRepository.listar_por_alumno(
             alumno_id
@@ -254,6 +294,35 @@ def crear_pago():
 
 
     # -----------------------------------------------------
+    # Un ALUMNO solo puede declarar pagos propios
+    # -----------------------------------------------------
+
+    usuario = request.usuario
+
+    if es_alumno(usuario):
+
+        if not usuario.get("alumno_id"):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Tu usuario no está asociado a un alumno"
+            }), 403
+
+        alumno = datos_alumno(usuario["alumno_id"])
+
+        if not alumno or not alumno.get("centro_id"):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Tu alumno no tiene una sede asignada"
+            }), 400
+
+        data["alumno_id"] = alumno["alumno_id"]
+        data["centro_id"] = alumno["centro_id"]
+        data["profesor_id"] = alumno.get("profesor_id")
+
+
+    # -----------------------------------------------------
     # Validar relaciones según concepto
     # -----------------------------------------------------
 
@@ -280,6 +349,54 @@ def crear_pago():
                 "inscripcion_examen_id"
             )
         }), 400
+
+
+    # -----------------------------------------------------
+    # La cuota o inscripción deben ser del mismo alumno
+    # -----------------------------------------------------
+
+    if data.get("cuota_id"):
+
+        cuota = CuotaRepository.obtener_por_id(
+            data["cuota_id"]
+        )
+
+        if not cuota:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "La cuota indicada no existe"
+            }), 400
+
+        if int(cuota["alumno_id"]) != int(data["alumno_id"]):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "La cuota no pertenece al alumno indicado"
+            }), 400
+
+
+    if data.get("inscripcion_examen_id"):
+
+        inscripcion = ExamenRepository.obtener_inscripcion(
+            data["inscripcion_examen_id"]
+        )
+
+        if not inscripcion:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "La inscripción indicada no existe"
+            }), 400
+
+        if int(inscripcion["alumno_id"]) != int(data["alumno_id"]):
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": (
+                    "La inscripción no pertenece al alumno indicado"
+                )
+            }), 400
 
 
     try:

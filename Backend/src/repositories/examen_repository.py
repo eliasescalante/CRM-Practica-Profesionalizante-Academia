@@ -112,7 +112,7 @@ class ExamenRepository:
                     ON pr.persona_id = pp.id
 
                 WHERE ep.activo = TRUE
-                  AND ep.fecha_examen >= NOW()
+                  AND DATE(ep.fecha_examen) >= CURDATE()
 
                 ORDER BY ep.fecha_examen ASC
             """
@@ -413,6 +413,74 @@ class ExamenRepository:
             """
 
             cursor.execute(query, (examen_id,))
+
+            return cursor.fetchall()
+
+        finally:
+
+            cursor.close()
+            conn.close()
+
+
+    # =========================================================
+    # LISTAR INSCRIPCIONES DE UN ALUMNO
+    # =========================================================
+
+    @staticmethod
+    def listar_inscripciones_alumno(alumno_id):
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+
+            query = """
+                SELECT
+                    ie.id AS inscripcion_id,
+                    ie.examen_id,
+                    ie.alumno_id,
+
+                    ep.titulo,
+                    ep.fecha_examen,
+                    ep.monto,
+                    ep.centro_id,
+                    ep.profesor_id,
+                    ep.activo,
+
+                    c.nombre AS centro_nombre,
+
+                    pp.nombre AS profesor_nombre,
+                    pp.apellido AS profesor_apellido,
+
+                    (
+                        SELECT
+                            pa.estado
+                        FROM pago pa
+                        WHERE pa.inscripcion_examen_id = ie.id
+                        ORDER BY pa.fecha_registro DESC
+                        LIMIT 1
+                    ) AS estado_pago
+
+                FROM inscripcion_examen ie
+
+                INNER JOIN examen_programado ep
+                    ON ie.examen_id = ep.id
+
+                INNER JOIN centro c
+                    ON ep.centro_id = c.id
+
+                INNER JOIN profesor pr
+                    ON ep.profesor_id = pr.id
+
+                INNER JOIN persona pp
+                    ON pr.persona_id = pp.id
+
+                WHERE ie.alumno_id = %s
+
+                ORDER BY ep.fecha_examen ASC
+            """
+
+            cursor.execute(query, (alumno_id,))
 
             return cursor.fetchall()
 

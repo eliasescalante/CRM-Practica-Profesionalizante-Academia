@@ -21,7 +21,9 @@ class UsuarioRepository:
                 p.apellido,
                 p.email,
                 p.avatar,
-                p.activo AS persona_activa
+                p.activo AS persona_activa,
+                (SELECT a.id FROM alumno a WHERE a.persona_id = p.id LIMIT 1) AS alumno_id,
+                (SELECT pr.id FROM profesor pr WHERE pr.persona_id = p.id LIMIT 1) AS profesor_id
 
             FROM usuario u
 
@@ -217,7 +219,9 @@ class UsuarioRepository:
                     p.apellido,
                     p.email,
                     p.avatar,
-                    p.activo AS persona_activa
+                    p.activo AS persona_activa,
+                    (SELECT a.id FROM alumno a WHERE a.persona_id = p.id LIMIT 1) AS alumno_id,
+                    (SELECT pr.id FROM profesor pr WHERE pr.persona_id = p.id LIMIT 1) AS profesor_id
                 FROM usuario u
                 INNER JOIN persona p
                     ON u.persona_id = p.id
@@ -254,9 +258,33 @@ class UsuarioRepository:
                     p.fecha_nacimiento,
                     p.contacto_emergencia,
                     p.avatar,
-                    p.activo AS persona_activa
+                    p.activo AS persona_activa,
+                    (SELECT a.id FROM alumno a WHERE a.persona_id = p.id LIMIT 1) AS alumno_id,
+                    (SELECT pr.id FROM profesor pr WHERE pr.persona_id = p.id LIMIT 1) AS profesor_id,
+
+                    al.centro_id,
+                    ce.nombre AS centro_nombre,
+                    al.profesor_id AS alumno_profesor_id,
+                    ppf.nombre AS profesor_nombre,
+                    ppf.apellido AS profesor_apellido,
+                    al.fecha_de_inicio,
+                    al.estado AS alumno_estado
+
                 FROM usuario u
                 INNER JOIN persona p ON u.persona_id = p.id
+
+                LEFT JOIN alumno al
+                    ON al.persona_id = p.id
+
+                LEFT JOIN centro ce
+                    ON ce.id = al.centro_id
+
+                LEFT JOIN profesor prf
+                    ON prf.id = al.profesor_id
+
+                LEFT JOIN persona ppf
+                    ON ppf.id = prf.persona_id
+
                 WHERE u.id = %s
                 LIMIT 1
             """
@@ -416,9 +444,33 @@ class UsuarioRepository:
                     p.fecha_nacimiento,
                     p.contacto_emergencia,
                     p.avatar,
-                    p.activo AS persona_activa
+                    p.activo AS persona_activa,
+                    (SELECT a.id FROM alumno a WHERE a.persona_id = p.id LIMIT 1) AS alumno_id,
+                    (SELECT pr.id FROM profesor pr WHERE pr.persona_id = p.id LIMIT 1) AS profesor_id,
+
+                    al.centro_id,
+                    ce.nombre AS centro_nombre,
+                    al.profesor_id AS alumno_profesor_id,
+                    ppf.nombre AS profesor_nombre,
+                    ppf.apellido AS profesor_apellido,
+                    al.fecha_de_inicio,
+                    al.estado AS alumno_estado
+
                 FROM usuario u
                 INNER JOIN persona p ON u.persona_id = p.id
+
+                LEFT JOIN alumno al
+                    ON al.persona_id = p.id
+
+                LEFT JOIN centro ce
+                    ON ce.id = al.centro_id
+
+                LEFT JOIN profesor prf
+                    ON prf.id = al.profesor_id
+
+                LEFT JOIN persona ppf
+                    ON ppf.id = prf.persona_id
+
                 WHERE u.id = %s
                 LIMIT 1
             """

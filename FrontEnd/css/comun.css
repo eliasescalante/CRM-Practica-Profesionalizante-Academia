@@ -1,0 +1,234 @@
+﻿/* =========================================================
+   Tien Long Hu - Componentes compartidos
+   ---------------------------------------------------------
+   Lo que usan tanto el login como el panel: mensajes,
+   avisos flotantes, insignias de estado, estados vacíos y
+   esqueletos de carga.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   Mensajes en línea
+   --------------------------------------------------------- */
+
+.alerta {
+  padding: 14px 16px;
+  margin: 0 0 18px;
+  border-left: 3px solid #9a958a;
+  background: #f1f0eb;
+  color: #4a4740;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+.alerta[hidden] {
+  display: none;
+}
+
+.alerta-error {
+  border-left-color: var(--red);
+  background: #fdeceb;
+  color: #8d1f20;
+}
+
+.alerta-ok {
+  border-left-color: var(--green-ink);
+  background: #e9faf0;
+  color: #0f5e30;
+}
+
+.alerta-info {
+  border-left-color: #9a958a;
+  background: #f1f0eb;
+  color: #4a4740;
+}
+
+.alerta-aviso {
+  border-left-color: #c98a12;
+  background: #fdf5e3;
+  color: #7a5306;
+}
+
+/* ---------------------------------------------------------
+   Avisos flotantes
+   --------------------------------------------------------- */
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: min(360px, calc(100vw - 40px));
+  pointer-events: none;
+}
+
+.toast {
+  padding: 14px 18px;
+  border-left: 3px solid var(--green-ink);
+  background: #0b0b0b;
+  color: #f4f2ec;
+  font-size: 13.5px;
+  line-height: 1.55;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.3);
+  animation: toastEntra 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.toast-error {
+  border-left-color: var(--red);
+}
+
+.toast-aviso {
+  border-left-color: #e7a51b;
+}
+
+.toast.se-va {
+  animation: toastSale 0.3s ease forwards;
+}
+
+@keyframes toastEntra {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes toastSale {
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------------------------------------------------------
+   Insignias de estado
+   --------------------------------------------------------- */
+
+.insignia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid #d7d3ca;
+  background: #f4f2ec;
+  color: #5f5c55;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.insignia-ok {
+  border-color: rgba(21, 128, 61, 0.35);
+  background: #e9faf0;
+  color: #12633a;
+}
+
+.insignia-warn {
+  border-color: rgba(201, 138, 18, 0.4);
+  background: #fdf5e3;
+  color: #7a5306;
+}
+
+.insignia-bad {
+  border-color: rgba(189, 37, 38, 0.35);
+  background: #fdeceb;
+  color: #8d1f20;
+}
+
+.insignia-neutro {
+  border-color: #d7d3ca;
+  background: #f1f0eb;
+  color: #5f5c55;
+}
+
+/* ---------------------------------------------------------
+   Estados vacíos
+   --------------------------------------------------------- */
+
+.vacio {
+  padding: 34px 20px 30px;
+  text-align: center;
+  border: 1px dashed #d9d5cc;
+  background: #fbfaf6;
+}
+
+.vacio-marca {
+  display: block;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--green-ink);
+  margin-bottom: 10px;
+}
+
+.vacio-titulo {
+  margin: 0 0 6px;
+  font-family: var(--display);
+  font-size: 24px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #3a3a3a;
+}
+
+.vacio-detalle {
+  margin: 0 auto;
+  max-width: 34ch;
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: #7d796f;
+}
+
+/* ---------------------------------------------------------
+   Esqueletos de carga
+   --------------------------------------------------------- */
+
+.cargando-filas {
+  display: grid;
+  gap: 10px;
+}
+
+.cargando-fila {
+  display: block;
+  height: 54px;
+  background: linear-gradient(90deg, #eeece6 25%, #f7f5f0 50%, #eeece6 75%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+@keyframes brillo {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .cargando-fila {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   Solo para lectores de pantalla
+   --------------------------------------------------------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

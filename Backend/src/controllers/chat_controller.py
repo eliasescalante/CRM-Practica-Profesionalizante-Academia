@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from src.repositories.chat_repository import ChatRepository
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import exigir_centro
 
 
 # =========================================================
@@ -26,6 +27,14 @@ chat_bp = Blueprint(
 def listar_mensajes_centro(centro_id):
 
     try:
+
+        sin_permiso = exigir_centro(
+            request.usuario,
+            centro_id
+        )
+
+        if sin_permiso:
+            return sin_permiso
 
         mensajes = ChatRepository.listar_por_centro(centro_id)
 
@@ -64,6 +73,14 @@ def obtener_mensaje(mensaje_id):
                 "mensaje": "Mensaje no encontrado"
             }), 404
 
+        sin_permiso = exigir_centro(
+            request.usuario,
+            mensaje.get("centro_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         return jsonify({
             "status": "OK",
             "mensaje": mensaje
@@ -99,7 +116,6 @@ def crear_mensaje():
 
     campos_obligatorios = [
         "centro_id",
-        "emisor_persona_id",
         "mensaje"
     ]
 
@@ -118,6 +134,15 @@ def crear_mensaje():
             "mensaje": "Faltan campos obligatorios",
             "campos": campos_faltantes
         }), 400
+
+
+    sin_permiso = exigir_centro(
+        request.usuario,
+        data["centro_id"]
+    )
+
+    if sin_permiso:
+        return sin_permiso
 
 
     # El emisor siempre es el usuario autenticado: evita que un usuario

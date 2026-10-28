@@ -14,24 +14,61 @@
 
 ## Landing pública — Tien Long Hu / Shen Xin Ling
 
-Landing page pública de la academia, de una sola página, hecha con HTML, CSS y JavaScript puro. Diseño inspirado en el PDF de referencia de Tien Long Hu / Shen Xin Ling. **No consume la API del backend todavía**: es solo presentación.
+Landing page pública de la academia, de una sola página, hecha con HTML, CSS y JavaScript puro. Diseño inspirado en el PDF de referencia de Tien Long Hu / Shen Xin Ling. La landing es solo presentación; el **login, el registro y el panel** sí consumen la API del backend.
 
 ### Estructura de carpetas
 
 ```
 FrontEnd/
-├── index.html      # estructura y contenido de todas las secciones
+├── index.html      # landing pública
+├── login.html      # ingreso + alta de alumno y de profesor
+├── panel.html      # panel privado (vista alumno / vista staff)
 ├── css/
-│   └── styles.css  # paleta, tipografía, layout responsive y animaciones
+│   ├── styles.css  # paleta, tipografía, layout responsive y animaciones
+│   ├── comun.css   # alertas, toasts, insignias, estados vacíos y skeletons
+│   ├── auth.css    # login y registro
+│   └── panel.css   # panel del alumno y del staff
 ├── js/
-│   └── script.js   # menú móvil, scroll suave, animaciones, barra de lectura, parallax y año del footer
+│   ├── script.js   # landing: menú móvil, scroll suave, animaciones, barra de lectura, parallax y año del footer
+│   ├── api.js      # cliente de la API y manejo de la sesión
+│   ├── ui.js       # helpers de DOM, formato de fechas/moneda y mensajes
+│   ├── auth.js     # login, registro y selects de sede/profesor
+│   ├── panel.js    # guardia de sesión, carga por rol y render del panel
+│   ├── panel-ui.js # modal, drawer, confirmaciones y constructores de formulario
+│   └── panel-acciones.js # acciones del panel: perfil, alumnos, lista, pagos, exámenes y noticias
 └── assets/         # imágenes del PDF de referencia y favicon.svg con la marca
 ```
 
 ### Cómo ejecutarla
 
-1. Abrí `FrontEnd/index.html` en tu navegador. Para desarrollo, podés usar la extensión **Live Server** de VS Code.
-2. No requiere Node.js, npm, frameworks ni backend.
+1. Levantá el backend (`Backend/app.py`, escucha en `http://127.0.0.1:4000`).
+2. Serví `FrontEnd/` con un servidor estático: **Live Server** de VS Code o `python -m http.server 5601 --bind 127.0.0.1` desde la carpeta `FrontEnd`.
+3. Abrí `http://127.0.0.1:5601/index.html`. No requiere Node.js, npm ni frameworks.
+
+### Login, registro y panel
+
+- El botón **Login** del header de la landing lleva a `login.html`.
+- Se ingresa con **usuario o email** y contraseña. La casilla **Mantener la sesión abierta** guarda el token en `localStorage`; si se destilda, se usa `sessionStorage` y la sesión se cierra al cerrar la pestaña.
+- **Alta de alumno**: DNI, nombre, apellido, email, usuario, contraseña (mínimo 8 caracteres), teléfono/nacimiento/emergencia opcionales, sede, profesor y fecha de inicio. Los selects se llenan con los `GET` públicos `/api/centros` y `/api/profesores`. La cuenta queda activa y puede ingresar enseguida.
+- **Alta de profesor**: solo datos personales. La cuenta y la ficha de profesor quedan **inactivas** hasta que un `ADMIN` las habilite; el login responde 403 mientras tanto.
+- **Panel por rol** (`panel.html`):
+  - `ALUMNO`: sede, profesor y fecha de inicio; asistencias, cuotas abiertas, pagos confirmados y graduaciones; listados de cuotas, pagos, exámenes, graduaciones y novedades; canal de mensajes de su sede. Puede editar su perfil y su foto, cambiar la contraseña, declarar un pago (queda `PENDIENTE` hasta que la escuela lo confirme), inscribirse a un examen o cancelar la inscripción y escribirle a la escuela.
+  - `PROFESOR` / `ADMIN`: totales de alumnos, profesores, sedes y pagos pendientes; tabla de alumnos con buscador (nombre, DNI, sede o profesor), pagos pendientes, agenda de exámenes y novedades. Puede dar de alta y editar alumnos (con baja lógica), abrir la **ficha 360** de cada alumno desde un drawer (datos, asistencias, cuotas, pagos, graduaciones e inscripciones), tomar lista por sede y fecha, registrar o confirmar pagos, **agendar/editar/eliminar exámenes**, publicar/editar/eliminar noticias y responder los mensajes de la sede. El `ADMIN` además gestiona las **sedes** (alta, edición, baja y reactivación). El perfil propio se edita con el mismo modal del alumno.
+  - Los formularios y la ficha se abren dentro de `panel.html` (modal y drawer), sin páginas extra.
+- Al entrar, el panel valida la sesión contra `/api/auth/me`. Si el token venció o la cuenta fue deshabilitada, limpia el almacenamiento y vuelve a `login.html?motivo=expirado`.
+- La URL de la API se resuelve en este orden: `<meta name="crm-api">` → `localStorage.crm.apiBase` → mismo host en el puerto `4000` → `http://127.0.0.1:4000`.
+
+### Pagos, exámenes, sedes, novedades y mensajes
+
+- **Conceptos de pago**: el formulario (tanto el del alumno como el del staff) habilita `CUOTA` solo si el alumno tiene cuotas en estado `PENDIENTE` o `VENCIDA`, y `EXAMEN` solo si tiene inscripciones a examen activas. Si no hay datos para un concepto, la opción queda deshabilitada con una pista que explica el motivo y el formulario cae en `MATRICULA`. Al elegir `CUOTA` se cargan sus cuotas y el monto se completa solo.
+- Las cuotas e inscripciones del modal se piden frescas a la API al abrirlo (no se usa la lista cacheada del panel), así el alumno ve lo que acaba de generarse.
+- **Agenda de exámenes**: en la tarjeta **Exámenes programados** el staff usa **Nuevo examen** para cargar título, sede, profesor, fecha y hora, y monto (puede ser 0). Se guarda con `POST /api/examenes/`, se edita con `PUT /api/examenes/<id>` y se da de baja con `DELETE /api/examenes/<id>` (baja lógica: queda `INACTIVO` visible para el staff). Los exámenes activos se listan en `GET /api/examenes/proximos` y los de hoy siguen apareciendo aunque la hora ya haya pasado; el alumno los ve en su panel y se inscribe desde ahí.
+- El `PROFESOR` solo agenda exámenes para sus sedes asignadas y para sí mismo, y solo puede editar o eliminar los que tiene asignados. El `ADMIN` puede hacerlo en cualquier sede y con cualquier profesor. La regla se valida en el backend: un `PROFESOR` que intente otra sede u otro docente recibe `403`.
+- **Sedes**: solo el `ADMIN` ve la tarjeta **Sedes**. Se crea con `POST /api/centros` (nombre obligatorio; dirección, teléfono e imagen opcionales), se edita con `PUT /api/centros/<id>` y se da de baja con `DELETE /api/centros/<id>` (baja lógica). Las sedes dadas de baja quedan con la insignia `INACTIVA` y se pueden **reactivar**; al guardar se refrescan los selectores de alumnos, exámenes, noticias y mensajes. El `PROFESOR` no ve la tarjeta y el backend rechaza sus intentos con `403`.
+- **Novedades**: el staff publica con `POST /api/noticias` y edita con `PUT /api/noticias/<id>` (título, contenido, sede opcional e imagen por URL). El autor sale del token. Eliminar es una baja lógica con `DELETE /api/noticias/<id>`: la noticia queda `INACTIVA`, se sigue viendo en el panel del staff con su insignia pero ya no se muestra a los alumnos ni ofrece acciones.
+- El `PROFESOR` solo puede publicar, editar y eliminar novedades de sus sedes asignadas; la opción **General (todas las sedes)** y las noticias de otras sedes quedan reservadas al `ADMIN`. La regla se valida en el backend, no solo en la interfaz: pedir otra sede devuelve `403`.
+- El alumno ve en **Novedades** las noticias generales y las de su propia sede (`GET /api/noticias/centro/<id>`); las inactivas solo las ve el staff.
+- **Mensajes por sede**: se leen con `GET /api/chat/centro/<id>` y se envían con `POST /api/chat` (máximo 500 caracteres). El alumno escribe en el canal de la sede de su perfil; el staff elige la sede en un selector (el `ADMIN` ve todas, el `PROFESOR` solo las propias). Cada mensaje muestra emisor, rol, avatar y fecha, y los propios se alinean a la derecha.
 
 ### Mockup del portal del alumno
 
@@ -39,7 +76,7 @@ En la raíz del repositorio hay un `index.html` aparte: es el **mockup del Porta
 
 ### Codificación de los archivos
 
-Los tres archivos de código (`FrontEnd/index.html`, `FrontEnd/css/styles.css`, `FrontEnd/js/script.js`) se guardan en **UTF-8 con BOM** (`EF BB BF`). 
+Los archivos de código de `FrontEnd/` (`*.html`, `css/*.css`, `js/*.js`) se guardan en **UTF-8 con BOM** (`EF BB BF`), con un solo BOM por archivo. El `.md` y los assets no llevan BOM.
 
 
 ### Imágenes de los testimonios
@@ -98,7 +135,7 @@ Las secciones `.intro` y `.experiences` tienen `FrontEnd/assets/fire.mp4` de fon
 
 ## Botón Login
 
-El botón del header dice **Login** y apunta a `#login`, que por ahora **no existe** (es una página de presentación). Cuando esté el acceso del CRM, reemplazá ese `href` por la URL o por el id de la sección del formulario de ingreso.
+El botón del header dice **Login** y lleva a `login.html`, donde están el ingreso y el alta de alumno/profesor.
 
 ---
 

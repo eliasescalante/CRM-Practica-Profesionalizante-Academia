@@ -1,0 +1,473 @@
+﻿<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0b" />
+    <meta
+      name="description"
+      content="Ingresá al portal de Tien Long Hu o creá tu cuenta de alumno o profesor."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Ingresar | Tien Long Hu</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/comun.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+  </head>
+  <body class="auth-body">
+    <a class="skip-link" href="#contenido">Saltar al formulario</a>
+    <div class="topline"></div>
+
+    <header class="auth-header">
+      <a class="brand" href="index.html" aria-label="Tien Long Hu, volver al inicio">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-copy"
+          ><strong>TIEN LONG HU</strong><small>SHEN XIN LING</small></span
+        >
+      </a>
+      <a class="auth-volver" href="index.html">
+        <span aria-hidden="true">←</span>
+        <span class="texto-largo">Volver al</span> INICIO
+      </a>
+    </header>
+
+    <main class="auth-main" id="contenido">
+      <section class="auth-visual" aria-label="Portal de la escuela">
+        <div class="auth-visual-img" aria-hidden="true"></div>
+        <div class="auth-visual-grad" aria-hidden="true"></div>
+        <div class="auth-visual-inner">
+          <p class="eyebrow"><span></span> PORTAL DE ALUMNOS Y PROFESORES</p>
+          <p class="auth-visual-title">
+            TU PRÁCTICA,<br /><em>EN ORDEN.</em>
+          </p>
+          <p class="auth-visual-lead">
+            El mismo camino de siempre, ahora con tu información a mano:
+            asistencias, cuotas, exámenes y novedades de la escuela.
+          </p>
+          <ul class="auth-visual-lista">
+            <li><strong>Alumnos:</strong> tus cuotas, asistencias y graduaciones.</li>
+            <li><strong>Profesores:</strong> tus grupos, agendas y pagos.</li>
+            <li><strong>Administración:</strong> sedes, cuotas y novedades.</li>
+          </ul>
+        </div>
+        <div class="auth-visual-foot">
+          <b>1991</b>
+          <span>TRADICIÓN EN MOVIMIENTO · QUILMES</span>
+        </div>
+      </section>
+
+      <section class="auth-panel" aria-labelledby="auth-title">
+        <div class="auth-card">
+          <p class="auth-kicker">Portal Tien Long Hu</p>
+          <h1 class="auth-titulo" id="auth-title">Entrá a tu <em>cuenta.</em></h1>
+          <p class="auth-bajada" id="auth-bajada">
+            Ingresá con tu usuario o email. Si todavía no tenés cuenta, podés
+            crearla en un minuto.
+          </p>
+
+          <div class="auth-tabs" role="tablist" aria-label="Ingresar o crear cuenta">
+            <button
+              type="button"
+              class="auth-tab"
+              id="tab-login"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-login"
+            >
+              Ingresar
+            </button>
+            <button
+              type="button"
+              class="auth-tab"
+              id="tab-registro"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-registro"
+            >
+              Crear cuenta
+            </button>
+          </div>
+
+          <!-- ============ INGRESAR ============ -->
+          <div
+            id="panel-login"
+            role="tabpanel"
+            aria-labelledby="tab-login"
+            tabindex="0"
+          >
+            <div class="alerta" id="login-aviso" role="alert" hidden></div>
+
+            <form id="form-login" novalidate>
+              <div class="form-grid">
+                <div class="campo campo-ancho">
+                  <label for="login-usuario">Usuario o email</label>
+                  <input
+                    type="text"
+                    id="login-usuario"
+                    name="usuario"
+                    autocomplete="username"
+                    spellcheck="false"
+                    placeholder="juanperez"
+                    required
+                  />
+                </div>
+
+                <div class="campo campo-ancho">
+                  <label for="login-clave">Contraseña</label>
+                  <div class="campo-clave">
+                    <input
+                      type="password"
+                      id="login-clave"
+                      name="contrasenia"
+                      autocomplete="current-password"
+                      placeholder="Tu contraseña"
+                      required
+                    />
+                    <button
+                      type="button"
+                      class="ver-clave"
+                      data-ver="login-clave"
+                      aria-pressed="false"
+                    >
+                      Ver
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="fila-check">
+                <label class="check" for="login-recordar">
+                  <input type="checkbox" id="login-recordar" checked />
+                  Mantener la sesión abierta
+                </label>
+              </div>
+
+              <button type="submit" class="auth-submit" id="login-enviar">
+                Ingresar <span aria-hidden="true">↗</span>
+              </button>
+            </form>
+
+            <p class="auth-pie">
+              ¿No tenés cuenta?
+              <button type="button" data-ir="registro">Creá una acá</button>
+            </p>
+          </div>
+
+          <!-- ============ CREAR CUENTA ============ -->
+          <div
+            id="panel-registro"
+            role="tabpanel"
+            aria-labelledby="tab-registro"
+            tabindex="0"
+            hidden
+          >
+            <div class="auth-switch" role="tablist" aria-label="Tipo de cuenta">
+              <button
+                type="button"
+                role="tab"
+                id="tab-alumno"
+                aria-selected="true"
+                aria-controls="wrap-alumno"
+              >
+                Soy alumno
+              </button>
+              <button
+                type="button"
+                role="tab"
+                id="tab-profesor"
+                aria-selected="false"
+                aria-controls="wrap-profesor"
+              >
+                Soy profesor
+              </button>
+            </div>
+
+            <div class="alerta" id="registro-aviso" role="alert" hidden></div>
+
+            <!-- --- Alta de alumno --- -->
+            <div id="wrap-alumno" role="tabpanel" aria-labelledby="tab-alumno">
+              <form id="form-alumno" novalidate>
+                <div class="form-grid">
+                  <div class="campo">
+                    <label for="al-dni">DNI</label>
+                    <input
+                      type="text"
+                      id="al-dni"
+                      name="dni"
+                      inputmode="numeric"
+                      pattern="[0-9]{6,9}"
+                      placeholder="31447495"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-nombre">Nombre</label>
+                    <input
+                      type="text"
+                      id="al-nombre"
+                      name="nombre"
+                      autocomplete="given-name"
+                      placeholder="Juan"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-apellido">Apellido</label>
+                    <input
+                      type="text"
+                      id="al-apellido"
+                      name="apellido"
+                      autocomplete="family-name"
+                      placeholder="Pérez"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-email">Email</label>
+                    <input
+                      type="email"
+                      id="al-email"
+                      name="email"
+                      autocomplete="email"
+                      placeholder="juan.perez@gmail.com"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-usuario">Usuario</label>
+                    <input
+                      type="text"
+                      id="al-usuario"
+                      name="usuario"
+                      autocomplete="username"
+                      spellcheck="false"
+                      pattern="[A-Za-z0-9._\-]{3,20}"
+                      placeholder="juanperez"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-clave">Contraseña</label>
+                    <div class="campo-clave">
+                      <input
+                        type="password"
+                        id="al-clave"
+                        name="contrasenia"
+                        autocomplete="new-password"
+                        placeholder="Mínimo 8 caracteres"
+                        minlength="8"
+                        required
+                      />
+                      <button
+                        type="button"
+                        class="ver-clave"
+                        data-ver="al-clave"
+                        aria-pressed="false"
+                      >
+                        Ver
+                      </button>
+                    </div>
+                    <small class="pista">Mínimo 8 caracteres.</small>
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-telefono"
+                      >Teléfono <span class="opcional">(opcional)</span></label
+                    >
+                    <input
+                      type="tel"
+                      id="al-telefono"
+                      name="telefono"
+                      autocomplete="tel"
+                      placeholder="11 2345 6789"
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-nacimiento"
+                      >Fecha de nacimiento
+                      <span class="opcional">(opcional)</span></label
+                    >
+                    <input
+                      type="date"
+                      id="al-nacimiento"
+                      name="fecha_nacimiento"
+                    />
+                  </div>
+
+                  <div class="campo campo-ancho">
+                    <label for="al-emergencia"
+                      >Contacto de emergencia
+                      <span class="opcional">(opcional)</span></label
+                    >
+                    <input
+                      type="text"
+                      id="al-emergencia"
+                      name="contacto_emergencia"
+                      placeholder="Nombre y teléfono"
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-centro">Sede</label>
+                    <select id="al-centro" name="centro_id" required>
+                      <option value="">Cargando sedes…</option>
+                    </select>
+                  </div>
+
+                  <div class="campo">
+                    <label for="al-profesor">Profesor</label>
+                    <select id="al-profesor" name="profesor_id" required>
+                      <option value="">Elegí una sede primero</option>
+                    </select>
+                  </div>
+
+                  <div class="campo campo-ancho">
+                    <label for="al-inicio">Fecha de inicio</label>
+                    <input type="date" id="al-inicio" name="fecha_inicio" required />
+                  </div>
+                </div>
+
+                <button type="submit" class="auth-submit" id="al-enviar">
+                  Crear mi cuenta <span aria-hidden="true">↗</span>
+                </button>
+              </form>
+
+              <p class="auth-pie">
+                ¿Ya tenés cuenta?
+                <button type="button" data-ir="login">Ingresá</button>
+              </p>
+            </div>
+
+            <!-- --- Alta de profesor --- -->
+            <div
+              id="wrap-profesor"
+              role="tabpanel"
+              aria-labelledby="tab-profesor"
+              hidden
+            >
+              <form id="form-profesor" novalidate>
+                <div class="form-grid">
+                  <div class="campo">
+                    <label for="pr-dni">DNI</label>
+                    <input
+                      type="text"
+                      id="pr-dni"
+                      name="dni"
+                      inputmode="numeric"
+                      pattern="[0-9]{6,9}"
+                      placeholder="11111111"
+                      autocomplete="off"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="pr-nombre">Nombre</label>
+                    <input
+                      type="text"
+                      id="pr-nombre"
+                      name="nombre"
+                      autocomplete="given-name"
+                      placeholder="Carlos"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="pr-apellido">Apellido</label>
+                    <input
+                      type="text"
+                      id="pr-apellido"
+                      name="apellido"
+                      autocomplete="family-name"
+                      placeholder="Gómez"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="pr-email">Email</label>
+                    <input
+                      type="email"
+                      id="pr-email"
+                      name="email"
+                      autocomplete="email"
+                      placeholder="profesor@crm.com"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="pr-usuario">Usuario</label>
+                    <input
+                      type="text"
+                      id="pr-usuario"
+                      name="usuario"
+                      autocomplete="username"
+                      spellcheck="false"
+                      pattern="[A-Za-z0-9._\-]{3,20}"
+                      placeholder="carlosprof"
+                      required
+                    />
+                  </div>
+
+                  <div class="campo">
+                    <label for="pr-clave">Contraseña</label>
+                    <div class="campo-clave">
+                      <input
+                        type="password"
+                        id="pr-clave"
+                        name="contrasenia"
+                        autocomplete="new-password"
+                        placeholder="Mínimo 8 caracteres"
+                        minlength="8"
+                        required
+                      />
+                      <button
+                        type="button"
+                        class="ver-clave"
+                        data-ver="pr-clave"
+                        aria-pressed="false"
+                      >
+                        Ver
+                      </button>
+                    </div>
+                    <small class="pista">Mínimo 8 caracteres.</small>
+                  </div>
+                </div>
+
+                <button type="submit" class="auth-submit" id="pr-enviar">
+                  Solicitar alta <span aria-hidden="true">↗</span>
+                </button>
+              </form>
+
+              <p class="auth-pie">
+                La cuenta de profesor queda pendiente hasta que un
+                administrador la habilite.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

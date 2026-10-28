@@ -2,6 +2,38 @@
 from flask import Blueprint, request, jsonify
 from src.repositories.examen_repository import ExamenRepository
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import (
+    denegado,
+    es_admin,
+    es_alumno,
+    exigir_alumno_propio,
+    exigir_centro
+)
+
+
+def puede_gestionar_examen(usuario, centro_id, profesor_id):
+    """El ADMIN agenda en cualquier sede; el PROFESOR solo sus clases.
+
+    Devuelve una respuesta 403 o None.
+    """
+
+    if es_admin(usuario):
+        return None
+
+    try:
+        propio = int(usuario.get("profesor_id"))
+        asignado = int(profesor_id)
+    except (TypeError, ValueError):
+        return denegado(
+            "Solo podés agendar exámenes para tus propias clases"
+        )
+
+    if propio != asignado:
+        return denegado(
+            "Solo podés agendar exámenes para tus propias clases"
+        )
+
+    return exigir_centro(usuario, centro_id)
 
 
 # =========================================================
@@ -26,10 +58,10 @@ def listar_examenes():
 
     try:
 
-        incluir_inactivos = request.args.get(
-            "todos",
-            "false"
-        ).lower() == "true"
+        incluir_inactivos = (
+            request.args.get("todos", "false").lower() == "true"
+            and request.usuario.get("rol") in ("ADMIN", "PROFESOR")
+        )
 
         examenes = ExamenRepository.listar(
             incluir_inactivos=incluir_inactivos
@@ -151,6 +183,15 @@ def crear_examen():
                     "mensaje": f"El campo '{campo}' es obligatorio"
                 }), 400
 
+        sin_permiso = puede_gestionar_examen(
+            request.usuario,
+            datos.get("centro_id"),
+            datos.get("profesor_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         examen_id = ExamenRepository.crear(datos)
 
         examen = ExamenRepository.obtener_por_id(
@@ -209,6 +250,33 @@ def actualizar_examen(examen_id):
                     "mensaje": f"El campo '{campo}' es obligatorio"
                 }), 400
 
+        examen_actual = ExamenRepository.obtener_por_id(examen_id)
+
+        if not examen_actual:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Examen no encontrado"
+            }), 404
+
+        sin_permiso = puede_gestionar_examen(
+            request.usuario,
+            examen_actual.get("centro_id"),
+            examen_actual.get("profesor_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
+        sin_permiso = puede_gestionar_examen(
+            request.usuario,
+            datos.get("centro_id"),
+            datos.get("profesor_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         actualizado = ExamenRepository.actualizar(
             examen_id,
             datos
@@ -251,6 +319,24 @@ def eliminar_examen(examen_id):
 
     try:
 
+        examen = ExamenRepository.obtener_por_id(examen_id)
+
+        if not examen:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Examen no encontrado"
+            }), 404
+
+        sin_permiso = puede_gestionar_examen(
+            request.usuario,
+            examen.get("centro_id"),
+            examen.get("profesor_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         eliminado = ExamenRepository.eliminar(
             examen_id
         )
@@ -272,6 +358,60 @@ def eliminar_examen(examen_id):
         return jsonify({
             "status": "ERROR",
             "mensaje": "Error al eliminar el examen",
+            "detalle": str(e)
+        }), 500
+
+
+# =========================================================
+# MIS INSCRIPCIONES
+# =========================================================
+
+@examen_bp.route("/mis-inscripciones", methods=["GET"])
+@token_required
+@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
+def listar_mis_inscripciones():
+
+    try:
+
+        usuario = request.usuario
+
+        if es_alumno(usuario):
+
+            alumno_id = usuario.get("alumno_id")
+
+            if not alumno_id:
+
+                return jsonify({
+                    "status": "ERROR",
+                    "mensaje": "Tu usuario no está asociado a un alumno"
+                }), 403
+
+        else:
+
+            alumno_id = request.args.get("alumno_id", type=int)
+
+            if not alumno_id:
+
+                return jsonify({
+                    "status": "ERROR",
+                    "mensaje": "Indicá el alumno_id por query string"
+                }), 400
+
+        inscripciones = ExamenRepository.listar_inscripciones_alumno(
+            alumno_id
+        )
+
+        return jsonify({
+            "status": "OK",
+            "cantidad": len(inscripciones),
+            "inscripciones": inscripciones
+        }), 200
+
+    except Exception as e:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "Error al listar las inscripciones",
             "detalle": str(e)
         }), 500
 
@@ -304,6 +444,18 @@ def listar_inscriptos(examen_id):
         inscriptos = ExamenRepository.listar_inscriptos(
             examen_id
         )
+
+        # Un ALUMNO solo puede ver su propia inscripción.
+        if es_alumno(request.usuario):
+
+            alumno_id = request.usuario.get("alumno_id")
+
+            inscriptos = [
+                inscripto
+                for inscripto in inscriptos
+                if alumno_id is not None
+                and int(inscripto["alumno_id"]) == int(alumno_id)
+            ]
 
         return jsonify({
             "status": "OK",
@@ -345,6 +497,14 @@ def obtener_inscripcion(inscripcion_id):
                 "mensaje": "Inscripción no encontrada"
             }), 404
 
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            inscripcion.get("alumno_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         return jsonify({
             "status": "OK",
             "inscripcion": inscripcion
@@ -383,6 +543,20 @@ def inscribir_alumno(examen_id):
             }), 400
 
         alumno_id = datos.get("alumno_id")
+
+        usuario = request.usuario
+
+        if es_alumno(usuario):
+
+            if not usuario.get("alumno_id"):
+
+                return jsonify({
+                    "status": "ERROR",
+                    "mensaje": "Tu usuario no está asociado a un alumno"
+                }), 403
+
+            # Un ALUMNO solo puede inscribirse a sí mismo.
+            alumno_id = usuario["alumno_id"]
 
         if not alumno_id:
 
@@ -458,6 +632,25 @@ def inscribir_alumno(examen_id):
 def cancelar_inscripcion(inscripcion_id):
 
     try:
+
+        inscripcion = ExamenRepository.obtener_inscripcion(
+            inscripcion_id
+        )
+
+        if not inscripcion:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Inscripción no encontrada"
+            }), 404
+
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            inscripcion.get("alumno_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
 
         eliminado = ExamenRepository.cancelar_inscripcion(
             inscripcion_id

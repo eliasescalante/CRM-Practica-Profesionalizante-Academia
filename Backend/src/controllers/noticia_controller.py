@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from src.repositories.noticia_repository import NoticiaRepository
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import denegado, es_admin, exigir_centro
 
 
 noticia_bp = Blueprint(
@@ -10,6 +11,25 @@ noticia_bp = Blueprint(
     __name__,
     url_prefix="/api/noticias"
 )
+
+
+def sede_permitida(usuario, centro_id):
+    """El ADMIN publica en cualquier sede (o general); el PROFESOR solo en las suyas.
+
+    Devuelve una respuesta 403 o None.
+    """
+
+    if es_admin(usuario):
+
+        return None
+
+    if centro_id in (None, "", 0):
+
+        return denegado(
+            "Solo un administrador puede publicar novedades generales"
+        )
+
+    return exigir_centro(usuario, centro_id)
 
 
 # =========================================================
@@ -26,6 +46,7 @@ def listar_noticias():
 
         incluir_inactivas = (
             request.args.get("todos", "false").lower() == "true"
+            and request.usuario.get("rol") in ("ADMIN", "PROFESOR")
         )
 
         noticias = NoticiaRepository.listar(
@@ -131,7 +152,6 @@ def crear_noticia():
         }), 400
 
     campos_obligatorios = [
-        "autor_usuario_id",
         "titulo",
         "contenido"
     ]
@@ -149,6 +169,18 @@ def crear_noticia():
             "mensaje": "Faltan campos obligatorios",
             "campos": campos_faltantes
         }), 400
+
+    # El autor siempre es el usuario autenticado: no se acepta del body.
+    data["autor_usuario_id"] = request.usuario["usuario_id"]
+
+    sin_permiso = sede_permitida(
+        request.usuario,
+        data.get("centro_id")
+    )
+
+    if sin_permiso:
+
+        return sin_permiso
 
     try:
 
@@ -209,6 +241,30 @@ def actualizar_noticia(noticia_id):
             "campos": campos_faltantes
         }), 400
 
+    existente = NoticiaRepository.obtener_por_id(noticia_id)
+
+    if not existente:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "Noticia no encontrada"
+        }), 404
+
+    nuevo_centro = (
+        data["centro_id"]
+        if "centro_id" in data
+        else existente.get("centro_id")
+    )
+
+    sin_permiso = (
+        sede_permitida(request.usuario, existente.get("centro_id"))
+        or sede_permitida(request.usuario, nuevo_centro)
+    )
+
+    if sin_permiso:
+
+        return sin_permiso
+
     try:
 
         actualizado = NoticiaRepository.actualizar(
@@ -251,6 +307,24 @@ def actualizar_noticia(noticia_id):
 def eliminar_noticia(noticia_id):
 
     try:
+
+        existente = NoticiaRepository.obtener_por_id(noticia_id)
+
+        if not existente:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "Noticia no encontrada"
+            }), 404
+
+        sin_permiso = sede_permitida(
+            request.usuario,
+            existente.get("centro_id")
+        )
+
+        if sin_permiso:
+
+            return sin_permiso
 
         desactivada = NoticiaRepository.desactivar(noticia_id)
 

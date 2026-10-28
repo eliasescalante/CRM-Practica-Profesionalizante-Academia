@@ -2,7 +2,7 @@
 from flask import Blueprint, request, jsonify
 
 from src.repositories.centro_repository import CentroRepository
-from src.utils.auth import token_required, roles_required
+from src.utils.auth import token_required, roles_required, token_opcional
 
 
 centro_bp = Blueprint(
@@ -15,17 +15,21 @@ centro_bp = Blueprint(
 # =========================================================
 # GET /api/centros
 # Listar centros
+# Público: el alta de alumno necesita este listado antes de
+# tener sesión. Un usuario autenticado puede pedir ?todos=true.
 # =========================================================
 
 @centro_bp.route("", methods=["GET"])
-@token_required
-@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
+@token_opcional
 def listar_centros():
 
     try:
 
+        autenticado = getattr(request, "usuario", None) is not None
+
         incluir_inactivos = (
-            request.args.get("todos", "false").lower() == "true"
+            autenticado
+            and request.args.get("todos", "false").lower() == "true"
         )
 
         centros = CentroRepository.listar(

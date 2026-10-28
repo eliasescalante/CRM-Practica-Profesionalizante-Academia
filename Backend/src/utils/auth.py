@@ -164,9 +164,72 @@ def token_required(func):
 
         usuario["rol"] = usuario_db["rol"]
         usuario["persona_id"] = usuario_db["persona_id"]
+        usuario["alumno_id"] = usuario_db.get("alumno_id")
+        usuario["profesor_id"] = usuario_db.get("profesor_id")
 
         # Guardamos el usuario autenticado
         # para que el endpoint pueda utilizarlo.
+
+        request.usuario = usuario
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+# =========================================================
+# DECORADOR: TOKEN OPCIONAL
+# =========================================================
+#
+# Para vistas de solo lectura que necesitan funcionar también sin
+# sesión (por ejemplo, poblar los selects del alta de alumno).
+# Si hay token válido deja request.usuario como el usuario autenticado;
+# si no hay token, es inválido o la cuenta está inactiva, deja None
+# y la vista decide qué mostrar. Nunca corta la petición.
+
+def token_opcional(func):
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        request.usuario = None
+
+        token = obtener_token()
+
+        if not token:
+            return func(*args, **kwargs)
+
+        usuario = verificar_token(token)
+
+        if not usuario:
+            return func(*args, **kwargs)
+
+        try:
+
+            from src.repositories.usuario_repository import (
+                UsuarioRepository
+            )
+
+            usuario_db = UsuarioRepository.obtener_por_id(
+                usuario["usuario_id"]
+            )
+
+        except Exception:
+            return func(*args, **kwargs)
+
+        if not usuario_db:
+            return func(*args, **kwargs)
+
+        if (
+            not usuario_db["usuario_activo"]
+            or not usuario_db["persona_activa"]
+        ):
+            return func(*args, **kwargs)
+
+        usuario["rol"] = usuario_db["rol"]
+        usuario["persona_id"] = usuario_db["persona_id"]
+        usuario["alumno_id"] = usuario_db.get("alumno_id")
+        usuario["profesor_id"] = usuario_db.get("profesor_id")
 
         request.usuario = usuario
 

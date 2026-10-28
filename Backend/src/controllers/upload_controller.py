@@ -4,6 +4,7 @@ import cloudinary
 import cloudinary.uploader
 from database.connection import get_db_connection
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import es_admin
 
 upload_bp = Blueprint("upload", __name__, url_prefix="/api/upload")
 
@@ -20,7 +21,14 @@ def subir_avatar():
             }), 400
 
         file = request.files['file']
-        persona_id = request.form.get("persona_id") 
+
+        # El avatar solo puede modificar la persona del token. Un ADMIN
+        # puede indicar otra persona_id desde el formulario.
+        persona_id = request.usuario["persona_id"]
+
+        if es_admin(request.usuario) and request.form.get("persona_id"):
+
+            persona_id = request.form.get("persona_id")
 
         if file.filename == '':
             return jsonify({

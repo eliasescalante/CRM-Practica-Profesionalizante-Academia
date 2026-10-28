@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 
 from src.repositories.cuota_repository import CuotaRepository
 from src.utils.auth import token_required, roles_required
+from src.utils.permisos import es_alumno, exigir_alumno_propio
 
 
 cuota_bp = Blueprint(
@@ -23,7 +24,24 @@ def listar_cuotas():
 
     try:
 
-        cuotas = CuotaRepository.listar()
+        usuario = request.usuario
+
+        if es_alumno(usuario):
+
+            if not usuario.get("alumno_id"):
+
+                return jsonify({
+                    "status": "ERROR",
+                    "mensaje": "Tu usuario no está asociado a un alumno"
+                }), 403
+
+            cuotas = CuotaRepository.listar_por_alumno(
+                usuario["alumno_id"]
+            )
+
+        else:
+
+            cuotas = CuotaRepository.listar()
 
         return jsonify({
             "status": "OK",
@@ -61,6 +79,14 @@ def obtener_cuota(cuota_id):
                 "mensaje": "Cuota no encontrada"
             }), 404
 
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            cuota.get("alumno_id")
+        )
+
+        if sin_permiso:
+            return sin_permiso
+
         return jsonify({
             "status": "OK",
             "cuota": cuota
@@ -86,6 +112,14 @@ def obtener_cuota(cuota_id):
 def listar_cuotas_alumno(alumno_id):
 
     try:
+
+        sin_permiso = exigir_alumno_propio(
+            request.usuario,
+            alumno_id
+        )
+
+        if sin_permiso:
+            return sin_permiso
 
         cuotas = CuotaRepository.listar_por_alumno(alumno_id)
 

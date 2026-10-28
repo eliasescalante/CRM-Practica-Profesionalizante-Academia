@@ -1,0 +1,601 @@
+﻿<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0b0b" />
+    <meta
+      name="description"
+      content="Panel privado de Tien Long Hu: asistencias, cuotas, pagos y novedades según tu rol."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Panel | Tien Long Hu</title>
+
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/comun.css" />
+    <link rel="stylesheet" href="css/panel.css" />
+  </head>
+  <body class="panel-body">
+    <a class="skip-link" href="#contenido">Saltar al contenido</a>
+    <div class="topline"></div>
+
+    <header class="panel-header">
+      <a class="brand" href="index.html" aria-label="Tien Long Hu, ir al inicio">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="brand-copy"
+          ><strong>TIEN LONG HU</strong><small>SHEN XIN LING</small></span
+        >
+      </a>
+
+      <div class="panel-header-right">
+        <a class="panel-header-link" href="index.html">Sitio</a>
+
+        <button
+          type="button"
+          class="panel-recargar"
+          id="btn-perfil"
+          data-accion="perfil"
+        >
+          Mi perfil
+        </button>
+
+        <button type="button" class="panel-recargar" id="btn-recargar">
+          Actualizar
+        </button>
+
+        <div class="panel-user">
+          <span class="panel-avatar" id="panel-avatar" aria-hidden="true">··</span>
+          <span class="panel-user-copy">
+            <strong id="panel-nombre">Cargando…</strong>
+            <small id="panel-rol">—</small>
+          </span>
+        </div>
+
+        <button type="button" class="panel-salir" id="btn-salir">
+          Salir <span aria-hidden="true">→</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="panel-main" id="contenido">
+      <!-- Esqueleto inicial mientras validamos la sesión -->
+      <div class="panel-esqueleto" id="panel-esqueleto">
+        <p class="panel-kicker">Verificando sesión</p>
+        <span class="cargando-fila"></span>
+        <span class="cargando-fila"></span>
+        <span class="cargando-fila"></span>
+      </div>
+
+      <div
+        class="alerta alerta-error panel-alerta"
+        id="panel-alerta"
+        role="alert"
+        hidden
+      ></div>
+
+      <!-- ============================================
+           VISTA ALUMNO
+           ============================================ -->
+      <div id="vista-alumno" hidden>
+        <section class="panel-hero">
+          <div class="panel-hero-copy">
+            <p class="panel-kicker">Portal del alumno</p>
+            <h1 class="panel-titulo">Hola, <em id="alumno-nombre">—</em></h1>
+            <p class="panel-bajada">
+              Tu recorrido en la escuela, en un solo lugar. Si algo no
+              coincide, hablá con tu profesor o con la sede.
+            </p>
+          </div>
+
+          <div class="panel-hero-datos">
+            <div class="panel-dato">
+              <span>Sede</span>
+              <strong id="alumno-sede">—</strong>
+            </div>
+            <div class="panel-dato">
+              <span>Profesor</span>
+              <strong id="alumno-profesor">—</strong>
+            </div>
+            <div class="panel-dato">
+              <span>Practicando desde</span>
+              <strong id="alumno-desde">—</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-kpis" aria-label="Resumen del alumno">
+          <article class="kpi">
+            <p class="kpi-label">Asistencias</p>
+            <p class="kpi-valor" id="kpi-asistencias">—</p>
+            <p class="kpi-pie" id="kpi-asistencias-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Cuotas abiertas</p>
+            <p class="kpi-valor" id="kpi-cuotas">—</p>
+            <p class="kpi-pie" id="kpi-cuotas-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Pagos confirmados</p>
+            <p class="kpi-valor" id="kpi-pagos">—</p>
+            <p class="kpi-pie" id="kpi-pagos-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Graduaciones</p>
+            <p class="kpi-valor" id="kpi-graduaciones">—</p>
+            <p class="kpi-pie" id="kpi-graduaciones-pie">—</p>
+          </article>
+        </section>
+
+        <div class="panel-grid">
+          <section class="panel-card" aria-labelledby="al-examenes-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-examenes-titulo">Próximos exámenes</h2>
+              <span class="panel-card-nota">Agenda de la escuela</span>
+            </header>
+            <div id="al-examenes" class="panel-lista">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="al-datos-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-datos-titulo">Mis datos</h2>
+              <div class="panel-card-acciones">
+                <span class="panel-card-nota">Ficha de contacto</span>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-secundario"
+                  data-accion="perfil"
+                >
+                  Editar
+                </button>
+              </div>
+            </header>
+            <dl class="panel-datos" id="al-datos">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </dl>
+          </section>
+
+          <section
+            class="panel-card panel-card-ancho"
+            aria-labelledby="al-asistencias-titulo"
+          >
+            <header class="panel-card-head">
+              <h2 id="al-asistencias-titulo">Mis asistencias</h2>
+              <span class="panel-card-nota" id="al-asistencias-nota"></span>
+            </header>
+            <div id="al-asistencias" class="panel-tabla-wrap">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card panel-card-ancho" aria-labelledby="al-cuotas-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-cuotas-titulo">Mis cuotas</h2>
+              <span class="panel-card-nota" id="al-cuotas-nota"></span>
+            </header>
+            <div id="al-cuotas" class="panel-tabla-wrap">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card panel-card-ancho" aria-labelledby="al-pagos-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-pagos-titulo">Mis pagos</h2>
+              <div class="panel-card-acciones">
+                <span class="panel-card-nota" id="al-pagos-nota"></span>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="declarar-pago"
+                >
+                  Declarar pago
+                </button>
+              </div>
+            </header>
+            <div id="al-pagos" class="panel-tabla-wrap">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="al-graduaciones-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-graduaciones-titulo">Graduaciones</h2>
+              <span class="panel-card-nota">Tu camino de grados</span>
+            </header>
+            <div id="al-graduaciones" class="panel-lista"></div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="al-noticias-titulo">
+            <header class="panel-card-head">
+              <h2 id="al-noticias-titulo">Novedades</h2>
+              <span class="panel-card-nota">De la escuela</span>
+            </header>
+            <div id="al-noticias" class="panel-lista"></div>
+          </section>
+
+          <section
+            class="panel-card panel-card-ancho"
+            aria-labelledby="al-chat-titulo"
+          >
+            <header class="panel-card-head">
+              <h2 id="al-chat-titulo">Mensajes con la escuela</h2>
+              <span class="panel-card-nota" id="al-chat-nota">
+                Canal de tu sede
+              </span>
+            </header>
+            <div id="al-chat" class="panel-chat" aria-live="polite">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+            <form class="panel-chat-form" id="form-chat-alumno">
+              <label class="sr-only" for="chat-alumno-mensaje">Mensaje</label>
+              <textarea
+                id="chat-alumno-mensaje"
+                rows="2"
+                maxlength="500"
+                placeholder="Escribí un mensaje para la escuela…"
+                required
+              ></textarea>
+              <button type="submit" class="panel-btn panel-btn-primario">
+                Enviar
+              </button>
+            </form>
+          </section>
+        </div>
+      </div>
+
+      <!-- ============================================
+           VISTA PROFESOR / ADMIN
+           ============================================ -->
+      <div id="vista-staff" hidden>
+        <section class="panel-hero">
+          <div class="panel-hero-copy">
+            <p class="panel-kicker" id="staff-kicker">Portal del equipo</p>
+            <h1 class="panel-titulo">Hola, <em id="staff-nombre">—</em></h1>
+            <p class="panel-bajada" id="staff-bajada">
+              El estado de la escuela de un vistazo: alumnos, sedes, cobros y
+              las novedades que estás publicando.
+            </p>
+          </div>
+
+          <div class="panel-hero-datos">
+            <div class="panel-dato">
+              <span>Rol</span>
+              <strong id="staff-rol">—</strong>
+            </div>
+            <div class="panel-dato">
+              <span>Usuario</span>
+              <strong id="staff-usuario">—</strong>
+            </div>
+            <div class="panel-dato">
+              <span>Hoy</span>
+              <strong id="staff-hoy">—</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel-kpis" aria-label="Resumen de la escuela">
+          <article class="kpi">
+            <p class="kpi-label">Alumnos</p>
+            <p class="kpi-valor" id="kpi-alumnos">—</p>
+            <p class="kpi-pie" id="kpi-alumnos-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Profesores</p>
+            <p class="kpi-valor" id="kpi-profesores">—</p>
+            <p class="kpi-pie" id="kpi-profesores-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Sedes</p>
+            <p class="kpi-valor" id="kpi-sedes">—</p>
+            <p class="kpi-pie" id="kpi-sedes-pie">—</p>
+          </article>
+
+          <article class="kpi">
+            <p class="kpi-label">Pagos pendientes</p>
+            <p class="kpi-valor" id="kpi-pendientes">—</p>
+            <p class="kpi-pie" id="kpi-pendientes-pie">—</p>
+          </article>
+        </section>
+
+        <section class="panel-card panel-card-ancho" aria-labelledby="st-alumnos-titulo">
+          <header class="panel-card-head panel-card-head-filtro">
+            <div>
+              <h2 id="st-alumnos-titulo">Alumnos</h2>
+              <span class="panel-card-nota" id="st-alumnos-nota">
+                Listado completo de la escuela
+              </span>
+            </div>
+
+            <div class="panel-card-herramientas">
+              <div class="panel-buscador">
+                <label class="sr-only" for="buscar-alumnos">
+                  Buscar alumno por nombre, DNI, sede o profesor
+                </label>
+                <input
+                  type="search"
+                  id="buscar-alumnos"
+                  placeholder="Buscar por nombre, DNI, sede…"
+                  autocomplete="off"
+                />
+              </div>
+
+              <div class="panel-card-acciones">
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-secundario"
+                  data-accion="tomar-lista"
+                >
+                  Tomar lista
+                </button>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="nuevo-alumno"
+                >
+                  Nuevo alumno
+                </button>
+              </div>
+            </div>
+          </header>
+
+          <div id="st-alumnos" class="panel-tabla-wrap">
+            <div class="cargando-filas" aria-hidden="true">
+              <span class="cargando-fila"></span>
+              <span class="cargando-fila"></span>
+              <span class="cargando-fila"></span>
+            </div>
+          </div>
+        </section>
+
+        <div class="panel-grid">
+          <section class="panel-card panel-card-ancho" aria-labelledby="st-pagos-titulo">
+            <header class="panel-card-head">
+              <h2 id="st-pagos-titulo">Pagos pendientes</h2>
+              <div class="panel-card-acciones">
+                <span class="panel-card-nota" id="st-pagos-nota"></span>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="registrar-pago"
+                >
+                  Registrar pago
+                </button>
+              </div>
+            </header>
+            <div id="st-pagos" class="panel-tabla-wrap">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+          </section>
+
+          <section
+            class="panel-card panel-card-ancho"
+            id="st-sedes-card"
+            aria-labelledby="st-sedes-titulo"
+            hidden
+          >
+            <header class="panel-card-head">
+              <div>
+                <h2 id="st-sedes-titulo">Sedes</h2>
+                <span class="panel-card-nota" id="st-sedes-nota">
+                  Alta, edición y baja
+                </span>
+              </div>
+              <div class="panel-card-acciones">
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="nueva-sede"
+                >
+                  Nueva sede
+                </button>
+              </div>
+            </header>
+            <div id="st-sedes" class="panel-lista"></div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="st-examenes-titulo">
+            <header class="panel-card-head">
+              <h2 id="st-examenes-titulo">Exámenes programados</h2>
+              <div class="panel-card-acciones">
+                <span class="panel-card-nota">Agenda</span>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="nuevo-examen"
+                >
+                  Nuevo examen
+                </button>
+              </div>
+            </header>
+            <div id="st-examenes" class="panel-lista"></div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="st-noticias-titulo">
+            <header class="panel-card-head">
+              <h2 id="st-noticias-titulo">Novedades</h2>
+              <div class="panel-card-acciones">
+                <span class="panel-card-nota">Publicadas</span>
+                <button
+                  type="button"
+                  class="panel-btn panel-btn-chico panel-btn-primario"
+                  data-accion="nueva-noticia"
+                >
+                  Nueva noticia
+                </button>
+              </div>
+            </header>
+            <div id="st-noticias" class="panel-lista"></div>
+          </section>
+
+          <section
+            class="panel-card panel-card-ancho"
+            aria-labelledby="st-chat-titulo"
+          >
+            <header class="panel-card-head">
+              <h2 id="st-chat-titulo">Mensajes de la sede</h2>
+              <div class="panel-card-acciones">
+                <label class="sr-only" for="chat-centro">Sede</label>
+                <select id="chat-centro" class="panel-select-chico"></select>
+              </div>
+            </header>
+            <div id="st-chat" class="panel-chat" aria-live="polite">
+              <div class="cargando-filas" aria-hidden="true">
+                <span class="cargando-fila"></span>
+                <span class="cargando-fila"></span>
+              </div>
+            </div>
+            <form class="panel-chat-form" id="form-chat-staff">
+              <label class="sr-only" for="chat-staff-mensaje">Mensaje</label>
+              <textarea
+                id="chat-staff-mensaje"
+                rows="2"
+                maxlength="500"
+                placeholder="Escribí un mensaje para la sede…"
+                required
+              ></textarea>
+              <button type="submit" class="panel-btn panel-btn-primario">
+                Enviar
+              </button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="panel-footer">
+      <span><b>TIEN LONG HU</b> · SHEN XIN LING</span>
+      <span>Portal privado · Quilmes</span>
+    </footer>
+
+    <!-- Modal de formularios -->
+    <div class="modal-fondo" id="modal-fondo" hidden>
+      <div
+        class="modal-caja"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-titulo"
+      >
+        <header class="modal-cabeza">
+          <div>
+            <p class="panel-kicker" id="modal-kicker">Panel</p>
+            <h2 id="modal-titulo">—</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-cerrar"
+            id="modal-cerrar"
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </header>
+        <div class="modal-cuerpo" id="modal-cuerpo"></div>
+        <footer class="modal-pie" id="modal-pie"></footer>
+      </div>
+    </div>
+
+    <!-- Drawer de fichas -->
+    <div class="drawer-fondo" id="drawer-fondo" hidden>
+      <aside
+        class="panel-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-titulo"
+      >
+        <header class="drawer-cabeza">
+          <div>
+            <p class="panel-kicker" id="drawer-kicker">Ficha</p>
+            <h2 id="drawer-titulo">—</h2>
+          </div>
+          <button
+            type="button"
+            class="modal-cerrar"
+            id="drawer-cerrar"
+            aria-label="Cerrar ficha"
+          >
+            ×
+          </button>
+        </header>
+        <div class="drawer-cuerpo" id="drawer-cuerpo"></div>
+      </aside>
+    </div>
+
+    <!-- Confirmación de acciones destructivas -->
+    <div class="modal-fondo modal-fondo-confirmar" id="confirmar-fondo" hidden>
+      <div
+        class="modal-caja modal-caja-chica"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirmar-titulo"
+        aria-describedby="confirmar-texto"
+      >
+        <header class="modal-cabeza">
+          <div>
+            <p class="panel-kicker">Confirmar</p>
+            <h2 id="confirmar-titulo">¿Continuar?</h2>
+          </div>
+        </header>
+        <div class="modal-cuerpo">
+          <p class="confirmar-texto" id="confirmar-texto"></p>
+        </div>
+        <footer class="modal-pie">
+          <button
+            type="button"
+            class="panel-btn panel-btn-secundario"
+            id="confirmar-cancelar"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="panel-btn panel-btn-peligro"
+            id="confirmar-ok"
+          >
+            Confirmar
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/panel-ui.js"></script>
+    <script src="js/panel.js"></script>
+    <script src="js/panel-acciones.js"></script>
+  </body>
+</html>

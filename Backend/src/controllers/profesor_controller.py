@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 import bcrypt
 from datetime import date
 from src.repositories.profesor_repository import ProfesorRepository
-from src.utils.auth import token_required, roles_required
+from src.utils.auth import token_required, roles_required, token_opcional
 
 
 profesor_bp = Blueprint(
@@ -16,22 +16,48 @@ profesor_bp = Blueprint(
 # =========================================================
 # GET /api/profesores
 # Listar profesores
+# Público, pero SIN datos personales (dni, email, teléfono) cuando
+# no hay sesión: el alta de alumno solo necesita id y nombre.
 # =========================================================
 
 @profesor_bp.route("", methods=["GET"])
-@token_required
-@roles_required('ADMIN', 'PROFESOR', 'ALUMNO')
+@token_opcional
 def listar_profesores():
 
     try:
 
+        autenticado = getattr(request, "usuario", None) is not None
+
         incluir_inactivos = (
-            request.args.get("todos", "false").lower() == "true"
+            autenticado
+            and request.args.get("todos", "false").lower() == "true"
         )
 
         profesores = ProfesorRepository.listar(
             incluir_inactivos=incluir_inactivos
         )
+
+        if not autenticado:
+
+            profesores = [
+                {
+                    "profesor_id": p.get("profesor_id"),
+                    "nombre": p.get("nombre"),
+                    "apellido": p.get("apellido"),
+                    "avatar": p.get("avatar"),
+                    "profesor_activo": p.get("profesor_activo"),
+                    "centros": [
+                        {
+                            "centro_id": c.get("centro_id"),
+                            "centro_nombre": c.get("centro_nombre"),
+                            "direccion": c.get("direccion"),
+                            "activo": c.get("activo")
+                        }
+                        for c in (p.get("centros") or [])
+                    ]
+                }
+                for p in profesores
+            ]
 
         return jsonify({
             "status": "OK",

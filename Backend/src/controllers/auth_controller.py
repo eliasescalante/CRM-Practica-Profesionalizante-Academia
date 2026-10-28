@@ -338,6 +338,8 @@ def login():
         "usuario": {
             "id": usuario["usuario_id"],
             "persona_id": usuario["persona_id"],
+            "alumno_id": usuario.get("alumno_id"),
+            "profesor_id": usuario.get("profesor_id"),
             "usuario": usuario["usuario"],
             "nombre": usuario["nombre"],
             "apellido": usuario["apellido"],
@@ -376,6 +378,8 @@ def obtener_usuario_autenticado():
             "usuario": {
                 "id": usuario["usuario_id"],
                 "persona_id": usuario["persona_id"],
+                "alumno_id": usuario.get("alumno_id"),
+                "profesor_id": usuario.get("profesor_id"),
                 "usuario": usuario["usuario"],
                 "nombre": usuario["nombre"],
                 "apellido": usuario["apellido"],
