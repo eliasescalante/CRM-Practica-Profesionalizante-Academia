@@ -325,3 +325,308 @@ const yearElement = document.querySelector('#year');
 if (yearElement) {
   yearElement.textContent = new Date().getFullYear();
 }
+
+/* ---------------------------------------------------------
+   Chatbot de preguntas frecuentes
+   ---------------------------------------------------------
+   Respuestas armadas con la informacion publicada en la landing.
+   La coincidencia es por palabras clave: no hay servicios externos.
+   --------------------------------------------------------- */
+const faqBot = document.querySelector('#faq-bot');
+const faqToggle = document.querySelector('#faq-bot-toggle');
+const faqPanel = document.querySelector('#faq-bot-panel');
+const faqCerrar = document.querySelector('#faq-bot-cerrar');
+const faqMensajes = document.querySelector('#faq-bot-mensajes');
+const faqForm = document.querySelector('#faq-bot-form');
+const faqInput = document.querySelector('#faq-bot-input');
+
+const FAQ = [
+  {
+    id: 'disciplinas',
+    prioridad: 11,
+    claves: [
+      'disciplina', 'disciplinas', 'wushu', 'wu shu', 'tai chi', 'taichi',
+      'tai chi chuan', 'curso', 'cursos', 'clase', 'clases', 'grupo',
+      'grupos', 'entrenamiento personal', 'personalizado', 'personalizados'
+    ],
+    respuesta:
+      'La escuela trabaja Wu Shu (formas clásicas y modernas), Tai Chi Chuan, clases en grupo y entrenamientos personales. Podés ver el detalle en la sección Disciplinas de la página.'
+  },
+  {
+    id: 'horarios',
+    prioridad: 2,
+    claves: [
+      'horario', 'horarios', 'hora', 'horas', 'dia', 'dias', 'turno',
+      'turnos', 'cuando', 'cronograma', 'que dias'
+    ],
+    respuesta:
+      'Los horarios actuales no están publicados en la web. Escribinos a hola@unsitiogenial.es o llamá al 923 456 789 y te pasamos los días y turnos de cada disciplina.'
+  },
+  {
+    id: 'precios',
+    prioridad: 3,
+    claves: [
+      'precio', 'precios', 'cuota', 'cuotas', 'costo', 'costos', 'arancel',
+      'aranceles', 'pago', 'pagos', 'pagar', 'mensualidad', 'valor', 'sale',
+      'cuesta', 'cuanto'
+    ],
+    respuesta:
+      'Los aranceles y planes de pago se consultan directamente con la escuela. Escribinos a hola@unsitiogenial.es o llamá al 923 456 789 para recibir la información actualizada.'
+  },
+  {
+    id: 'ubicacion',
+    prioridad: 4,
+    claves: [
+      'donde', 'ubicacion', 'direccion', 'llegar', 'sede', 'local', 'calle',
+      'quilmes', 'ubicados', 'como llego'
+    ],
+    respuesta:
+      'Estamos en Av. 12 de Octubre 1000, Quilmes, Buenos Aires, Argentina. En la sección Contacto de la página tenés la dirección y los datos para escribirnos.'
+  },
+  {
+    id: 'inscripcion',
+    prioridad: 5,
+    claves: [
+      'inscribir', 'inscripcion', 'inscribirme', 'inscribo', 'anotarme',
+      'registrarme', 'empezar', 'empiezo', 'comenzar', 'comienzo', 'prueba',
+      'probar', 'clase de prueba', 'como empiezo', 'como me inscribo'
+    ],
+    respuesta:
+      'Para empezar, escribinos a hola@unsitiogenial.es o usá el botón "Quiero más información" de la sección Contacto. Si ya sos alumno o profesor, podés ingresar desde el botón Login.'
+  },
+  {
+    id: 'edades',
+    prioridad: 1,
+    claves: [
+      'edad', 'edades', 'nino', 'ninos', 'nina', 'ninas', 'adulto', 'adultos',
+      'menor', 'menores', 'chico', 'chicos', 'familia', 'infantil'
+    ],
+    respuesta:
+      'Hay clases en grupo y entrenamientos personalizados. No publicamos edades mínimas en la web, así que consultanos por la franja de edad y el grupo que mejor se adapte a vos o a tu familia.'
+  },
+  {
+    id: 'contacto',
+    prioridad: 6,
+    claves: [
+      'contacto', 'telefono', 'email', 'correo', 'whatsapp', 'comunicar',
+      'hablar', 'llamar', 'escribir', 'escribinos', 'mail'
+    ],
+    respuesta:
+      'Podés escribirnos a tienlonghu@gmail.com o llamar al 1138197145. También encontrás estos datos al final de la página, en la sección Contacto.'
+  },
+  {
+    id: 'historia',
+    prioridad: 10,
+    claves: [
+      'historia', 'tradicion', 'fundada', 'fundacion', 'maestro', 'ruben',
+      'braun', '1991', 'escuela', 'academia', 'origen'
+    ],
+    respuesta:
+      'Tien Long Hu es una Escuela Superior de Artes Chinas fundada en 1991 por el Maestro Rubén Braun. Preserva las enseñanzas tradicionales de las artes marciales chinas y combina formas clásicas y modernas de Wu Shu.'
+  },
+  {
+    id: 'graduaciones',
+    prioridad: 7,
+    claves: [
+      'graduacion', 'graduaciones', 'grado', 'grados', 'cinturon',
+      'cinturones', 'examen', 'examenes', 'rendir', 'avanzar', 'certificado'
+    ],
+    respuesta:
+      'Las graduaciones se registran en el panel privado: cada alumno puede ver su último grado y los profesores ven cuántos alumnos hay en cada graduación. Para rendir un examen, hablá con tu profesor.'
+  },
+  {
+    id: 'login',
+    prioridad: 8,
+    claves: [
+      'login', 'panel', 'contrasena', 'usuario', 'ingresar', 'cuenta',
+      'plataforma', 'clave', 'mi perfil'
+    ],
+    respuesta:
+      'Si ya sos alumno o profesor, entrá desde el botón Login de la esquina superior derecha. Si no recordás tu usuario o contraseña, escribinos a hola@unsitiogenial.es.'
+  },
+  {
+    id: 'ropa',
+    prioridad: 9,
+    claves: [
+      'ropa', 'vestimenta', 'uniforme', 'llevar', 'calzado', 'zapatillas',
+      'equipo', 'que me pongo'
+    ],
+    respuesta:
+      'Te recomendamos ropa cómoda y calzado deportivo para la primera clase. Si la disciplina necesita algún elemento específico, consultanos antes por correo o teléfono.'
+  }
+];
+
+const normalizarTexto = (valor) =>
+  String(valor || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const buscarRespuesta = (consulta) => {
+  const texto = ` ${normalizarTexto(consulta)} `;
+
+  if (!texto.trim()) {
+    return null;
+  }
+
+  let mejor = null;
+  let mejorPuntaje = 0;
+
+  FAQ.forEach((item) => {
+    let puntaje = 0;
+
+    item.claves.forEach((clave) => {
+      const buscada = normalizarTexto(clave);
+
+      if (!buscada) return;
+
+      if (texto.indexOf(` ${buscada} `) !== -1) {
+        puntaje += buscada.split(' ').length;
+      }
+    });
+
+    if (
+      puntaje > mejorPuntaje ||
+      (puntaje === mejorPuntaje && puntaje > 0 && mejor && item.prioridad < mejor.prioridad)
+    ) {
+      mejorPuntaje = puntaje;
+      mejor = item;
+    }
+  });
+
+  return mejor;
+};
+
+const respuestaPorDefecto =
+  'No encontré una respuesta exacta para esa pregunta. Podés consultar por horarios, precios, ubicación, disciplinas, edades, inscripción, graduaciones o el acceso al panel. Para algo puntual, escribinos a hola@unsitiogenial.es.';
+
+if (faqBot && faqToggle && faqPanel && faqMensajes) {
+  let iniciado = false;
+  let abierto = false;
+
+  const irAlFinal = () => {
+    faqMensajes.scrollTop = faqMensajes.scrollHeight;
+  };
+
+  const agregarMensaje = (tipo, contenido) => {
+    const burbuja = document.createElement('div');
+    burbuja.className = `faq-bot-mensaje faq-bot-mensaje-${tipo}`;
+
+    if (tipo === 'bot') {
+      const autor = document.createElement('span');
+      autor.className = 'faq-bot-autor';
+      autor.textContent = 'Asistente';
+      burbuja.appendChild(autor);
+    }
+
+    const copia = document.createElement('p');
+    copia.textContent = contenido;
+    burbuja.appendChild(copia);
+
+    faqMensajes.appendChild(burbuja);
+    irAlFinal();
+
+    return burbuja;
+  };
+
+  const responder = (contenido) => {
+    const indicador = document.createElement('div');
+    indicador.className = 'faq-bot-mensaje faq-bot-mensaje-bot faq-bot-escribiendo';
+    indicador.textContent = 'Escribiendo…';
+    faqMensajes.appendChild(indicador);
+    irAlFinal();
+
+    window.setTimeout(() => {
+      indicador.remove();
+      agregarMensaje('bot', contenido);
+    }, 320);
+  };
+
+  const preguntar = (textoCrudo) => {
+    const pregunta = String(textoCrudo || '').trim();
+
+    if (!pregunta) {
+      return;
+    }
+
+    agregarMensaje('usuario', pregunta);
+
+    const encontrada = buscarRespuesta(pregunta);
+
+    responder(encontrada ? encontrada.respuesta : respuestaPorDefecto);
+  };
+
+  const abrirBot = () => {
+    abierto = true;
+    faqPanel.hidden = false;
+    faqBot.classList.add('is-open');
+    faqToggle.setAttribute('aria-expanded', 'true');
+
+    if (!iniciado) {
+      iniciado = true;
+      agregarMensaje(
+        'bot',
+        '¡Hola! Soy el asistente de Tien Long Hu. Podés preguntarme por horarios, precios, ubicación, disciplinas, edades, inscripción o graduaciones.'
+      );
+    }
+
+    irAlFinal();
+
+    if (faqInput) {
+      window.setTimeout(() => faqInput.focus(), 40);
+    }
+  };
+
+  const cerrarBot = (devolverFoco) => {
+    abierto = false;
+    faqPanel.hidden = true;
+    faqBot.classList.remove('is-open');
+    faqToggle.setAttribute('aria-expanded', 'false');
+
+    if (devolverFoco) {
+      faqToggle.focus();
+    }
+  };
+
+  faqToggle.addEventListener('click', () => {
+    if (abierto) {
+      cerrarBot(false);
+    } else {
+      abrirBot();
+    }
+  });
+
+  if (faqCerrar) {
+    faqCerrar.addEventListener('click', () => cerrarBot(true));
+  }
+
+  if (faqForm && faqInput) {
+    faqForm.addEventListener('submit', (evento) => {
+      evento.preventDefault();
+
+      const pregunta = faqInput.value.trim();
+
+      if (!pregunta) {
+        return;
+      }
+
+      faqInput.value = '';
+      preguntar(pregunta);
+    });
+  }
+
+  document.addEventListener('keydown', (evento) => {
+    if (evento.key === 'Escape' && abierto) {
+      cerrarBot(true);
+    }
+  });
+
+  document.addEventListener('click', (evento) => {
+    if (abierto && !faqBot.contains(evento.target)) {
+      cerrarBot(false);
+    }
+  });
+}

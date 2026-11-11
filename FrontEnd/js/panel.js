@@ -51,6 +51,8 @@
   let centrosCache = [];
   let profesoresCache = [];
   let noticiasCache = [];
+  let graduacionesCache = [];
+  let graduacionPorAlumno = new Map();
   let chatCentroId = null;
   let perfilCache = {};
   let sesionCaida = false;
@@ -208,6 +210,82 @@
       '<span>' + partes.mes + '</span>' +
       '</span>'
     );
+  }
+
+  /* Días de diferencia entre hoy y una fecha (sin hora).
+     Negativo = ya venció, 0 = vence hoy. */
+  function diasHasta(valor) {
+    if (!valor) {
+      return null;
+    }
+
+    const fechaVencimiento = new Date(valor);
+
+    if (isNaN(fechaVencimiento.getTime())) {
+      return null;
+    }
+
+    const hoy = new Date();
+
+    const diaHoy = Date.UTC(
+      hoy.getFullYear(),
+      hoy.getMonth(),
+      hoy.getDate()
+    );
+
+    const diaVencimiento = Date.UTC(
+      fechaVencimiento.getUTCFullYear(),
+      fechaVencimiento.getUTCMonth(),
+      fechaVencimiento.getUTCDate()
+    );
+
+    return Math.round((diaVencimiento - diaHoy) / 86400000);
+  }
+
+  /* Edad cumplida a partir de la fecha de nacimiento. */
+  function edadDe(fechaNacimiento) {
+    if (!fechaNacimiento) {
+      return null;
+    }
+
+    const nacimiento = new Date(fechaNacimiento);
+
+    if (isNaN(nacimiento.getTime())) {
+      return null;
+    }
+
+    const hoy = new Date();
+
+    let edad = hoy.getFullYear() - nacimiento.getUTCFullYear();
+    const meses = hoy.getMonth() - nacimiento.getUTCMonth();
+
+    if (
+      meses < 0 ||
+      (meses === 0 && hoy.getDate() < nacimiento.getUTCDate())
+    ) {
+      edad -= 1;
+    }
+
+    return edad >= 0 && edad <= 120 ? edad : null;
+  }
+
+  /* Texto de vencimiento: "vencida", "vence hoy" o "vence en N días". */
+  function textoVencimiento(dias) {
+    if (dias === null) {
+      return 'sin fecha de vencimiento';
+    }
+
+    if (dias < 0) {
+      return dias === -1
+        ? 'vencida ayer'
+        : 'vencida hace ' + Math.abs(dias) + ' días';
+    }
+
+    if (dias === 0) {
+      return 'vence hoy';
+    }
+
+    return 'vence en ' + dias + (dias === 1 ? ' día' : ' días');
   }
 
   function texto(valor) {
@@ -472,7 +550,9 @@
           '<p class="panel-noticia-texto">' +
           texto(noticia.contenido || '') +
           '</p>' +
-          '<p>' + texto(detalles.join(' · ')) + '</p>' +
+          '<p class="panel-noticia-meta">' +
+          texto(detalles.join(' · ')) +
+          '</p>' +
           imagen +
           '</div>' +
           (lado
@@ -1021,13 +1101,52 @@
      VISTA ALUMNO
      --------------------------------------------------------- */
 
-  function kpi(alumno, pie) {
-    return { valor: alumno, pie: pie };
+  function kpi(valor, pie, estado, etiqueta) {
+    return {
+      valor: valor,
+      pie: pie,
+      estado: estado || '',
+      etiqueta: etiqueta || ''
+    };
   }
 
   function pintarKpiAlumno(id, datos) {
-    document.getElementById(id).textContent = datos.valor;
-    document.getElementById(id + '-pie').textContent = datos.pie;
+    const nodo = document.getElementById(id);
+    const tarjeta = nodo ? nodo.closest('.kpi') : null;
+    const insignia = document.getElementById(id + '-estado');
+
+    if (nodo) {
+      nodo.textContent = datos.valor;
+    }
+
+    const pie = document.getElementById(id + '-pie');
+
+    if (pie) {
+      pie.textContent = datos.pie;
+    }
+
+    if (tarjeta) {
+      tarjeta.classList.remove('kpi-ok', 'kpi-atencion', 'kpi-urgente');
+
+      if (datos.estado) {
+        tarjeta.classList.add('kpi-' + datos.estado);
+      }
+    }
+
+    if (insignia) {
+      insignia.classList.remove(
+        'kpi-estado-ok',
+        'kpi-estado-atencion',
+        'kpi-estado-urgente'
+      );
+
+      if (datos.estado) {
+        insignia.classList.add('kpi-estado-' + datos.estado);
+      }
+
+      insignia.textContent = datos.etiqueta || '—';
+      insignia.hidden = !datos.etiqueta;
+    }
   }
 
   async function cargarAlumno() {
@@ -1134,30 +1253,114 @@
       return Boolean(asistencia.presente);
     }).length;
 
+    const porcentajeAsistencia = asistencias.length
+      ? Math.round((presentes / asistencias.length) * 100)
+      : null;
+
+    let estadoAsistencia = '';
+    let etiquetaAsistencia = 'Sin datos';
+    let pieAsistencia = 'Sin asistencias registradas';
+
+    if (porcentajeAsistencia !== null) {
+      if (porcentajeAsistencia === 100) {
+        estadoAsistencia = 'ok';
+        etiquetaAsistencia = 'Perfecta';
+        pieAsistencia =
+          presentes +
+          ' de ' +
+          asistencias.length +
+          (asistencias.length === 1 ? ' clase' : ' clases') +
+          ' · asistencia perfecta';
+      } else {
+        estadoAsistencia = 'urgente';
+        etiquetaAsistencia = 'A mejorar';
+
+        const ausencias = asistencias.length - presentes;
+
+        pieAsistencia =
+          presentes +
+          ' de ' +
+          asistencias.length +
+          ' clases · ' +
+          ausencias +
+          (ausencias === 1 ? ' ausencia' : ' ausencias');
+      }
+    }
+
     pintarKpiAlumno(
       'kpi-asistencias',
       kpi(
-        asistencias.length
-          ? Math.round((presentes / asistencias.length) * 100) + '%'
-          : '—',
-        asistencias.length
-          ? presentes + ' de ' + asistencias.length + ' clases registradas'
-          : 'Sin asistencias registradas'
+        porcentajeAsistencia === null ? '—' : porcentajeAsistencia + '%',
+        pieAsistencia,
+        estadoAsistencia,
+        etiquetaAsistencia
       )
     );
 
     const abiertas = cuotas.filter(esAbierta);
     const montoAbierto = sumar(abiertas, 'monto');
+    const diasCuotas = abiertas
+      .map(function (cuota) {
+        return diasHasta(cuota.fecha_vencimiento);
+      })
+      .filter(function (dias) {
+        return dias !== null;
+      })
+      .sort(function (a, b) {
+        return a - b;
+      });
+
+    const cuotasVencidas = diasCuotas.filter(function (dias) {
+      return dias < 0;
+    }).length;
+
+    const cuotasPorVencer = diasCuotas.filter(function (dias) {
+      return dias >= 0 && dias <= 7;
+    }).length;
+
+    let estadoCuotas = '';
+    let etiquetaCuotas = 'Sin datos';
+    let pieCuotas = 'Sin cuotas generadas';
+
+    if (cuotas.length) {
+      if (!abiertas.length) {
+        estadoCuotas = 'ok';
+        etiquetaCuotas = 'Al día';
+        pieCuotas = 'No tenés cuotas pendientes';
+      } else if (cuotasVencidas) {
+        estadoCuotas = 'urgente';
+        etiquetaCuotas = 'Vencida';
+        pieCuotas =
+          cuotasVencidas +
+          (cuotasVencidas === 1 ? ' cuota vencida' : ' cuotas vencidas') +
+          ' · ' +
+          UI.moneda(montoAbierto);
+      } else if (cuotasPorVencer) {
+        estadoCuotas = 'urgente';
+        etiquetaCuotas = 'Por vencer';
+        pieCuotas =
+          cuotasPorVencer +
+          (cuotasPorVencer === 1 ? ' cuota por vencer' : ' cuotas por vencer') +
+          ' · ' +
+          UI.moneda(montoAbierto);
+      } else {
+        estadoCuotas = 'atencion';
+        etiquetaCuotas = 'Pendiente';
+        pieCuotas = UI.moneda(montoAbierto) + ' por regularizar';
+
+        if (diasCuotas.length) {
+          pieCuotas += ' · ' + textoVencimiento(diasCuotas[0]);
+        }
+      }
+    }
 
     pintarKpiAlumno(
       'kpi-cuotas',
       kpi(
         String(abiertas.length),
-        cuotas.length
-          ? abiertas.length
-            ? UI.moneda(montoAbierto) + ' por regularizar'
-            : 'Estás al día con tus cuotas'
-          : 'Sin cuotas generadas'
+        pieCuotas,
+        estadoCuotas,
+        etiquetaCuotas
       )
     );
 
@@ -1166,13 +1369,58 @@
     });
     const montoPagado = sumar(confirmados, 'monto');
 
+    const pendientes = pagos.filter(function (pago) {
+      return estadoPago(pago) !== 'CONFIRMADO';
+    });
+
+    const diasPagos = pendientes
+      .map(function (pago) {
+        return diasHasta(pago.fecha_vencimiento);
+      })
+      .filter(function (dias) {
+        return dias !== null;
+      })
+      .sort(function (a, b) {
+        return a - b;
+      });
+
+    const pagosUrgentes = diasPagos.filter(function (dias) {
+      return dias <= 7;
+    }).length;
+
+    let estadoPagos = '';
+    let etiquetaPagos = 'Sin datos';
+    let piePagos = 'Sin pagos registrados';
+
+    if (pagos.length) {
+      if (!pendientes.length) {
+        estadoPagos = 'ok';
+        etiquetaPagos = 'Al día';
+        piePagos = UI.moneda(montoPagado) + ' abonados · sin pendientes';
+      } else if (pagosUrgentes) {
+        estadoPagos = 'urgente';
+        etiquetaPagos = 'Revisar';
+        piePagos =
+          pendientes.length +
+          (pendientes.length === 1 ? ' pago por confirmar' : ' pagos por confirmar') +
+          ' · ' +
+          textoVencimiento(diasPagos[0]);
+      } else {
+        estadoPagos = 'atencion';
+        etiquetaPagos = 'Pendiente';
+        piePagos =
+          pendientes.length +
+          (pendientes.length === 1 ? ' pago por confirmar' : ' pagos por confirmar');
+      }
+    }
+
     pintarKpiAlumno(
       'kpi-pagos',
       kpi(
         String(confirmados.length),
-        confirmados.length
-          ? UI.moneda(montoPagado) + ' abonados'
-          : 'Sin pagos confirmados'
+        piePagos,
+        estadoPagos,
+        etiquetaPagos
       )
     );
 
@@ -1285,42 +1533,115 @@
     document.getElementById(id + '-pie').textContent = pie;
   }
 
+  function gradoDeAlumno(alumno) {
+    return graduacionPorAlumno.get(Number(alumno.alumno_id)) || '';
+  }
+
+  function leerFiltrosAlumnos() {
+    const select = $('#filtro-graduacion');
+    const nodoDesde = $('#filtro-edad-desde');
+    const nodoHasta = $('#filtro-edad-hasta');
+
+    let desde =
+      nodoDesde && nodoDesde.value !== '' ? Number(nodoDesde.value) : null;
+    let hasta =
+      nodoHasta && nodoHasta.value !== '' ? Number(nodoHasta.value) : null;
+
+    if (desde !== null && (isNaN(desde) || desde < 0)) {
+      desde = null;
+    }
+
+    if (hasta !== null && (isNaN(hasta) || hasta < 0)) {
+      hasta = null;
+    }
+
+    if (desde !== null && hasta !== null && desde > hasta) {
+      const cambio = desde;
+      desde = hasta;
+      hasta = cambio;
+    }
+
+    return {
+      graduacion: select ? select.value : '',
+      desde: desde,
+      hasta: hasta
+    };
+  }
+
   function pintarTablaAlumnos(alumnos, busqueda) {
     const nodo = $('#st-alumnos');
     const termino = (busqueda || '').trim().toLowerCase();
+    const filtros = leerFiltrosAlumnos();
+    const hayFiltros =
+      Boolean(termino) ||
+      Boolean(filtros.graduacion) ||
+      filtros.desde !== null ||
+      filtros.hasta !== null;
 
     const filtrados = alumnos.filter(function (alumno) {
-      if (!termino) {
-        return true;
+      if (termino) {
+        const textoBuscable = [
+          alumno.nombre,
+          alumno.apellido,
+          alumno.dni,
+          alumno.email,
+          alumno.usuario,
+          alumno.centro_nombre,
+          alumno.profesor_nombre,
+          alumno.profesor_apellido
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+
+        if (textoBuscable.indexOf(termino) === -1) {
+          return false;
+        }
       }
 
-      const textoBuscable = [
-        alumno.nombre,
-        alumno.apellido,
-        alumno.dni,
-        alumno.email,
-        alumno.usuario,
-        alumno.centro_nombre,
-        alumno.profesor_nombre,
-        alumno.profesor_apellido
-      ]
-        .filter(Boolean)
-        .join(' ')
-        .toLowerCase();
+      const grado = gradoDeAlumno(alumno);
 
-      return textoBuscable.indexOf(termino) !== -1;
+      if (filtros.graduacion === '__sin__' && grado) {
+        return false;
+      }
+
+      if (
+        filtros.graduacion &&
+        filtros.graduacion !== '__sin__' &&
+        grado !== filtros.graduacion
+      ) {
+        return false;
+      }
+
+      if (filtros.desde !== null || filtros.hasta !== null) {
+        const edad = edadDe(alumno.fecha_nacimiento);
+
+        if (edad === null) {
+          return false;
+        }
+
+        if (filtros.desde !== null && edad < filtros.desde) {
+          return false;
+        }
+
+        if (filtros.hasta !== null && edad > filtros.hasta) {
+          return false;
+        }
+      }
+
+      return true;
     });
 
-    $('#st-alumnos-nota').textContent = termino
+    $('#st-alumnos-nota').textContent = hayFiltros
       ? filtrados.length + ' de ' + alumnos.length + ' alumnos'
       : alumnos.length +
         (alumnos.length === 1 ? ' alumno registrado' : ' alumnos registrados');
 
     if (!filtrados.length) {
       nodo.innerHTML = UI.vacio(
-        termino ? 'Sin resultados' : 'Todavía no hay alumnos',
-        termino
-          ? 'Probá con otro nombre, DNI, sede o profesor.'
+        hayFiltros ? 'Sin resultados' : 'Todavía no hay alumnos',
+        hayFiltros
+          ? 'Probá con otro nombre, rango de edad o graduación.'
           : 'Cuando se registren alumnos van a aparecer en este listado.'
       );
       return;
@@ -1358,11 +1679,16 @@
         '">Editar</button>' +
         '</div>';
 
+      const edad = edadDe(alumno.fecha_nacimiento);
+      const grado = gradoDeAlumno(alumno);
+
       return [
         { html: persona },
         alumno.dni ? celda(alumno.dni) : celdaVacia(),
+        edad === null ? celdaVacia('num') : celda(String(edad), 'num'),
         alumno.centro_nombre ? celda(alumno.centro_nombre) : celdaVacia(),
         profe ? celda(profe) : celdaVacia(),
+        grado ? celda(grado) : celdaVacia(),
         { html: UI.insignia(alumno.estado), clase: 'num' },
         celda(fecha(alumno.fecha_de_inicio || alumno.fecha_alta), 'tenue'),
         { html: acciones, clase: 'num' }
@@ -1373,14 +1699,140 @@
       [
         { titulo: 'Alumno' },
         { titulo: 'DNI' },
+        { titulo: 'Edad', clase: 'num' },
         { titulo: 'Sede' },
         { titulo: 'Profesor' },
+        { titulo: 'Graduación' },
         { titulo: 'Estado', clase: 'num' },
         { titulo: 'Desde', clase: 'num' },
         { titulo: 'Acciones', clase: 'num' }
       ],
       filas
     );
+  }
+
+  function poblarFiltroGraduaciones() {
+    const select = $('#filtro-graduacion');
+
+    if (!select) {
+      return;
+    }
+
+    const grados = Array.from(
+      new Set(
+        graduacionesCache
+          .map(function (graduacion) {
+            return String(graduacion.grado || '').trim();
+          })
+          .filter(Boolean)
+      )
+    ).sort(function (a, b) {
+      return a.localeCompare(b, 'es');
+    });
+
+    const valorActual = select.value;
+
+    select.innerHTML =
+      '<option value="">Todas</option>' +
+      '<option value="__sin__">Sin graduación</option>' +
+      grados
+        .map(function (grado) {
+          return (
+            '<option value="' +
+            UI.escapar(grado) +
+            '">' +
+            UI.escapar(grado) +
+            '</option>'
+          );
+        })
+        .join('');
+
+    select.value =
+      valorActual === '' || valorActual === '__sin__' || grados.indexOf(valorActual) !== -1
+        ? valorActual
+        : '';
+  }
+
+  function pintarGraduacionesStaff() {
+    const nodo = $('#st-graduaciones');
+
+    if (!nodo) {
+      return;
+    }
+
+    const porGrado = new Map();
+
+    graduacionPorAlumno.forEach(function (grado) {
+      porGrado.set(grado, (porGrado.get(grado) || 0) + 1);
+    });
+
+    const conGraduacion = graduacionPorAlumno.size;
+    const sinGraduacion = Math.max(alumnosCache.length - conGraduacion, 0);
+
+    const nota = $('#st-graduaciones-nota');
+
+    if (nota) {
+      nota.textContent = alumnosCache.length
+        ? conGraduacion +
+          ' de ' +
+          alumnosCache.length +
+          ' alumnos con graduación'
+        : 'Según el último grado de cada alumno';
+    }
+
+    if (!conGraduacion) {
+      nodo.innerHTML = UI.vacio(
+        'Todavía sin graduaciones',
+        'Cuando registres graduaciones vas a ver cuántos alumnos hay en cada grado.'
+      );
+      return;
+    }
+
+    const entradas = Array.from(porGrado.entries()).sort(function (a, b) {
+      return b[1] - a[1] || a[0].localeCompare(b[0], 'es');
+    });
+
+    const maximo = entradas[0][1];
+
+    nodo.innerHTML =
+      '<div class="panel-graduacion-resumen">' +
+      '<div><strong>' +
+      conGraduacion +
+      '</strong><span>con graduación</span></div>' +
+      '<div><strong>' +
+      sinGraduacion +
+      '</strong><span>sin graduación</span></div>' +
+      '<div><strong>' +
+      graduacionesCache.length +
+      '</strong><span>registros</span></div>' +
+      '</div>' +
+      '<ul class="panel-graduacion-lista">' +
+      entradas
+        .map(function (entrada) {
+          const cantidad = entrada[1];
+          const porcentaje = Math.round((cantidad / maximo) * 100);
+
+          return (
+            '<li class="panel-graduacion">' +
+            '<div class="panel-graduacion-cab">' +
+            '<span class="panel-graduacion-grado">' +
+            UI.escapar(entrada[0]) +
+            '</span>' +
+            '<b>' +
+            cantidad +
+            (cantidad === 1 ? ' alumno' : ' alumnos') +
+            '</b>' +
+            '</div>' +
+            '<span class="panel-graduacion-barra" aria-hidden="true">' +
+            '<i style="width:' +
+            porcentaje +
+            '%"></i>' +
+            '</span>' +
+            '</li>'
+          );
+        })
+        .join('') +
+      '</ul>';
   }
 
   function pintarTablaPendientes(pagos) {
@@ -1453,7 +1905,8 @@
       centros: API.get('/api/centros?todos=true'),
       pagos: API.get('/api/pagos/pendientes'),
       examenes: API.get('/api/examenes/?todos=true'),
-      noticias: API.get('/api/noticias?todos=true')
+      noticias: API.get('/api/noticias?todos=true'),
+      graduaciones: API.get('/api/graduaciones')
     };
 
     const claves = Object.keys(pedidos);
@@ -1495,12 +1948,29 @@
     const pagos = lista(datos.pagos, 'pagos');
     const examenes = lista(datos.examenes, 'examenes');
     const noticias = lista(datos.noticias, 'noticias');
+    const graduaciones = lista(datos.graduaciones, 'graduaciones');
 
     profesoresCache = profesores;
     centrosCache = centros;
     pagosCache = pagos;
     examenesCache = examenes;
     noticiasCache = noticias;
+    graduacionesCache = graduaciones;
+
+    /* La API devuelve las graduaciones de la más nueva a la más vieja:
+       la primera de cada alumno es su grado actual. */
+    graduacionPorAlumno = new Map();
+
+    graduaciones.forEach(function (graduacion) {
+      const alumnoId = Number(graduacion.alumno_id);
+      const grado = String(graduacion.grado || '').trim();
+
+      if (!alumnoId || !grado || graduacionPorAlumno.has(alumnoId)) {
+        return;
+      }
+
+      graduacionPorAlumno.set(alumnoId, grado);
+    });
 
     const esAdmin = usuario.rol === 'ADMIN';
 
@@ -1588,7 +2058,9 @@
 
     /* --- Listados --- */
 
+    poblarFiltroGraduaciones();
     pintarTablaAlumnos(alumnosCache, $('#buscar-alumnos').value);
+    pintarGraduacionesStaff();
     pintarTablaPendientes(pagos);
     pintarExamenes($('#st-examenes'), examenes, { staff: true });
     pintarNoticias($('#st-noticias'), noticias, { staff: true });
@@ -1699,13 +2171,59 @@
     btnRecargar.disabled = false;
   });
 
-  $('#buscar-alumnos').addEventListener('input', function (evento) {
+  function refrescarListadoAlumnos() {
     if (!alumnosCache.length) {
       return;
     }
 
-    pintarTablaAlumnos(alumnosCache, evento.target.value);
-  });
+    pintarTablaAlumnos(alumnosCache, $('#buscar-alumnos').value);
+  }
+
+  $('#buscar-alumnos').addEventListener('input', refrescarListadoAlumnos);
+
+  ['#filtro-graduacion', '#filtro-edad-desde', '#filtro-edad-hasta'].forEach(
+    function (selector) {
+      const nodo = $(selector);
+
+      if (nodo) {
+        nodo.addEventListener('input', refrescarListadoAlumnos);
+        nodo.addEventListener('change', refrescarListadoAlumnos);
+      }
+    }
+  );
+
+  const btnLimpiarFiltros = $('#limpiar-filtros-alumnos');
+
+  if (btnLimpiarFiltros) {
+    btnLimpiarFiltros.addEventListener('click', function () {
+      const buscador = $('#buscar-alumnos');
+      const select = $('#filtro-graduacion');
+      const desde = $('#filtro-edad-desde');
+      const hasta = $('#filtro-edad-hasta');
+
+      if (buscador) {
+        buscador.value = '';
+      }
+
+      if (select) {
+        select.value = '';
+      }
+
+      if (desde) {
+        desde.value = '';
+      }
+
+      if (hasta) {
+        hasta.value = '';
+      }
+
+      refrescarListadoAlumnos();
+
+      if (buscador) {
+        buscador.focus();
+      }
+    });
+  }
 
   const formChatAlumno = $('#form-chat-alumno');
   const formChatStaff = $('#form-chat-staff');

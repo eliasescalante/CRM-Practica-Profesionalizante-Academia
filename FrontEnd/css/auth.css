@@ -645,3 +645,26 @@
     animation: none !important;
   }
 }
+
+/* =========================================================
+   Radios
+   ========================================================= */
+
+.auth-tabs,
+.auth-submit,
+.campo input,
+.campo select {
+  border-radius: var(--r-sm);
+}
+
+.auth-tab {
+  border-radius: calc(var(--r-sm) - 2px);
+}
+
+.auth-switch button {
+  border-radius: var(--r-pill);
+}
+
+.ver-clave {
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+}

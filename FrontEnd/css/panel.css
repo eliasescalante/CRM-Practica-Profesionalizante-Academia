@@ -337,6 +337,103 @@
   color: #6f6b62;
 }
 
+/* Feedback de estado: verde = al día, ámbar = pendiente, rojo = urgente. */
+
+.kpi-cabeza {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 24px;
+  margin-bottom: 12px;
+}
+
+.kpi-cabeza .kpi-label {
+  margin: 0;
+}
+
+.kpi-estado {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border: 1px solid #d3cec1;
+  background: #f7f5ef;
+  color: #6f6b62;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.kpi-estado[hidden] {
+  display: none;
+}
+
+.kpi-estado-ok {
+  border-color: #9fd6b3;
+  background: #e9f8ef;
+  color: var(--green-ink);
+}
+
+.kpi-estado-atencion {
+  border-color: #e6c46a;
+  background: #fff4d6;
+  color: #7a5200;
+}
+
+.kpi-estado-urgente {
+  border-color: #e2a3a4;
+  background: #fbe8e8;
+  color: #8f1c1d;
+}
+
+.kpi.kpi-ok {
+  border-color: #9fd6b3;
+  background: linear-gradient(180deg, #f3fbf6, #fff 72%);
+}
+
+.kpi.kpi-atencion {
+  border-color: #e6c46a;
+  background: linear-gradient(180deg, #fff9e9, #fff 72%);
+}
+
+.kpi.kpi-urgente {
+  border-color: #e2a3a4;
+  background: linear-gradient(180deg, #fdf1f1, #fff 72%);
+}
+
+.kpi.kpi-ok::before,
+.kpi.kpi-atencion::before,
+.kpi.kpi-urgente::before {
+  transform: scaleX(1);
+}
+
+.kpi.kpi-ok::before {
+  background: var(--green-ink);
+}
+
+.kpi.kpi-atencion::before {
+  background: #d99a00;
+}
+
+.kpi.kpi-urgente::before {
+  background: var(--red);
+}
+
+.kpi.kpi-ok .kpi-valor {
+  color: var(--green-ink);
+}
+
+.kpi.kpi-atencion .kpi-valor {
+  color: #8a5a00;
+}
+
+.kpi.kpi-urgente .kpi-valor {
+  color: var(--red);
+}
+
 /* ---------------------------------------------------------
    Tarjetas
    --------------------------------------------------------- */
@@ -345,6 +442,10 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+}
+
+.panel-grid > * {
+  min-width: 0;
 }
 
 .panel-card {
@@ -465,12 +566,153 @@
   box-shadow: 0 0 0 3px rgba(62, 232, 122, 0.22);
 }
 
+/* Filtros avanzados del listado de alumnos */
+
+.panel-filtros-alumnos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  border: 1px solid #e2ddd2;
+  background: #faf8f3;
+}
+
+.panel-filtro {
+  display: flex;
+  flex: 1 1 170px;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.panel-filtro label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #7d7971;
+}
+
+.panel-filtro select,
+.panel-filtro input {
+  width: 100%;
+  height: 44px;
+  padding: 0 12px;
+  border: 1px solid #d3ccbd;
+  border-radius: 0;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 13.5px;
+}
+
+.panel-filtro select:focus,
+.panel-filtro input:focus {
+  outline: none;
+  border-color: var(--green-ink);
+  box-shadow: 0 0 0 3px rgba(62, 232, 122, 0.22);
+}
+
+.panel-filtro-edad {
+  flex: 0 1 132px;
+}
+
+.panel-btn-limpiar {
+  flex: 0 0 auto;
+  height: 44px;
+}
+
+/* Métricas de graduaciones (panel del profesor) */
+
+.panel-graduaciones {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.panel-graduacion-resumen {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.panel-graduacion-resumen > div {
+  padding: 12px 14px 14px;
+  background: #0b0b0b;
+  color: #fff;
+  border-bottom: 3px solid var(--yellow);
+}
+
+.panel-graduacion-resumen strong {
+  display: block;
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--yellow);
+  font-variant-numeric: tabular-nums;
+}
+
+.panel-graduacion-resumen span {
+  display: block;
+  margin-top: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #b9b9b9;
+}
+
+.panel-graduacion-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.panel-graduacion-cab {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.panel-graduacion-grado {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.panel-graduacion-cab b {
+  font-size: 12px;
+  color: #6f6b62;
+  white-space: nowrap;
+}
+
+.panel-graduacion-barra {
+  display: block;
+  height: 8px;
+  margin-top: 6px;
+  background: #e9e5db;
+}
+
+.panel-graduacion-barra i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-ink), var(--yellow));
+}
+
 /* ---------------------------------------------------------
    Tablas
    --------------------------------------------------------- */
 
 .panel-tabla-wrap {
   width: 100%;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -691,11 +933,21 @@
   white-space: nowrap;
 }
 
-/* Novedades: texto recortado */
+/* Novedades: fila compacta, imagen completa y metadatos legibles */
+
+.panel-fila-noticia {
+  gap: 14px;
+  padding: 13px 0;
+}
+
+.panel-fila-noticia .panel-fila-copy h3 {
+  margin-bottom: 3px;
+  line-height: 1.3;
+}
 
 .panel-noticia-texto {
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -704,14 +956,25 @@
   max-width: 190px;
 }
 
+.panel-fila-noticia .panel-noticia-meta {
+  margin-top: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  color: #8b877f;
+}
+
+/* Se muestra la imagen completa, sin recortar, con una altura máxima
+   común para que la lista no se estire de más. */
 .panel-noticia-img {
-  width: 100%;
-  max-width: 380px;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  margin-top: 10px;
+  display: block;
+  width: auto;
+  max-width: 100%;
+  max-height: 220px;
+  margin: 8px auto 0;
   border: 1px solid #e8e4db;
-  object-fit: cover;
+  background: #f4f2ec;
+  object-fit: contain;
 }
 
 .panel-select-chico {
@@ -1758,7 +2021,7 @@ body.panel-bloqueado {
 
 @media (max-width: 900px) {
   .panel-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .panel-user-copy {
@@ -1787,6 +2050,22 @@ body.panel-bloqueado {
 
   .panel-card-acciones {
     justify-content: flex-start;
+  }
+
+  .panel-filtros-alumnos {
+    padding: 12px;
+  }
+
+  .panel-filtro {
+    flex: 1 1 100%;
+  }
+
+  .panel-filtro-edad {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .panel-btn-limpiar {
+    width: 100%;
   }
 
   .modal-cabeza,
@@ -1968,6 +2247,28 @@ body.panel-bloqueado {
   }
 }
 
+@media (max-width: 520px) {
+  .panel-header {
+    gap: 8px;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .panel-header-right {
+    gap: 6px;
+  }
+
+  #btn-perfil {
+    display: none;
+  }
+
+  .panel-recargar,
+  .panel-salir {
+    padding-left: 11px;
+    padding-right: 11px;
+  }
+}
+
 @media (max-width: 420px) {
   .panel-kpis {
     grid-template-columns: 1fr;
@@ -1980,6 +2281,18 @@ body.panel-bloqueado {
   .panel-card-head h2 {
     font-size: 24px;
   }
+
+  .kpi-cabeza {
+    align-items: flex-start;
+  }
+
+  .panel-filtros-alumnos {
+    padding: 12px 10px;
+  }
+
+  .panel-graduacion-resumen strong {
+    font-size: 30px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1991,5 +2304,93 @@ body.panel-bloqueado {
   .modal-caja,
   .panel-drawer {
     animation: none;
+  }
+}
+
+/* =========================================================
+   Radios
+   ---------------------------------------------------------
+   Escala común para tarjetas, botones, controles y capas.
+   Va al final para no alterar las medidas ya definidas.
+   ========================================================= */
+
+.panel-card {
+  border-radius: var(--r-lg);
+}
+
+/* La cabecera oscura es full-bleed: se redondea solo arriba. */
+.panel-card-head {
+  border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
+}
+
+.panel-hero {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+
+.kpi,
+.panel-esqueleto,
+.panel-filtros-alumnos,
+.perfil-avatar {
+  border-radius: var(--r-md);
+}
+
+.kpi-estado {
+  border-radius: var(--r-pill);
+}
+
+.panel-btn,
+.panel-recargar,
+.panel-salir,
+.panel-header-link,
+.panel-buscador input,
+.panel-filtro select,
+.panel-filtro input,
+.campo input,
+.campo select,
+.campo textarea,
+.panel-select-chico,
+.panel-chat-form textarea,
+.panel-graduacion-resumen > div,
+.panel-fecha,
+.panel-sede-marca,
+.panel-noticia-img,
+.chat-burbuja,
+.lista-asistencia {
+  border-radius: var(--r-sm);
+}
+
+.panel-persona-avatar,
+.modal-cerrar {
+  border-radius: 50%;
+}
+
+.panel-graduacion-barra,
+.panel-graduacion-barra i {
+  border-radius: var(--r-pill);
+}
+
+.chat-etiqueta {
+  border-radius: var(--r-xs);
+}
+
+.ficha-resumen {
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.modal-caja {
+  border-radius: var(--r-xl);
+  overflow: hidden;
+}
+
+.panel-drawer {
+  border-radius: var(--r-xl) 0 0 var(--r-xl);
+  overflow: hidden;
+}
+
+@media (max-width: 620px) {
+  .panel-drawer {
+    border-radius: 0;
   }
 }

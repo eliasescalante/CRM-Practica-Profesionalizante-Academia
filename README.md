@@ -16,6 +16,10 @@
 
 Landing page pública de la academia, de una sola página, hecha con HTML, CSS y JavaScript puro. Diseño inspirado en el PDF de referencia de Tien Long Hu / Shen Xin Ling. La landing es solo presentación; el **login, el registro y el panel** sí consumen la API del backend.
 
+Incluye un **chatbot de preguntas frecuentes** en la esquina inferior derecha. Funciona sin servicios externos: busca palabras clave en la consulta y responde con la información publicada en la página (disciplinas, horarios, precios, ubicación, edades, inscripción, graduaciones, contacto y acceso al panel). Se abre con el botón flotante, se cierra con `Escape` o con un clic afuera y deja el foco en el botón.
+
+El sistema visual comparte una escala de radios definida en `styles.css` (`--r-xs`, `--r-sm`, `--r-md`, `--r-lg`, `--r-xl` y `--r-pill`) y reutilizada por `auth.css`, `comun.css` y `panel.css`: botones y controles redondeados, tarjetas con 20px, modales/drawer con 26px e insignias tipo píldora. En el panel, las cabeceras oscuras de las tarjetas recortan solo sus esquinas superiores para no perder el efecto full-bleed.
+
 ### Estructura de carpetas
 
 ```
@@ -29,7 +33,7 @@ FrontEnd/
 │   ├── auth.css    # login y registro
 │   └── panel.css   # panel del alumno y del staff
 ├── js/
-│   ├── script.js   # landing: menú móvil, scroll suave, animaciones, barra de lectura, parallax y año del footer
+│   ├── script.js   # landing: menú móvil, scroll suave, animaciones, barra de lectura, parallax, año del footer y chatbot de FAQ
 │   ├── api.js      # cliente de la API y manejo de la sesión
 │   ├── ui.js       # helpers de DOM, formato de fechas/moneda y mensajes
 │   ├── auth.js     # login, registro y selects de sede/profesor
@@ -52,8 +56,8 @@ FrontEnd/
 - **Alta de alumno**: DNI, nombre, apellido, email, usuario, contraseña (mínimo 8 caracteres), teléfono/nacimiento/emergencia opcionales, sede, profesor y fecha de inicio. Los selects se llenan con los `GET` públicos `/api/centros` y `/api/profesores`. La cuenta queda activa y puede ingresar enseguida.
 - **Alta de profesor**: solo datos personales. La cuenta y la ficha de profesor quedan **inactivas** hasta que un `ADMIN` las habilite; el login responde 403 mientras tanto.
 - **Panel por rol** (`panel.html`):
-  - `ALUMNO`: sede, profesor y fecha de inicio; asistencias, cuotas abiertas, pagos confirmados y graduaciones; listados de cuotas, pagos, exámenes, graduaciones y novedades; canal de mensajes de su sede. Puede editar su perfil y su foto, cambiar la contraseña, declarar un pago (queda `PENDIENTE` hasta que la escuela lo confirme), inscribirse a un examen o cancelar la inscripción y escribirle a la escuela.
-  - `PROFESOR` / `ADMIN`: totales de alumnos, profesores, sedes y pagos pendientes; tabla de alumnos con buscador (nombre, DNI, sede o profesor), pagos pendientes, agenda de exámenes y novedades. Puede dar de alta y editar alumnos (con baja lógica), abrir la **ficha 360** de cada alumno desde un drawer (datos, asistencias, cuotas, pagos, graduaciones e inscripciones), tomar lista por sede y fecha, registrar o confirmar pagos, **agendar/editar/eliminar exámenes**, publicar/editar/eliminar noticias y responder los mensajes de la sede. El `ADMIN` además gestiona las **sedes** (alta, edición, baja y reactivación). El perfil propio se edita con el mismo modal del alumno.
+  - `ALUMNO`: sede, profesor y fecha de inicio; asistencias, cuotas abiertas, pagos confirmados y graduaciones. Los KPIs tienen **feedback visual**: verde cuando está todo al día (`Perfecta`, `Al día`), ámbar cuando hay algo pendiente sin urgencia (`Pendiente`) y rojo cuando hay una cuota vencida o por vencer en los próximos 7 días, un pago por confirmar en ese plazo o asistencias por debajo del 100% (`Vencida`, `Por vencer`, `Revisar`, `A mejorar`). Listados de cuotas, pagos, exámenes, graduaciones y novedades; canal de mensajes de su sede. Puede editar su perfil y su foto, cambiar la contraseña, declarar un pago (queda `PENDIENTE` hasta que la escuela lo confirme), inscribirse a un examen o cancelar la inscripción y escribirle a la escuela.
+  - `PROFESOR` / `ADMIN`: totales de alumnos, profesores, sedes y pagos pendientes; tabla de alumnos con buscador (nombre, DNI, sede o profesor) y **filtros combinables** por graduación (incluye “Sin graduación”), edad desde y edad hasta, con botón **Limpiar filtros**. La tabla muestra la edad y la última graduación de cada alumno. La tarjeta **Graduaciones** resume cuántos alumnos hay en cada grado, cuántos están sin graduación y el total de registros. También ve pagos pendientes, agenda de exámenes y novedades. Puede dar de alta y editar alumnos (con baja lógica), abrir la **ficha 360** de cada alumno desde un drawer (datos, asistencias, cuotas, pagos, graduaciones e inscripciones), tomar lista por sede y fecha, registrar o confirmar pagos, **agendar/editar/eliminar exámenes**, publicar/editar/eliminar noticias y responder los mensajes de la sede. El `ADMIN` además gestiona las **sedes** (alta, edición, baja y reactivación). El perfil propio se edita con el mismo modal del alumno.
   - Los formularios y la ficha se abren dentro de `panel.html` (modal y drawer), sin páginas extra.
 - Al entrar, el panel valida la sesión contra `/api/auth/me`. Si el token venció o la cuenta fue deshabilitada, limpia el almacenamiento y vuelve a `login.html?motivo=expirado`.
 - La URL de la API se resuelve en este orden: `<meta name="crm-api">` → `localStorage.crm.apiBase` → mismo host en el puerto `4000` → `http://127.0.0.1:4000`.

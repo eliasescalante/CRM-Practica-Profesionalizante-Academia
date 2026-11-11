@@ -111,26 +111,38 @@
         </section>
 
         <section class="panel-kpis" aria-label="Resumen del alumno">
-          <article class="kpi">
-            <p class="kpi-label">Asistencias</p>
+          <article class="kpi" id="kpi-asistencias-card">
+            <div class="kpi-cabeza">
+              <p class="kpi-label">Asistencias</p>
+              <span class="kpi-estado" id="kpi-asistencias-estado">—</span>
+            </div>
             <p class="kpi-valor" id="kpi-asistencias">—</p>
             <p class="kpi-pie" id="kpi-asistencias-pie">—</p>
           </article>
 
-          <article class="kpi">
-            <p class="kpi-label">Cuotas abiertas</p>
+          <article class="kpi" id="kpi-cuotas-card">
+            <div class="kpi-cabeza">
+              <p class="kpi-label">Cuotas abiertas</p>
+              <span class="kpi-estado" id="kpi-cuotas-estado">—</span>
+            </div>
             <p class="kpi-valor" id="kpi-cuotas">—</p>
             <p class="kpi-pie" id="kpi-cuotas-pie">—</p>
           </article>
 
-          <article class="kpi">
-            <p class="kpi-label">Pagos confirmados</p>
+          <article class="kpi" id="kpi-pagos-card">
+            <div class="kpi-cabeza">
+              <p class="kpi-label">Pagos confirmados</p>
+              <span class="kpi-estado" id="kpi-pagos-estado">—</span>
+            </div>
             <p class="kpi-valor" id="kpi-pagos">—</p>
             <p class="kpi-pie" id="kpi-pagos-pie">—</p>
           </article>
 
-          <article class="kpi">
-            <p class="kpi-label">Graduaciones</p>
+          <article class="kpi" id="kpi-graduaciones-card">
+            <div class="kpi-cabeza">
+              <p class="kpi-label">Graduaciones</p>
+              <span class="kpi-estado" id="kpi-graduaciones-estado">—</span>
+            </div>
             <p class="kpi-valor" id="kpi-graduaciones">—</p>
             <p class="kpi-pie" id="kpi-graduaciones-pie">—</p>
           </article>
@@ -370,6 +382,48 @@
             </div>
           </header>
 
+          <div class="panel-filtros-alumnos" aria-label="Filtros de alumnos">
+            <div class="panel-filtro">
+              <label for="filtro-graduacion">Graduación</label>
+              <select id="filtro-graduacion">
+                <option value="">Todas</option>
+                <option value="__sin__">Sin graduación</option>
+              </select>
+            </div>
+
+            <div class="panel-filtro panel-filtro-edad">
+              <label for="filtro-edad-desde">Edad desde</label>
+              <input
+                type="number"
+                id="filtro-edad-desde"
+                min="0"
+                max="120"
+                inputmode="numeric"
+                placeholder="—"
+              />
+            </div>
+
+            <div class="panel-filtro panel-filtro-edad">
+              <label for="filtro-edad-hasta">Edad hasta</label>
+              <input
+                type="number"
+                id="filtro-edad-hasta"
+                min="0"
+                max="120"
+                inputmode="numeric"
+                placeholder="—"
+              />
+            </div>
+
+            <button
+              type="button"
+              class="panel-btn panel-btn-chico panel-btn-secundario panel-btn-limpiar"
+              id="limpiar-filtros-alumnos"
+            >
+              Limpiar filtros
+            </button>
+          </div>
+
           <div id="st-alumnos" class="panel-tabla-wrap">
             <div class="cargando-filas" aria-hidden="true">
               <span class="cargando-fila"></span>
@@ -426,6 +480,18 @@
               </div>
             </header>
             <div id="st-sedes" class="panel-lista"></div>
+          </section>
+
+          <section class="panel-card" aria-labelledby="st-graduaciones-titulo">
+            <header class="panel-card-head">
+              <div>
+                <h2 id="st-graduaciones-titulo">Graduaciones</h2>
+                <span class="panel-card-nota" id="st-graduaciones-nota">
+                  Según el último grado de cada alumno
+                </span>
+              </div>
+            </header>
+            <div id="st-graduaciones" class="panel-graduaciones"></div>
           </section>
 
           <section class="panel-card" aria-labelledby="st-examenes-titulo">

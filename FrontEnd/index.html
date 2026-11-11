@@ -493,5 +493,73 @@
       ><span>DISCIPLINA PARA EL CUERPO. EQUILIBRIO PARA LA MENTE.</span
       ><a href="#inicio">VOLVER ARRIBA ↑</a>
     </footer>
+
+    <!-- Chatbot de preguntas frecuentes -->
+    <div class="faq-bot" id="faq-bot">
+      <button
+        type="button"
+        class="faq-bot-toggle"
+        id="faq-bot-toggle"
+        aria-expanded="false"
+        aria-controls="faq-bot-panel"
+      >
+        <span class="faq-bot-icon" aria-hidden="true">?</span>
+        <span class="faq-bot-toggle-label">Preguntas frecuentes</span>
+      </button>
+
+      <section
+        class="faq-bot-panel"
+        id="faq-bot-panel"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="faq-bot-titulo"
+        hidden
+      >
+        <header class="faq-bot-head">
+          <div>
+            <p class="faq-bot-kicker">Asistente de la escuela</p>
+            <h2 id="faq-bot-titulo">Preguntas frecuentes</h2>
+            <p class="faq-bot-estado">
+              <span aria-hidden="true"></span> Respuestas automáticas
+            </p>
+          </div>
+          <button
+            type="button"
+            class="faq-bot-cerrar"
+            id="faq-bot-cerrar"
+            aria-label="Cerrar preguntas frecuentes"
+          >
+            ×
+          </button>
+        </header>
+
+        <div
+          class="faq-bot-mensajes"
+          id="faq-bot-mensajes"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+        ></div>
+
+        <form class="faq-bot-form" id="faq-bot-form">
+          <label class="sr-only" for="faq-bot-input"
+            >Escribí tu pregunta</label
+          >
+          <input
+            type="text"
+            id="faq-bot-input"
+            maxlength="200"
+            autocomplete="off"
+            placeholder="Escribí tu pregunta…"
+          />
+          <button type="submit" aria-label="Enviar pregunta">→</button>
+        </form>
+
+        <p class="faq-bot-nota">
+          Para consultas puntuales,
+          <a href="mailto:hola@unsitiogenial.es">escribinos por correo</a>.
+        </p>
+      </section>
+    </div>
   </body>
 </html>
