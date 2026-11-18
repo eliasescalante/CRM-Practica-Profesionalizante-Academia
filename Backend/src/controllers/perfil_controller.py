@@ -61,6 +61,7 @@ def actualizar_perfil():
         }), 400
 
     campos_permitidos = {
+        "dni",
         "nombre",
         "apellido",
         "email",
@@ -78,7 +79,7 @@ def actualizar_perfil():
             "campos": sorted(campos_invalidos)
         }), 400
 
-    for campo in ("nombre", "apellido", "email"):
+    for campo in ("dni", "nombre", "apellido", "email"):
         if campo in datos and (
             not isinstance(datos[campo], str) or not datos[campo].strip()
         ):
@@ -87,8 +88,9 @@ def actualizar_perfil():
                 "mensaje": f"El campo {campo} no puede estar vacío"
             }), 400
 
-    if "email" in datos:
-        datos["email"] = datos["email"].strip()
+    for campo in ("dni", "email"):
+        if campo in datos:
+            datos[campo] = datos[campo].strip()
 
     try:
         actualizado = UsuarioRepository.actualizar_perfil(
@@ -123,6 +125,11 @@ def actualizar_perfil():
             return jsonify({
                 "status": "ERROR",
                 "mensaje": "El email ya está registrado"
+            }), 409
+        if str(e) == "DNI_EXISTENTE":
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "El DNI ya está registrado"
             }), 409
         raise
 

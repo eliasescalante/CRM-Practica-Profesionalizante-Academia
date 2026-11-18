@@ -1,6 +1,12 @@
 # Secretos / entorno
 .env
 .env.*
+!.env.example
+
+# Dumps con datos reales (nunca al repositorio)
+*_dump.sql
+dump_*.sql
+crm_*.sql
 
 # Python
 __pycache__/

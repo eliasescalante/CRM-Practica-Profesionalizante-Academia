@@ -307,6 +307,13 @@
             autocomplete: 'family-name'
           }),
           PanelUI.campo({
+            id: 'perfil-dni',
+            label: 'DNI',
+            valor: perfil.dni,
+            requerido: true,
+            placeholder: 'Sin puntos'
+          }),
+          PanelUI.campo({
             id: 'perfil-email',
             label: 'Email',
             tipo: 'email',
@@ -452,6 +459,7 @@
           PanelUI.ocupado(boton);
 
           const res = await API.put('/api/perfil', {
+            dni: PanelUI.valor('perfil-dni'),
             nombre: PanelUI.valor('perfil-nombre'),
             apellido: PanelUI.valor('perfil-apellido'),
             email: PanelUI.valor('perfil-email'),
@@ -2790,6 +2798,100 @@
   }
 
   /* ---------------------------------------------------------
+     Campus: ventana de acceso a Google Classroom
+     --------------------------------------------------------- */
+
+  const CAMPUS_CODIGO = '6p34sh2o';
+  const CAMPUS_URL =
+    'https://classroom.google.com/c/ODgzNDcxODA2MDg4?cjc=6p34sh2o';
+
+  function abrirCampus() {
+    PanelUI.abrirModal({
+      kicker: 'Aula virtual',
+      titulo: 'Campus',
+      cuerpo:
+        '<p class="campus-intro">' +
+        'Las clases, los materiales y las tareas están en Google Classroom.' +
+        '</p>' +
+        '<ul class="campus-lista">' +
+        '<li><strong>Entrá con tu cuenta de Google</strong>, no con el ' +
+        'usuario y la contraseña del CRM.</li>' +
+        '<li>Usá la misma cuenta con la que la escuela te dio de alta. ' +
+        'Con otra cuenta no vas a ver la clase.</li>' +
+        '<li><strong>Alumnos:</strong> se suman con el código de la clase. ' +
+        '<strong>Docentes:</strong> la escuela les asigna el rol de docente ' +
+        'dentro de Classroom.</li>' +
+        '<li>¿Todavía no tenés cuenta? Pedí el alta en tu sede.</li>' +
+        '</ul>' +
+        '<div class="campus-codigo">' +
+        '<div class="campus-codigo-dato">' +
+        '<span>Código de clase</span>' +
+        '<strong>' +
+        CAMPUS_CODIGO +
+        '</strong>' +
+        '</div>' +
+        '<button type="button" class="panel-btn panel-btn-secundario ' +
+        'panel-btn-chico" data-accion="copiar-clase" data-codigo="' +
+        CAMPUS_CODIGO +
+        '">Copiar código</button>' +
+        '</div>',
+      pie:
+        '<button type="button" class="panel-btn panel-btn-secundario" ' +
+        'data-accion="cerrar-modal">Cerrar</button>' +
+        '<a class="panel-btn panel-btn-primario" href="' +
+        CAMPUS_URL +
+        '" target="_blank" rel="noopener noreferrer">' +
+        'Abrir Classroom <span aria-hidden="true">↗</span></a>'
+    });
+  }
+
+  /* ---------------------------------------------------------
+     Google Classroom: copiar el código de la clase
+     --------------------------------------------------------- */
+
+  function copiarTexto(texto) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(texto);
+    }
+
+    return new Promise(function (resolver, rechazar) {
+      const campo = document.createElement('textarea');
+
+      campo.value = texto;
+      campo.setAttribute('readonly', '');
+      campo.style.position = 'fixed';
+      campo.style.top = '-9999px';
+      document.body.appendChild(campo);
+      campo.select();
+
+      const copiado = document.execCommand('copy');
+
+      document.body.removeChild(campo);
+
+      if (copiado) {
+        resolver();
+      } else {
+        rechazar(new Error('No se pudo copiar'));
+      }
+    });
+  }
+
+  function copiarCodigoClase(boton) {
+    const codigo = boton.getAttribute('data-codigo') || '6p34sh2o';
+
+    copiarTexto(codigo)
+      .then(function () {
+        UI.avisar('Código de clase copiado: ' + codigo, 'ok');
+      })
+      .catch(function () {
+        UI.avisar(
+          'No pudimos copiar el código. Escribilo a mano: ' + codigo,
+          'aviso'
+        );
+      });
+  }
+
+  /* ---------------------------------------------------------
      Delegación de eventos
      --------------------------------------------------------- */
 
@@ -2882,6 +2984,14 @@
 
     'nueva-noticia': function () {
       abrirFormularioNoticia(null);
+    },
+
+    'abrir-campus': function () {
+      abrirCampus();
+    },
+
+    'copiar-clase': function (id, boton) {
+      copiarCodigoClase(boton);
     },
 
     'editar-noticia': function (id) {

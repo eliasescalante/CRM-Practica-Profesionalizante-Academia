@@ -8,6 +8,12 @@ from database.cloudinary_connection import check_cloudinary_connection
 main_bp = Blueprint("main", __name__)
 
 
+@main_bp.route("/api/ping", methods=["GET"])
+def ping():
+    """Health check liviano: no toca la base ni servicios externos."""
+    return jsonify({"status": "OK", "server": "OK"}), 200
+
+
 @main_bp.route("/api/status", methods=["GET"])
 def status():
 

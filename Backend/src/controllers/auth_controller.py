@@ -1,4 +1,6 @@
 #agregado al docs
+import os
+
 from flask import Blueprint, request, jsonify
 import bcrypt
 from datetime import date
@@ -394,4 +396,269 @@ def obtener_usuario_autenticado():
             "status": "ERROR",
             "mensaje": "Error al obtener el usuario autenticado"
         }), 500
+
+
+# =========================================================
+# INICIO DE SESIÓN CON GOOGLE
+# ---------------------------------------------------------
+# El frontend obtiene un ID token con Google Identity Services y
+# lo manda acá. Validamos la firma y el audience contra
+# GOOGLE_CLIENT_ID y buscamos una cuenta del CRM con ese email.
+#
+# Si el email todavía no tiene cuenta, la creamos como alumno
+# provisorio con lo que informa Google (nombre, apellido, email y
+# foto). La ficha se completa con la primera sede y el primer
+# profesor activos, la fecha de hoy y un DNI generado (G-...).
+# Se puede desactivar con GOOGLE_AUTO_ALTA=0.
+# =========================================================
+
+def _usuario_publico(usuario):
+    return {
+        "id": usuario["usuario_id"],
+        "persona_id": usuario["persona_id"],
+        "alumno_id": usuario.get("alumno_id"),
+        "profesor_id": usuario.get("profesor_id"),
+        "usuario": usuario["usuario"],
+        "nombre": usuario["nombre"],
+        "apellido": usuario["apellido"],
+        "email": usuario["email"],
+        "rol": usuario["rol"],
+        "avatar": usuario["avatar"]
+    }
+
+
+def _mensaje_cuenta_inactiva(usuario):
+
+    if usuario.get("rol") == "PROFESOR":
+        return (
+            "La cuenta está inactiva o pendiente de habilitación "
+            "por un administrador"
+        )
+
+    return "La cuenta se encuentra inactiva"
+
+
+def _auto_alta_google_habilitada():
+
+    valor = (os.getenv("GOOGLE_AUTO_ALTA") or "1").strip().lower()
+
+    return valor not in ("0", "false", "no", "off")
+
+
+def _nombre_google(informacion, email):
+
+    nombre = (informacion.get("given_name") or "").strip()
+    apellido = (informacion.get("family_name") or "").strip()
+
+    if not nombre and not apellido:
+        nombre = email.split("@")[0]
+
+    return nombre, apellido
+
+
+@auth_bp.route("/google/config", methods=["GET"])
+def google_config():
+
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+
+    return jsonify({
+        "status": "OK",
+        "habilitado": bool(client_id),
+        "client_id": client_id or None,
+        "auto_alta": _auto_alta_google_habilitada()
+    }), 200
+
+
+@auth_bp.route("/google", methods=["POST"])
+def login_google():
+
+    data = request.get_json(silent=True) or {}
+    credential = data.get("credential")
+
+    if not isinstance(credential, str) or not credential.strip():
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "No se recibió el token de Google"
+        }), 400
+
+    client_id = os.getenv("GOOGLE_CLIENT_ID")
+
+    if not client_id:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": (
+                "El inicio de sesión con Google todavía no está "
+                "configurado en el servidor"
+            )
+        }), 503
+
+    try:
+
+        from google.auth.transport import requests as google_requests
+        from google.oauth2 import id_token
+
+        informacion = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            client_id
+        )
+
+    except ImportError:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": (
+                "Falta la dependencia google-auth en el servidor. "
+                "Instalá Backend/requirements.txt"
+            )
+        }), 503
+
+    except ValueError:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": (
+                "No pudimos validar tu cuenta de Google. "
+                "Probá de nuevo o ingresá con usuario y contraseña."
+            )
+        }), 401
+
+    except Exception:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": (
+                "No pudimos conectar con Google en este momento. "
+                "Probá de nuevo en unos minutos."
+            )
+        }), 503
+
+    email = (informacion.get("email") or "").strip()
+
+    if not email:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "La cuenta de Google no informó un email"
+        }), 401
+
+    if not informacion.get("email_verified"):
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": (
+                "El email de tu cuenta de Google no está verificado"
+            )
+        }), 403
+
+    try:
+
+        usuario = UsuarioRepository.obtener_por_usuario_o_email(email)
+
+    except Exception:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "No se pudo consultar la cuenta"
+        }), 503
+
+    cuenta_creada = False
+
+    if not usuario:
+
+        if not _auto_alta_google_habilitada():
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": (
+                    "No hay una cuenta del CRM con el email " + email + ". "
+                    "Pedile a la escuela que te dé de alta o ingresá con "
+                    "usuario y contraseña."
+                )
+            }), 404
+
+        nombre, apellido = _nombre_google(informacion, email)
+
+        try:
+
+            UsuarioRepository.registrar_desde_google({
+                "nombre": nombre,
+                "apellido": apellido,
+                "email": email,
+                "sub": informacion.get("sub"),
+                "avatar": informacion.get("picture"),
+                "contrasenia": bcrypt.hashpw(
+                    os.urandom(24).hex().encode("utf-8"),
+                    bcrypt.gensalt()
+                ).decode("utf-8")
+            })
+
+            usuario = UsuarioRepository.obtener_por_usuario_o_email(email)
+            cuenta_creada = True
+
+        except ValueError:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": (
+                    "No hay una cuenta del CRM con el email " + email +
+                    " y la escuela no tiene una sede y un profesor activos "
+                    "para crear una ficha provisoria. Pedile al "
+                    "administrador que te dé de alta."
+                )
+            }), 409
+
+        except Exception:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": (
+                    "No hay una cuenta del CRM con el email " + email +
+                    " y no pudimos crearla automáticamente. "
+                    "Pedile a la escuela que te dé de alta."
+                )
+            }), 500
+
+        if not usuario:
+
+            return jsonify({
+                "status": "ERROR",
+                "mensaje": "No se pudo recuperar la cuenta recién creada"
+            }), 500
+
+    if not usuario["usuario_activo"] or not usuario["persona_activa"]:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": _mensaje_cuenta_inactiva(usuario)
+        }), 403
+
+    try:
+
+        token = generar_token(usuario)
+
+    except Exception:
+
+        return jsonify({
+            "status": "ERROR",
+            "mensaje": "No se pudo generar la sesión"
+        }), 500
+
+    if cuenta_creada:
+        mensaje = (
+            "Cuenta creada con Google. Podés completar tus datos y definir "
+            "una contraseña desde Mi perfil."
+        )
+    else:
+        mensaje = "Inicio de sesión exitoso"
+
+    return jsonify({
+        "status": "OK",
+        "mensaje": mensaje,
+        "cuenta_creada": cuenta_creada,
+        "token": token,
+        "usuario": _usuario_publico(usuario)
+    }), 200
 

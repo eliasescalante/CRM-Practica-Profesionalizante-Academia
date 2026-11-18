@@ -37,6 +37,10 @@
   const loginEnviar = $('#login-enviar');
   const avisoLogin = $('#login-aviso');
 
+  const googleSeparador = $('#google-separador');
+  const googleBoton = $('#google-boton');
+  const googleNota = $('#google-nota');
+
   const formAlumno = $('#form-alumno');
   const alEnviar = $('#al-enviar');
   const alCentro = $('#al-centro');
@@ -261,6 +265,177 @@
 
     location.replace('panel.html');
   });
+
+  /* ---------------------------------------------------------
+     Login con Google
+     ---------------------------------------------------------
+     El backend expone su Client ID en /api/auth/google/config.
+     Si no está configurado, el bloque queda oculto y el ingreso
+     con usuario y contraseña sigue funcionando igual.
+     --------------------------------------------------------- */
+
+  let googleIniciando = false;
+  let googleEnviando = false;
+
+  function esperarGoogle(intentos) {
+    return new Promise(function (resolver) {
+      if (
+        window.google &&
+        window.google.accounts &&
+        window.google.accounts.id
+      ) {
+        resolver(true);
+        return;
+      }
+
+      if (intentos <= 0) {
+        resolver(false);
+        return;
+      }
+
+      window.setTimeout(function () {
+        esperarGoogle(intentos - 1).then(resolver);
+      }, 300);
+    });
+  }
+
+  function ocultarGoogle() {
+    if (googleBoton) {
+      googleBoton.hidden = true;
+    }
+
+    if (googleSeparador) {
+      googleSeparador.hidden = true;
+    }
+
+    if (googleNota) {
+      googleNota.hidden = true;
+    }
+  }
+
+  async function entrarConGoogle(respuesta) {
+    if (googleEnviando) {
+      return;
+    }
+
+    const credencial = respuesta && respuesta.credential;
+
+    if (!credencial) {
+      UI.mostrarMensaje(
+        avisoLogin,
+        'No pudimos obtener tu cuenta de Google. Probá de nuevo.',
+        'error'
+      );
+      return;
+    }
+
+    googleEnviando = true;
+    UI.ocultarMensaje(avisoLogin);
+    UI.mostrarMensaje(avisoLogin, 'Validando tu cuenta de Google…', 'info');
+
+    const resultado = await API.auth.loginGoogle(credencial);
+
+    googleEnviando = false;
+
+    if (!resultado.ok) {
+      UI.mostrarMensaje(
+        avisoLogin,
+        API.mensaje(resultado),
+        resultado.status === 403 ? 'aviso' : 'error'
+      );
+      return;
+    }
+
+    API.guardarSesion(
+      resultado.data.token,
+      resultado.data.usuario,
+      loginRecordar.checked
+    );
+
+    if (resultado.data && resultado.data.cuenta_creada) {
+      try {
+        window.sessionStorage.setItem('crm.cuentaNueva', '1');
+      } catch (error) {
+        /* sin sessionStorage: se pierde el aviso, no la sesión */
+      }
+    }
+
+    location.replace('panel.html');
+  }
+
+  async function iniciarGoogle() {
+    if (!googleBoton || googleIniciando) {
+      return;
+    }
+
+    googleIniciando = true;
+
+    try {
+      const config = await API.auth.googleConfig();
+
+      if (
+        !config.ok ||
+        !config.data ||
+        !config.data.habilitado ||
+        !config.data.client_id
+      ) {
+        ocultarGoogle();
+        return;
+      }
+
+      const disponible = await esperarGoogle(20);
+
+      if (!disponible) {
+        ocultarGoogle();
+        return;
+      }
+
+      const notaAlta = $('#google-nota-alta');
+      const notaSolo = $('#google-nota-solo');
+      const autoAlta = config.data.auto_alta !== false;
+
+      if (notaAlta) {
+        notaAlta.hidden = !autoAlta;
+      }
+
+      if (notaSolo) {
+        notaSolo.hidden = autoAlta;
+      }
+
+      window.google.accounts.id.initialize({
+        client_id: config.data.client_id,
+        callback: entrarConGoogle,
+        auto_select: false,
+        cancel_on_tap_outside: true
+      });
+
+      /* Mostramos el bloque antes de medir para que el botón use
+         el ancho real de la tarjeta (también en celular). */
+      googleBoton.hidden = false;
+      googleSeparador.hidden = false;
+      googleNota.hidden = false;
+
+      const ancho = Math.max(
+        240,
+        Math.min(400, Math.round(googleBoton.clientWidth || 360))
+      );
+
+      window.google.accounts.id.renderButton(googleBoton, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'left',
+        locale: 'es',
+        width: ancho
+      });
+    } catch (error) {
+      ocultarGoogle();
+    } finally {
+      googleIniciando = false;
+    }
+  }
 
   /* ---------------------------------------------------------
      Sedes y profesores para el alta de alumno
@@ -550,6 +725,7 @@
 
   prepararFormularios();
   leerMotivo();
+  iniciarGoogle();
 
   const parametros = new URLSearchParams(location.search);
 

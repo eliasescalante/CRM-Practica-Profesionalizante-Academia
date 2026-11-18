@@ -1,3 +1,5 @@
+import re
+
 from database.connection import get_db_connection
 
 class UsuarioRepository:
@@ -302,6 +304,7 @@ class UsuarioRepository:
         cursor = conn.cursor(dictionary=True)
 
         campos_permitidos = {
+            "dni",
             "nombre",
             "apellido",
             "email",
@@ -336,6 +339,21 @@ class UsuarioRepository:
 
                 if cursor.fetchone():
                     raise ValueError("EMAIL_EXISTENTE")
+
+            # Verificar que el DNI no pertenezca a otra persona.
+            if "dni" in datos:
+                cursor.execute(
+                    """
+                    SELECT id
+                    FROM persona
+                    WHERE dni = %s AND id <> %s
+                    LIMIT 1
+                    """,
+                    (datos["dni"], persona_id)
+                )
+
+                if cursor.fetchone():
+                    raise ValueError("DNI_EXISTENTE")
 
             campos = {
                 campo: valor
@@ -479,5 +497,186 @@ class UsuarioRepository:
             return cursor.fetchone()
 
         finally:
+            cursor.close()
+            conn.close()
+
+    # =========================================================
+    # ALTA AUTOMÁTICA DESDE GOOGLE
+    # ---------------------------------------------------------
+    # Google solo aporta nombre, apellido, email y foto. La ficha
+    # de alumno necesita DNI, sede, profesor y fecha de inicio, así
+    # que se completan con datos provisorios: la primera sede y el
+    # primer profesor activos, la fecha de hoy y un DNI generado.
+    # El alumno puede corregirlos después desde su perfil.
+    # =========================================================
+
+    @staticmethod
+    def _usuario_libre(cursor, email):
+
+        base = (email or "alumno").split("@")[0].lower()
+        base = re.sub(r"[^a-z0-9._-]", "", base) or "alumno"
+        base = base[:40]
+
+        candidato = base
+        sufijo = 1
+
+        while True:
+
+            cursor.execute(
+                "SELECT id FROM usuario WHERE usuario = %s",
+                (candidato,)
+            )
+
+            if not cursor.fetchone():
+                return candidato
+
+            sufijo += 1
+            candidato = base[: 50 - len(str(sufijo))] + str(sufijo)
+
+    @staticmethod
+    def _dni_libre(cursor, sub):
+
+        digitos = re.sub(r"[^0-9]", "", sub or "")[-10:]
+        base = "G-" + (digitos or "0000000000")
+
+        candidato = base
+        sufijo = 0
+
+        while True:
+
+            cursor.execute(
+                "SELECT id FROM persona WHERE dni = %s",
+                (candidato,)
+            )
+
+            if not cursor.fetchone():
+                return candidato
+
+            sufijo += 1
+            candidato = base + "-" + str(sufijo)
+
+    @staticmethod
+    def registrar_desde_google(datos):
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        try:
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM centro
+                WHERE activo = 1
+                ORDER BY id
+                LIMIT 1
+                """
+            )
+            centro = cursor.fetchone()
+
+            cursor.execute(
+                """
+                SELECT pr.id
+                FROM profesor pr
+                INNER JOIN persona p
+                    ON p.id = pr.persona_id
+                WHERE pr.activo = 1
+                  AND p.activo = 1
+                ORDER BY pr.id
+                LIMIT 1
+                """
+            )
+            profesor = cursor.fetchone()
+
+            if not centro or not profesor:
+                raise ValueError(
+                    "La escuela no tiene una sede y un profesor activos"
+                )
+
+            usuario = UsuarioRepository._usuario_libre(
+                cursor,
+                datos["email"]
+            )
+            dni = UsuarioRepository._dni_libre(
+                cursor,
+                datos.get("sub")
+            )
+
+            cursor.execute(
+                """
+                INSERT INTO persona (
+                    dni,
+                    nombre,
+                    apellido,
+                    email,
+                    avatar
+                )
+                VALUES (%s, %s, %s, %s, %s)
+                """,
+                (
+                    dni,
+                    datos["nombre"],
+                    datos["apellido"],
+                    datos["email"],
+                    datos.get("avatar")
+                )
+            )
+
+            persona_id = cursor.lastrowid
+
+            cursor.execute(
+                """
+                INSERT INTO usuario (
+                    persona_id,
+                    usuario,
+                    contrasenia,
+                    rol
+                )
+                VALUES (%s, %s, %s, 'ALUMNO')
+                """,
+                (
+                    persona_id,
+                    usuario,
+                    datos["contrasenia"]
+                )
+            )
+
+            usuario_id = cursor.lastrowid
+
+            cursor.execute(
+                """
+                INSERT INTO alumno (
+                    persona_id,
+                    centro_id,
+                    profesor_id,
+                    fecha_de_inicio
+                )
+                VALUES (%s, %s, %s, CURDATE())
+                """,
+                (
+                    persona_id,
+                    centro["id"],
+                    profesor["id"]
+                )
+            )
+
+            alumno_id = cursor.lastrowid
+
+            conn.commit()
+
+            return {
+                "usuario_id": usuario_id,
+                "persona_id": persona_id,
+                "alumno_id": alumno_id
+            }
+
+        except Exception:
+
+            conn.rollback()
+
+            raise
+
+        finally:
+
             cursor.close()
             conn.close()

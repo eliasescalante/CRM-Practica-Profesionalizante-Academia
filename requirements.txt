@@ -1,0 +1,3 @@
+# Render / Railway detectan Python por este archivo.
+# Las dependencias reales están en Backend/requirements.txt.
+-r Backend/requirements.txt

@@ -34,6 +34,7 @@ FrontEnd/
 │   └── panel.css   # panel del alumno y del staff
 ├── js/
 │   ├── script.js   # landing: menú móvil, scroll suave, animaciones, barra de lectura, parallax, año del footer y chatbot de FAQ
+│   ├── config.js   # URL del backend para deploy (vacío = mismo host)
 │   ├── api.js      # cliente de la API y manejo de la sesión
 │   ├── ui.js       # helpers de DOM, formato de fechas/moneda y mensajes
 │   ├── auth.js     # login, registro y selects de sede/profesor
@@ -47,7 +48,10 @@ FrontEnd/
 
 1. Levantá el backend (`Backend/app.py`, escucha en `http://127.0.0.1:4000`).
 2. Serví `FrontEnd/` con un servidor estático: **Live Server** de VS Code o `python -m http.server 5601 --bind 127.0.0.1` desde la carpeta `FrontEnd`.
-3. Abrí `http://127.0.0.1:5601/index.html`. No requiere Node.js, npm ni frameworks.
+3. Abrí la URL que te muestre ese servidor (Live Server suele usar `http://127.0.0.1:5500/FrontEnd/index.html`; el servidor de Python, `http://127.0.0.1:5601/index.html`). No requiere Node.js, npm ni frameworks.
+4. Alternativa de una sola URL: con el backend iniciado, abrí `http://127.0.0.1:4000/`. Flask sirve también el frontend.
+
+> Para publicarlo online seguí [DEPLOY.md](DEPLOY.md): mismo host (recomendado), Render/Railway, MySQL en la nube y el origen de Google de producción.
 
 ### Login, registro y panel
 
@@ -59,8 +63,53 @@ FrontEnd/
   - `ALUMNO`: sede, profesor y fecha de inicio; asistencias, cuotas abiertas, pagos confirmados y graduaciones. Los KPIs tienen **feedback visual**: verde cuando está todo al día (`Perfecta`, `Al día`), ámbar cuando hay algo pendiente sin urgencia (`Pendiente`) y rojo cuando hay una cuota vencida o por vencer en los próximos 7 días, un pago por confirmar en ese plazo o asistencias por debajo del 100% (`Vencida`, `Por vencer`, `Revisar`, `A mejorar`). Listados de cuotas, pagos, exámenes, graduaciones y novedades; canal de mensajes de su sede. Puede editar su perfil y su foto, cambiar la contraseña, declarar un pago (queda `PENDIENTE` hasta que la escuela lo confirme), inscribirse a un examen o cancelar la inscripción y escribirle a la escuela.
   - `PROFESOR` / `ADMIN`: totales de alumnos, profesores, sedes y pagos pendientes; tabla de alumnos con buscador (nombre, DNI, sede o profesor) y **filtros combinables** por graduación (incluye “Sin graduación”), edad desde y edad hasta, con botón **Limpiar filtros**. La tabla muestra la edad y la última graduación de cada alumno. La tarjeta **Graduaciones** resume cuántos alumnos hay en cada grado, cuántos están sin graduación y el total de registros. También ve pagos pendientes, agenda de exámenes y novedades. Puede dar de alta y editar alumnos (con baja lógica), abrir la **ficha 360** de cada alumno desde un drawer (datos, asistencias, cuotas, pagos, graduaciones e inscripciones), tomar lista por sede y fecha, registrar o confirmar pagos, **agendar/editar/eliminar exámenes**, publicar/editar/eliminar noticias y responder los mensajes de la sede. El `ADMIN` además gestiona las **sedes** (alta, edición, baja y reactivación). El perfil propio se edita con el mismo modal del alumno.
   - Los formularios y la ficha se abren dentro de `panel.html` (modal y drawer), sin páginas extra.
+  - Ambas vistas incluyen el botón **Campus** en el navbar: abre una ventana con las indicaciones para entrar a Google Classroom, el botón para abrirlo y la opción de copiar el código de la clase.
 - Al entrar, el panel valida la sesión contra `/api/auth/me`. Si el token venció o la cuenta fue deshabilitada, limpia el almacenamiento y vuelve a `login.html?motivo=expirado`.
-- La URL de la API se resuelve en este orden: `<meta name="crm-api">` → `localStorage.crm.apiBase` → mismo host en el puerto `4000` → `http://127.0.0.1:4000`.
+- La URL de la API se resuelve en este orden: `js/config.js` (`window.CRM_API_BASE`) → `<meta name="api-base">` → `localStorage.crm.apiBase` → en un dominio público, el mismo origen → mismo host en el puerto `4000` → `http://127.0.0.1:4000`.
+
+### Google Classroom
+
+El navbar del panel (alumno y staff) tiene un botón **Campus** que abre una ventana con las indicaciones para entrar a Google Classroom, el botón para abrir la clase en una pestaña nueva y la opción de copiar el código. El CRM no guarda ni pide credenciales de Google: cada persona inicia sesión con su propia cuenta.
+
+- Invitación: `https://classroom.google.com/c/ODgzNDcxODA2MDg4?cjc=6p34sh2o`
+- Código de clase: `6p34sh2o`
+- La ventana aclara que hay que entrar con la cuenta de Google (no con usuario y contraseña del CRM), usar la misma cuenta con la que la escuela dio el alta y, en el caso de los alumnos, sumarse con el código de la clase.
+- El botón **Copiar código** copia `6p34sh2o` al portapapeles (con un fallback para navegadores sin Clipboard API).
+- Los permisos **docente / alumno** se administran dentro de Google Classroom, con las cuentas e invitaciones de Google. El CRM no puede otorgarlos: para que un profesor pueda modificar la clase, la escuela debe invitarlo con el rol de docente desde Classroom.
+
+### Inicio de sesión con Google (opcional)
+
+Además de usuario/email y contraseña, el login puede mostrar **Continuar con Google**. El bloque queda oculto si el backend no tiene configurado un OAuth Client ID, así que el ingreso actual sigue funcionando igual.
+
+Configuración:
+
+1. En [Google Cloud Console](https://console.cloud.google.com/) creá un proyecto, configurá la pantalla de consentimiento (tipo **External**) y creá una credencial **OAuth 2.0 → Aplicación web**.
+2. En **Orígenes JavaScript autorizados** agregá el origen **exacto** con el que abrís el login: protocolo, host y puerto, sin ruta ni barra final. Tiene que coincidir con lo que muestra la barra de direcciones. Por ejemplo:
+   - Live Server de VS Code: `http://localhost:5500` y `http://127.0.0.1:5500`
+   - Servidor de Python: `http://localhost:5601` y `http://127.0.0.1:5601`
+   - Flask sirviendo todo (una sola URL): `http://localhost:4000` y `http://127.0.0.1:4000`
+   - Producción: el dominio real, por ejemplo `https://crm.tudominio.com`
+
+   Si abrís desde otro dispositivo de la red, agregá también esa IP (por ejemplo `http://192.168.0.208:5500`). Los cambios pueden tardar unos minutos en propagarse.
+3. Si la pantalla de consentimiento está en modo **Testing**, agregá la cuenta con la que vas a probar en **Usuarios de prueba**. Sin eso Google bloquea el acceso aunque el origen esté bien.
+4. Copiá el **Client ID** en `Backend/.env`:
+
+   ```env
+   GOOGLE_CLIENT_ID=tu-client-id.apps.googleusercontent.com
+   ```
+
+5. Instalá las dependencias (`pip install -r Backend/requirements.txt`, incluye `google-auth`) y reiniciá el backend.
+
+Cómo funciona:
+
+- El frontend recibe el **ID token** de Google Identity Services y lo envía a `POST /api/auth/google`.
+- El backend valida firma, `audience` y expiración contra el Client ID, exige que el email esté verificado y busca una cuenta **existente** por email con `UsuarioRepository.obtener_por_usuario_o_email`.
+- Si no hay cuenta con ese email, crea un **alumno provisorio** con lo que informa Google (nombre, apellido, email y foto). Como la ficha necesita DNI, sede, profesor y fecha de inicio, se completan con la primera sede y el primer profesor activos, la fecha de hoy y un DNI generado con el prefijo `G-`. El alumno puede corregir esos datos desde su perfil y el staff también puede editarlos.
+- Para que el alta sea solo para cuentas existentes (comportamiento anterior), configurá `GOOGLE_AUTO_ALTA=0` en `Backend/.env`.
+- Se aplican las mismas reglas de cuenta activa que el login normal y se emite el mismo JWT del CRM.
+- `GET /api/auth/google/config` informa si Google está habilitado; el login lo consulta antes de mostrar el botón.
+
+> El vínculo de identidad es el email: quien controle una cuenta de Google con el mismo email que una cuenta del CRM puede ingresar con ella. Conviene que la escuela valide los emails al dar de alta.
 
 ### Pagos, exámenes, sedes, novedades y mensajes
 

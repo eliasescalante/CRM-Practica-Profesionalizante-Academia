@@ -2143,6 +2143,24 @@
     mostrarVista(usuario.rol);
     terminarCarga();
 
+    const cuentaNueva = (function () {
+      try {
+        const valor = window.sessionStorage.getItem('crm.cuentaNueva');
+        window.sessionStorage.removeItem('crm.cuentaNueva');
+        return valor;
+      } catch (error) {
+        return null;
+      }
+    })();
+
+    if (cuentaNueva) {
+      UI.avisar(
+        'Tu cuenta se creó con Google. Completá tus datos y, si querés, ' +
+        'definí una contraseña desde Mi perfil.',
+        'ok'
+      );
+    }
+
     await cargarVista();
 
     if (sesionCaida) {

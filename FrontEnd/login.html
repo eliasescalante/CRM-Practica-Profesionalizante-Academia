@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="css/styles.css" />
     <link rel="stylesheet" href="css/comun.css" />
     <link rel="stylesheet" href="css/auth.css" />
+    <!-- Google Identity Services. El botón solo aparece si el backend
+         tiene configurado GOOGLE_CLIENT_ID. -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
   </head>
   <body class="auth-body">
     <a class="skip-link" href="#contenido">Saltar al formulario</a>
@@ -154,6 +157,21 @@
                 Ingresar <span aria-hidden="true">↗</span>
               </button>
             </form>
+
+            <div class="auth-separador" id="google-separador" hidden>
+              <span>o</span>
+            </div>
+
+            <div class="auth-google" id="google-boton" hidden></div>
+
+            <p class="auth-google-nota" id="google-nota" hidden>
+              <span id="google-nota-alta">Si es tu primera vez, creamos tu
+              cuenta con los datos de Google y después completás el resto
+              desde Mi perfil.</span>
+              <span id="google-nota-solo" hidden>Usá la misma cuenta de Google
+              con la que ya estás registrado en la escuela. Si todavía no
+              tenés cuenta, pedí el alta en tu sede.</span>
+            </p>
 
             <p class="auth-pie">
               ¿No tenés cuenta?
@@ -466,6 +484,7 @@
       </section>
     </main>
 
+    <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/auth.js"></script>

@@ -21,14 +21,37 @@ const API = (function () {
      URL base
      ---------------------------------------------------------
      Prioridad:
-       1) <meta name="api-base" content="..."> en el HTML
-       2) localStorage.crm.apiBase (para probar contra otra IP)
-       3) el mismo host desde el que se sirve el front, puerto 4000
-          (así funciona también desde el celular en la misma red)
-       4) 127.0.0.1:4000 si se abre el HTML como archivo
+       1) window.CRM_API_BASE (js/config.js), para deploy separado
+       2) <meta name="api-base"> o <meta name="crm-api"> en el HTML
+       3) localStorage.crm.apiBase (para probar contra otra IP)
+       4) en local, el mismo host en el puerto 4000
+       5) en un dominio público, el mismo origen (Flask sirve la API
+          y el frontend en el mismo host)
+       6) 127.0.0.1:4000 si se abre el HTML como archivo
      --------------------------------------------------------- */
+
+  function esHostLocal(host) {
+    return (
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      host === '::1' ||
+      host === '[::1]' ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(host)
+    );
+  }
+
   function resolverBase() {
-    const meta = document.querySelector('meta[name="api-base"]');
+    const baseGlobal = (window.CRM_API_BASE || '').trim();
+
+    if (baseGlobal) {
+      return baseGlobal.replace(/\/+$/, '');
+    }
+
+    const meta =
+      document.querySelector('meta[name="api-base"]') ||
+      document.querySelector('meta[name="crm-api"]');
 
     if (meta && meta.content) {
       return meta.content.replace(/\/+$/, '');
@@ -44,6 +67,10 @@ const API = (function () {
     }
 
     if (location.protocol === 'http:' || location.protocol === 'https:') {
+      if (!esHostLocal(location.hostname)) {
+        return location.origin;
+      }
+
       return location.protocol + '//' + location.hostname + ':4000';
     }
 
@@ -242,6 +269,18 @@ const API = (function () {
         method: 'POST',
         auth: false,
         body: { usuario: usuarioTexto, contrasenia: contrasenia }
+      });
+    },
+
+    googleConfig: function () {
+      return pedir('/api/auth/google/config', { auth: false });
+    },
+
+    loginGoogle: function (credential) {
+      return pedir('/api/auth/google', {
+        method: 'POST',
+        auth: false,
+        body: { credential: credential }
       });
     },
 

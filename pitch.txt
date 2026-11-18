@@ -1,0 +1,191 @@
+PITCH — PRESENTACIÓN DE PRÁCTICA PROFESIONALIZANTE
+===================================================
+
+Proyecto: CRM + portal del alumno para la academia Tien Long Hu / Shen Xin Ling
+Autor: Elías Escalante
+Rol: desarrollo full-stack en solitario (relevamiento, base de datos, backend,
+     frontend, integraciones y documentación)
+Duración objetivo: 3 min 45 s (guion de ~540 palabras)
+Slides que cubre: presentación personal, rol desempeñado y aportes realizados.
+
+Cómo usarlo: no hace falta leerlo textual. Los tiempos son orientativos; si vas
+justo, acortá el bloque 7 y el cierre. Las frases entre corchetes son acotaciones
+para vos, no se dicen.
+
+
+------------------------------------------------------------------
+BLOQUE 1 — QUIÉN SOY  (0:00 – 0:20)
+------------------------------------------------------------------
+
+Buenas, soy Elías Escalante, estudiante de la Tecnicatura en Programación.
+Me interesa el desarrollo web y, sobre todo, entender el problema antes de
+escribir la primera línea de código. Este cuatrimestre me tocó llevar adelante,
+solo, un CRM para una academia de artes marciales.
+
+
+------------------------------------------------------------------
+BLOQUE 2 — EL PROBLEMA  (0:20 – 1:00)
+------------------------------------------------------------------
+
+La academia Tien Long Hu venía trabajando con planillas, cuadernos y WhatsApp.
+Cada sede anotaba las asistencias en papel, las cuotas no tenían un registro
+central y los pagos se confirmaban por mensaje. El alumno, para saber si estaba
+al día, tenía que preguntar. Eso generaba información dispersa, errores en los
+cobros y mucho tiempo administrativo. El problema no era solo "pasar todo a
+digital": era ordenar un circuito que estaba repartido entre personas y canales.
+
+
+------------------------------------------------------------------
+BLOQUE 3 — OBJETIVO  (1:00 – 1:25)
+------------------------------------------------------------------
+
+El objetivo fue construir un sistema web único con dos caras: un panel de
+gestión para la escuela y un portal de autoservicio para el alumno. La escuela
+conserva el control —confirma pagos, toma lista, agenda exámenes— y el alumno
+gana autonomía para consultar su estado, declarar un pago o inscribirse a un
+examen.
+
+
+------------------------------------------------------------------
+BLOQUE 4 — MI ROL  (1:25 – 1:50)
+------------------------------------------------------------------
+
+Mi rol fue full-stack y en solitario: hice el relevamiento, el modelo de datos,
+la API, la interfaz y la documentación. Usé Flask y MySQL en el backend, y HTML,
+CSS y JavaScript puro en el frontend, sin frameworks. Eso implicó tomar todas
+las decisiones de arquitectura y hacerme cargo del proyecto de principio a fin.
+
+
+------------------------------------------------------------------
+BLOQUE 5 — MIS APORTES  (1:50 – 2:55)
+------------------------------------------------------------------
+
+En concreto, diseñé una base de 14 tablas organizada alrededor de la persona y
+sus roles —alumno, profesor y administrador—, con sedes, asistencias, cuotas,
+pagos, exámenes, graduaciones, novedades y mensajería. Sobre ese modelo construí
+una API REST de alrededor de 70 endpoints, separada en controladores y
+repositorios.
+
+En seguridad implementé autenticación con JWT, contraseñas hasheadas con bcrypt
+y autorización por rol: un profesor solo puede operar sobre sus sedes y sus
+alumnos, y esa regla se valida en el backend, no solo en la pantalla.
+
+En el panel del alumno: asistencias, cuotas, pagos, exámenes y graduaciones,
+con semáforos de estado, declaración de pagos pendientes de confirmación y canal
+de mensajes de la sede.
+
+En el panel del staff: alta y edición de alumnos, ficha 360, toma de lista,
+registro y confirmación de pagos, agenda de exámenes, novedades y gestión de
+sedes.
+
+Además sumé login con Google, el acceso a Google Classroom desde el navbar y una
+landing pública con chatbot de preguntas frecuentes.
+
+
+------------------------------------------------------------------
+BLOQUE 6 — AVANCE Y ESTADO  (2:55 – 3:25)
+------------------------------------------------------------------
+
+Hoy el sistema funciona de punta a punta sobre la base de la academia: se puede
+registrar un alumno, tomar lista, generar y cobrar cuotas, agendar exámenes,
+publicar novedades y conversar por sede. Los dos paneles están terminados y
+probados. Como próximos pasos quedan el despliegue en un servidor, los backups
+automáticos y una batería de pruebas automatizadas.
+
+
+------------------------------------------------------------------
+BLOQUE 7 — REQUERIMIENTOS Y DIFICULTAD  (3:25 – 3:50)
+------------------------------------------------------------------
+
+Los requerimientos principales fueron la gestión por roles, el desacople entre
+frontend y backend y el uso desde computadora y celular. La dificultad más
+grande no fue técnica: fue traducir reglas de negocio reales —quién puede
+cobrar, cuándo vence una cuota, cómo se confirma un pago— a un modelo de datos
+coherente.
+
+
+------------------------------------------------------------------
+BLOQUE 8 — CIERRE  (3:50 – 4:00)
+------------------------------------------------------------------
+
+En resumen, pasé de un proceso manual y disperso a un sistema centralizado,
+seguro y usable. Y me llevo el aprendizaje de sostener un proyecto completo:
+relevar, decidir, construir y documentar para que otro pueda continuarlo.
+
+
+##################################################################
+VERSIÓN CORTA — 60 SEGUNDOS (por si hay poco tiempo)
+##################################################################
+
+Soy Elías Escalante, estudiante de la Tecnicatura en Programación. Desarrollé
+solo un CRM para la academia de artes marciales Tien Long Hu, que gestionaba
+asistencias, cuotas y pagos con planillas, cuadernos y WhatsApp. El objetivo fue
+centralizar esa información y darle al alumno un portal de autoservicio. Mi rol
+fue full-stack: modelo de datos, API con Flask y MySQL, frontend con JavaScript
+puro, seguridad con JWT y bcrypt, y documentación. Hoy el sistema permite
+registrar alumnos, tomar lista, cobrar cuotas, agendar exámenes, publicar
+novedades y conversar por sede, con permisos diferenciados para alumno, profesor
+y administrador. Lo que sigue es despliegue, backups y pruebas automatizadas.
+
+
+##################################################################
+MAPA CON LAS SLIDES
+##################################################################
+
+Slide "Presentación personal"  -> Bloques 1 y 2
+Slide "Rol desempeñado"        -> Bloques 3 y 4
+Slide "Aportes realizados"     -> Bloques 5, 6 y 7
+Cierre                          -> Bloque 8
+
+Si tenés una sola lámina para todo, contá esta historia en este orden:
+quién soy -> qué problema había -> qué me propuse -> qué rol tuve ->
+qué construí -> en qué estado está -> qué aprendí.
+
+
+##################################################################
+POSIBLES PREGUNTAS DEL JURADO
+##################################################################
+
+¿Por qué sin frameworks?
+  Porque el proyecto no necesita un build ni un ecosistema grande, y usar HTML,
+  CSS y JavaScript puro me obligó a dominar los fundamentos. La separación en
+  controladores y repositorios mantiene el backend ordenado y fácil de extender.
+
+¿Cómo protegés los datos y los accesos?
+  Contraseñas con bcrypt (nunca en texto plano), sesiones con JWT firmado y
+  expiración, validación de rol en cada endpoint y variables sensibles en un
+  archivo .env fuera del repositorio. El login con Google valida la firma y el
+  audience del token, y no guarda credenciales de Google.
+
+¿Cómo evitás errores en los cobros?
+  Cada pago queda en estado PENDIENTE hasta que la escuela lo confirma, se
+  asocia a una cuota o inscripción concreta y se registra quién lo confirmó.
+  Eso deja trazabilidad y evita cobros duplicados o "fantasma".
+
+¿Qué pasa si el alumno se registra solo con Google?
+  Se crea una ficha provisoria con sus datos de Google y la primera sede y
+  profesor activos. Después completa DNI, teléfono y el resto desde Mi perfil, y
+  el staff ajusta sede y fecha de inicio. El alta automática se puede desactivar
+  por configuración.
+
+¿El sistema escala?
+  Para la academia actual, sí: MySQL relacional, API separada del frontend y
+  consultas acotadas por sede y rol. Si crece, el siguiente paso es separar
+  servicios, cachear listados y sumar pruebas de carga.
+
+¿Qué te faltó o qué harías distinto?
+  Sumar pruebas automatizadas desde el inicio y desplegar antes, para detectar
+  problemas de configuración (como los orígenes del login con Google) en un
+  entorno real y no al final.
+
+
+##################################################################
+CHECKLIST PARA EL DÍA DE LA PRESENTACIÓN
+##################################################################
+
+- Ensayá una vez con cronómetro: si pasás de 4 minutos, recortá el bloque 5.
+- No leas la pantalla: usá el guion como guía y mirá al jurado.
+- Tené la demo lista en una pestaña (login -> panel del alumno -> panel del
+  staff) por si te la piden; no la arranques vos si el tiempo es justo.
+- Si falla internet o el proyector, la versión corta de 60 segundos te salva.
+- Cerrá con la frase final mirando al jurado, sin apuro.
